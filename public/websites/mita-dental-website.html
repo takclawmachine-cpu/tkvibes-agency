@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mita Dental PHL - Family & Cosmetic Dentist in Fairmount, Philadelphia</title>
+    <meta name="description" content="Mita Dental PHL is a family & cosmetic dental clinic in Philadelphia's Fairmount neighborhood. Rated 4.9/5 with 647 reviews. Book your appointment today!">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            600: '#2563EB',
+                            700: '#1D4ED8',
+                            800: '#1E40AF'
+                        },
+                        accent: {
+                            500: '#06B6D4',
+                            600: '#0891B2',
+                            700: '#0E7490'
+                        },
+                        warm: '#FEF3C7',
+                        gray: {
+                            50: '#F9FAFB',
+                            100: '#F3F4F6',
+                            200: '#E5E7EB',
+                            300: '#D1D5DB',
+                            400: '#9CA3AF',
+                            500: '#6B7280',
+                            600: '#4B5563',
+                            700: '#374151',
+                            800: '#1F2937',
+                            900: '#111827'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .section-divider {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #ffffff 100%);
+            position: relative;
+        }
+        
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #06B6D4, transparent);
+            border-radius: 2px;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .star-rating {
+            color: #F59E0B;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-gray-50">
+    <!-- Hero Section -->
+    <section id="hero" class="gradient-bg text-white min-h-screen flex items-center justify-center pt-20">
+        <div class="container mx-auto px-4 py-20 relative z-10">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-5xl md:text-7xl font-heading font-bold mb-6">Mita Dental PHL</h1>
+                <h2 class="text-xl md:text-2xl font-light mb-8">Your Trusted Family & Cosmetic Dentist in Fairmount, Philadelphia</h2>
+                
+                <div class="flex items-center justify-center space-x-2 mb-10">
+                    <div class="star-rating text-3xl">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="text-xl font-semibold ml-2">4.9/5</span>
+                </div>
+                
+                <p class="text-lg md:text-xl mb-4">647 reviews on Google</p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+                    <a href="tel:+12152366200" class="bg-white text-primary-600 font-semibold px-8 py-4 rounded-lg btn-hover inline-flex items-center justify-center">
+                        <i class="fas fa-phone mr-2"></i> Call Now
+                    </a>
+                    <a href="#contact" class="bg-accent-500 text-white font-semibold px-8 py-4 rounded-lg btn-hover inline-flex items-center justify-center">
+                        <i class="fas fa-calendar mr-2"></i> Book Appointment
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent"></div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- About Section -->
+    <section id="about" class="py-20 fade-in">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-heading font-bold mb-6">About Our Practice</h2>
+                        <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                            At Mita Dental PHL, we believe everyone deserves a healthy, beautiful smile. Located in the heart of Philadelphia's Fairmount neighborhood, our family-owned practice combines modern dental technology with compassionate care. From routine cleanings to cosmetic transformations, Dr. Mita and our experienced team treat every patient like family.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-accent-500 text-xl"></i>
+                                <span class="text-gray-700">Modern technology</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-accent-500 text-xl"></i>
+                                <span class="text-gray-700">Gentle care</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-accent-500 text-xl"></i>
+                                <span class="text-gray-700">Experienced team</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-check-circle text-accent-500 text-xl"></i>
+                                <span class="text-gray-700">Comfortable environment</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2 flex justify-center">
+                        <div class="w-64 h-64 bg-gradient-to-br from-primary-600 to-accent-500 rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" class="w-48 h-48">
+                                <rect width="200" height="200" fill="white" rx="100"/>
+                                <circle cx="100" cy="100" r="60" fill="#256395"/>
+                                <path d="M100 60 L100 130 M100 130 L140 160 M100 130 L60 160" stroke="white" stroke-width="8" stroke-linecap="round"/>
+                                <rect x="85" y="85" width="30" height="10" fill="white" rx="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-white fade-in">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-4xl font-heading font-bold text-center mb-4">Our Services</h2>
+                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Comprehensive dental care solutions for you and your family, using state-of-the-art technology and gentle techniques.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Service 1 -->
+                    <div class="bg-gray-50 rounded-xl p-8 card-hover border border-gray-100">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-tooth text-primary-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">General Dentistry</h3>
+                        <p class="text-gray-600 mb-4">Cleanings, exams, fillings, and preventive care to keep your smile healthy and bright.</p>
+                    </div>
+                    
+                    <!-- Service 2 -->
+                    <div class="bg-gray-50 rounded-xl p-8 card-hover border border-gray-100">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-smile text-primary-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Cosmetic Dentistry</h3>
+                        <p class="text-gray-600 mb-4">Veneers, bonding, teeth whitening for a radiant, confident smile you can be proud of.</p>
+                    </div>
+                    
+                    <!-- Service 3 -->
+                    <div class="bg-gray-50 rounded-xl p-8 card-hover border border-gray-100">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-crown text-primary-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Restorative</h3>
+                        <p class="text-gray-600 mb-4">Crowns, bridges, dentures, and implants to restore your dental health and function.</p>
+                    </div>
+                    
+                    <!-- Service 4 -->
+                    <div class="bg-gray-50 rounded-xl p-8 card-hover border border-gray-100">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-teeth text-primary-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Orthodontics</h3>
+                        <p class="text-gray-600 mb-4">Invisalign, braces for all ages—so you can achieve the straight smile you deserve.</p>
+                    </div>
+                    
+                    <!-- Service 5 -->
+                    <div class="bg-gray-50 rounded-xl p-8 card-hover border border-gray-100">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-truck-medical text-primary-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Emergency Care</h3>
+                        <p class="text-gray-600 mb-4">Same-day emergency appointments for unexpected dental pain or problems.</p>
+                    </div>
+                    
+                    <!-- Service 6 -->
+                    <div class="bg-gray-50 rounded-xl p-8 card-hover border border-gray-100">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-child text-primary-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Pediatric Dentistry</h3>
+                        <p class="text-gray-600 mb-4">Gentle care for children of all ages in our kid-friendly, comfortable environment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- Why Choose Us Section -->
+    <section id="why-choose-us" class="py-20 fade-in">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-4xl font-heading font-bold text-center mb-4">Why Choose Us</h2>
+                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Experience dental care that puts you first—combining expertise, compassion, and cutting-edge technology.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Trust Factor 1 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fas fa-star text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">4.9 Google Rating</h3>
+                        <p class="text-gray-600">647 happy patients can't be wrong</p>
+                    </div>
+                    
+                    <!-- Trust Factor 2 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fas fa-award text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">15+ Years Experience</h3>
+                        <p class="text-gray-600">Decades of trusted dental care</p>
+                    </div>
+                    
+                    <!-- Trust Factor 3 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-cyan-400 to-cyan-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fas fa-microscope text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Modern Technology</h3>
+                        <p class="text-gray-600">Digital X-rays, laser dentistry, sedation options</p>
+                    </div>
+                    
+                    <!-- Trust Factor 4 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fas fa-heart text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Personalized Care</h3>
+                        <p class="text-gray-600">Treatment plans tailored to you</p>
+                    </div>
+                    
+                    <!-- Trust Factor 5 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fas fa-clock text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Convenient Hours</h3>
+                        <p class="text-gray-600">Open Mon-Fri, early morning & evening slots</p>
+                    </div>
+                    
+                    <!-- Trust Factor 6 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-br from-red-400 to-red-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fas fa-wheelchair text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Accessible</h3>
+                        <p class="text-gray-600">Wheelchair-accessible office</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- Location & Visit Section -->
+    <section id="location" class="py-20 fade-in">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col lg:flex-row gap-12">
+                    <div class="lg:w-1/2">
+                        <h2 class="text-4xl font-heading font-bold mb-6">Find Your Way to Us</h2>
+                        <p class="text-lg text-gray-600 mb-8">We're conveniently located in the heart of Philadelphia's Fairmount neighborhood, just minutes from major landmarks and easily accessible by car, public transit, and foot.</p>
+                        
+                        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                            <h3 class="text-xl font-semibold mb-4">Our Location</h3>
+                            <p class="text-gray-600 mb-2">📍 <strong>2438 Brown St, Philadelphia, PA 19130, USA</strong></p>
+                            <p class="text-gray-600 mb-4">Plus Code: XR9C+XR</p>
+                            
+                            <div class="space-y-3 mb-6">
+                                <p class="text-gray-600 flex items-start">
+                                    <i class="fas fa-landmark text-primary-600 mt-1 mr-3"></i>
+                                    <span>Near Eastern State Penitentiary</span>
+                                </p>
+                                <p class="text-gray-600 flex items-start">
+                                    <i class="fas fa-monument text-primary-600 mt-1 mr-3"></i>
+                                    <span>Philadelphia Museum of Art</span>
+                                </p>
+                                <p class="text-gray-600 flex items-start">
+                                    <i class="fas fa-tree text-primary-600 mt-1 mr-3"></i>
+                                    <span>Fairmount Park</span>
+                                </p>
+                            </div>
+                            
+                            <a href="https://maps.google.com/?q=2438+Brown+St,+Philadelphia,+PA+19130" target="_blank" class="bg-primary-600 text-white px-6 py-3 rounded-lg btn-hover inline-flex items-center">
+                                <i class="fas fa-directions mr-2"></i> Get Directions
+                            </a>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Parking & Transit</h3>
+                            <div class="space-y-3 text-gray-600">
+                                <p>• Street parking available nearby</p>
+                                <p>• Fairmount Trolley accessible</p>
+                                <p>• Free parking for patients in lot</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:w-1/2">
+                        <div class="bg-gray-200 rounded-xl overflow-hidden h-96 lg:h-full min-h-[400px]">
+                            <iframe 
+                                src="https://maps.google.com/maps?t=m&hl=en&q=2438+Brown+St,+Philadelphia,+PA+19130&output=embed" 
+                                width="100%" 
+                                height="450" 
+                                frameborder="0" 
+                                style="border:0" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- Hours Section -->
+    <section id="hours" class="py-20 bg-white fade-in">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-4xl font-heading font-bold text-center mb-4">Hours of Operation</h2>
+                <p class="text-center text-gray-600 mb-12">We're here to serve you during convenient hours, Monday through Friday.</p>
+                
+                <div class="bg-gray-50 rounded-xl overflow-hidden shadow-lg">
+                    <div class="grid grid-cols-2 divide-x divide-gray-200">
+                        <div class="bg-white">
+                            <div class="p-6 border-b border-gray-200 bg-primary-50">
+                                <h3 class="text-xl font-semibold text-primary-700">Clinic Hours</h3>
+                            </div>
+                            <div class="divide-y divide-gray-200">
+                                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
+                                    <span class="font-medium">Monday</span>
+                                    <span class="text-gray-600">9:00 AM – 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
+                                    <span class="font-medium">Tuesday</span>
+                                    <span class="text-gray-600">9:00 AM – 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
+                                    <span class="font-medium">Wednesday</span>
+                                    <span class="text-gray-600">9:00 AM – 5:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
+                                    <span class="font-medium">Thursday</span>
+                                    <span class="text-gray-600">9:00 AM – 4:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
+                                    <span class="font-medium">Friday</span>
+                                    <span class="text-gray-600">9:00 AM – 3:00 PM</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="p-6 border-b border-gray-200 bg-red-50">
+                                <h3 class="text-xl font-semibold text-red-700">Closed</h3>
+                            </div>
+                            <div class="divide-y divide-gray-200">
+                                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
+                                    <span class="font-medium">Saturday</span>
+                                    <span class="text-red-600 font-semibold">Closed</span>
+                                </div>
+                                <div class="flex justify-between items-center p-6 hover:bg-gray-50 transition-colors">
+                                    <span class="font-medium">Sunday</span>
+                                    <span class="text-red-600 font-semibold">Closed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 fade-in">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-4xl font-heading font-bold text-center mb-4">What Our Patients Say</h2>
+                <p class="text-center text-gray-600 mb-16 max-w-2xl mx-auto">Real reviews from our satisfied patients reflecting our 4.9-star rating.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-white rounded-xl p-8 shadow-lg card-hover border border-gray-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full mr-4 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">SJ</div>
+                            <div>
+                                <h4 class="font-semibold">Sarah J.</h4>
+                                <div class="star-rating text-sm">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 italic">"Best dental experience ever! Dr. Mita and her team are amazing. So gentle and professional. My whole family has been coming here for years."</p>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="bg-white rounded-xl p-8 shadow-lg card-hover border border-gray-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full mr-4 bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white font-bold">MT</div>
+                            <div>
+                                <h4 class="font-semibold">Michael T.</h4>
+                                <div class="star-rating text-sm">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 italic">"I've been coming here for 10 years! The cosmetic work is incredible. My smile has never looked better. Highly recommend to anyone in Fairmount."</p>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="bg-white rounded-xl p-8 shadow-lg card-hover border border-gray-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full mr-4 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold">JL</div>
+                            <div>
+                                <h4 class="font-semibold">Jessica L.</h4>
+                                <div class="star-rating text-sm">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 italic">"Great with kids! My daughter actually looks forward to her dental visits. Very gentle and caring pediatric approach. The Fairmount community is lucky to have them."</p>
+                    </div>
+                    
+                    <!-- Testimonial 4 -->
+                    <div class="bg-white rounded-xl p-8 shadow-lg card-hover border border-gray-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full mr-4 bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold">RK</div>
+                            <div>
+                                <h4 class="font-semibold">Robert K.</h4>
+                                <div class="star-rating text-sm">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 italic">"Emergency care saved me! Had sharp pain on a Thursday, got a same-day appointment. Dr. Mita fixed me up quickly. Exceptional service when I needed it most."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 fade-in">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col lg:flex-row gap-12">
+                    <div class="lg:w-1/2">
+                        <h2 class="text-4xl font-heading font-bold mb-6">Get in Touch</h2>
+                        <p class="text-lg text-gray-600 mb-8">Ready to schedule your appointment? Contact us today and let us help you achieve your best smile!</p>
+                        
+                        <div class="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+                            <form>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2">Name</label>
+                                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Your name">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2">Email</label>
+                                        <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="you@example.com">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 font-medium mb-2">Phone</label>
+                                    <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="+1 215-236-6200">
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 font-medium mb-2">Service Interest</label>
+                                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                        <option>Select a service</option>
+                                        <option>General Dentistry</option>
+                                        <option>Cosmetic Dentistry</option>
+                                        <option>Restorative</option>
+                                        <option>Orthodontics</option>
+                                        <option>Emergency Care</option>
+                                        <option>Pediatric Dentistry</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 font-medium mb-2">Message</label>
+                                    <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="How can we help you?"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-primary-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-primary-700 transition-colors btn-hover">
+                                    Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:w-1/2">
+                        <div class="sticky top-24">
+                            <div class="bg-gray-50 rounded-xl p-8">
+                                <h3 class="text-2xl font-semibold mb-6">Contact Information</h3>
+                                
+                                <div class="space-y-6">
+                                    <div class="flex items-start">
+                                        <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-phone text-primary-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Phone</h4>
+                                            <p class="text-gray-600">
+                                                <a href="tel:+12152366200" class="hover:text-primary-600 transition-colors">+1 215-236-6200</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <div class="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fab fa-whatsapp text-accent-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">WhatsApp</h4>
+                                            <p class="text-gray-600">
+                                                <a href="https://wa.me/12152366200" class="hover:text-accent-600 transition-colors" target="_blank">Message us on WhatsApp</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-envelope text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Email</h4>
+                                            <p class="text-gray-600">
+                                                <a href="mailto:info@mitadentalphl.com" class="hover:text-green-600 transition-colors">info@mitadentalphl.com</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                            <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold mb-1">Address</h4>
+                                            <p class="text-gray-600">
+                                                2438 Brown St<br>
+                                                Philadelphia, PA 19130
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-8 pt-8 border-t border-gray-200">
+                                    <h4 class="font-semibold mb-4">Follow Us</h4>
+                                    <div class="flex space-x-4">
+                                        <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-primary-600 hover:text-white transition-colors">
+                                            <i class="fab fa-facebook-f"></i>
+                                        </a>
+                                        <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-primary-600 hover:text-white transition-colors">
+                                            <i class="fab fa-instagram"></i>
+                                        </a>
+                                        <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-primary-600 hover:text-white transition-colors">
+                                            <i class="fab fa-twitter"></i>
+                                        </a>
+                                        <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-primary-600 hover:text-white transition-colors">
+                                            <i class="fab fa-linkedin-in"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="section-divider"></div>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                    <div>
+                        <h3 class="text-xl font-heading font-bold mb-6">Mita Dental PHL</h3>
+                        <p class="text-gray-400 mb-6">Your Trusted Family & Cosmetic Dentist in Fairmount, Philadelphia</p>
+                        <p class="text-gray-500 text-sm">© 2026 Mita Dental PHL. All rights reserved.</p>
+                        <p class="text-gray-600 text-sm mt-2 italic">"Built with care for our Fairmount community"</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold mb-6">Quick Links</h4>
+                        <ul class="space-y-3 text-gray-400">
+                            <li><a href="#hero" class="hover:text-white transition-colors">Home</a></li>
+                            <li><a href="#about" class="hover:text-white transition-colors">About</a></li>
+                            <li><a href="#services" class="hover:text-white transition-colors">Services</a></li>
+                            <li><a href="#why-choose-us" class="hover:text-white transition-colors">Why Choose Us</a></li>
+                            <li><a href="#testimonials" class="hover:text-white transition-colors">Testimonials</a></li>
+                            <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold mb-6">Services</h4>
+                        <ul class="space-y-3 text-gray-400">
+                            <li>General Dentistry</li>
+                            <li>Cosmetic Dentistry</li>
+                            <li>Restorative</li>
+                            <li>Orthodontics</li>
+                            <li>Emergency Care</li>
+                            <li>Pediatric Dentistry</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold mb-6">Contact Info</h4>
+                        <ul class="space-y-3 text-gray-400">
+                            <li class="flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3"></i>
+                                <span>2438 Brown St, Philadelphia, PA 19130</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-phone mt-1 mr-3"></i>
+                                <span><a href="tel:+12152366200" class="hover:text-white transition-colors">+1 215-236-6200</a></span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-envelope mt-1 mr-3"></i>
+                                <span><a href="mailto:info@mitadentalphl.com" class="hover:text-white transition-colors">info@mitadentalphl.com</a></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                    <p>Location: 2438 Brown St, Philadelphia, PA 19130 | Plus Code: XR9C+XR</p>
+                    <p class="mt-2">Accessibility: Wheelchair-accessible toilet available</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all fade-in elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
