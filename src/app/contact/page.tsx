@@ -98,7 +98,9 @@ export default function ContactPage() {
             <div className="contact-form-box">
               <p className="contact-form-headline">
                 <span className="contact-form-headline-text">
-                  Select Your Services, Set Your Price
+                  Select Your Services,
+                  <br />
+                  Set Your Price
                 </span>
               </p>
               <h4>Send us a message</h4>
