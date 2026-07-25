@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import MultiSelectServices from '@/components/MultiSelectServices'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -12,7 +13,7 @@ const contactDetails = [
     iconClass: 'fas fa-phone',
     title: 'Phone',
     value: '+91 98182 46938',
-    href: 'tel:+919818246938',
+    href: 'tel:+919****6938',
     note: 'Mon to Sat, 10:00 AM to 7:00 PM',
   },
   {
@@ -95,6 +96,11 @@ export default function ContactPage() {
             </div>
 
             <div className="contact-form-box">
+              <p className="contact-form-headline">
+                <span className="contact-form-headline-text">
+                  Select Your Services, Set Your Price
+                </span>
+              </p>
               <h4>Send us a message</h4>
               <form action="https://formsubmit.co/hello@tkvibes.com" method="POST">
                 <input type="hidden" name="_subject" value="New inquiry from TKVibes website" />
@@ -136,19 +142,8 @@ export default function ContactPage() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="service">Service interested in</label>
-                  <select id="service" name="service" defaultValue="">
-                    <option value="" disabled>
-                      Select a service
-                    </option>
-                    <option>Website design</option>
-                    <option>Brand identity</option>
-                    <option>SEO services</option>
-                    <option>Google ads</option>
-                    <option>Meta ads</option>
-                    <option>Automation workflows</option>
-                    <option>Custom package</option>
-                  </select>
+                  <label>Services interested in</label>
+                  <MultiSelectServices />
                 </div>
 
                 <div className="form-group">
@@ -222,7 +217,7 @@ export default function ContactPage() {
               <i className="fab fa-whatsapp" />
               WhatsApp Us
             </a>
-            <a href="tel:+919818246938" className="btn-custom btn-outline-custom">
+            <a href="tel:+919****6938" className="btn-custom btn-outline-custom">
               <i className="fas fa-phone" />
               Call Us
             </a>
