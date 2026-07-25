@@ -1,95 +1,102 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
+import Link from 'next/link'
+
+const plans = [
+  {
+    name: 'Starter',
+    price: 'Rs 4,999',
+    description: 'A lean package for new businesses that need a cleaner first impression.',
+    features: [
+      'Logo design concepts',
+      'Google Business Profile setup',
+      'Business card design',
+      'Basic SEO setup',
+      'One month support',
+    ],
+    featured: false,
+  },
+  {
+    name: 'Growth',
+    price: 'Rs 14,999',
+    description: 'Best for businesses ready to pair branding with a serious website launch.',
+    features: [
+      'Expanded logo and brand work',
+      'Five-page business website',
+      'Hosting setup assistance',
+      'Google Business optimization',
+      'On-page SEO setup',
+      'Three months priority support',
+    ],
+    featured: true,
+  },
+  {
+    name: 'Enterprise',
+    price: 'Rs 34,999',
+    description: 'A broader digital package for established businesses that need more scale.',
+    features: [
+      'Full brand identity package',
+      'Larger custom website build',
+      'Managed hosting guidance',
+      'SEO plus technical audit',
+      'Ads setup and launch support',
+      'Automation workflow planning',
+    ],
+    featured: false,
+  },
+]
+
+const addons = [
+  {
+    icon: 'fa-chart-line',
+    title: 'Technical SEO audit',
+    description: 'A detailed review of structure, indexing, speed, and conversion blockers.',
+    price: 'Rs 2,999',
+  },
+  {
+    icon: 'fa-bullhorn',
+    title: 'Monthly ad management',
+    description: 'Ongoing optimization for Google or Meta campaigns with reporting.',
+    price: 'Rs 3,999 per month',
+  },
+  {
+    icon: 'fa-sitemap',
+    title: 'n8n workflow setup',
+    description: 'A custom automation workflow for lead routing, notifications, or follow-up.',
+    price: 'Rs 2,499',
+  },
+  {
+    icon: 'fa-file-lines',
+    title: 'Brochure or deck design',
+    description: 'Sales-ready presentation or brochure assets aligned to your new web presence.',
+    price: 'Rs 1,999 and up',
+  },
+]
+
+const faqs = [
+  {
+    question: 'How long does delivery usually take?',
+    answer:
+      'Starter work can often be delivered in a few business days. Larger website and branding packages take longer depending on scope and feedback cycles.',
+  },
+  {
+    question: 'Can we customize a package?',
+    answer:
+      'Yes. These packages are starting points. We can combine branding, website, SEO, ads, and automation into a custom plan.',
+  },
+  {
+    question: 'Do revisions come with the packages?',
+    answer:
+      'Yes. Every package includes revision rounds. The exact number depends on the package size and scope agreed at kickoff.',
+  },
+  {
+    question: 'Do you provide support after launch?',
+    answer:
+      'Yes. Each package includes post-delivery support, and longer ongoing support can be added when needed.',
+  },
+]
 
 export default function PackagesPage() {
-  const plans = [
-    {
-      name: 'Starter',
-      price: '₹4,999',
-      desc: 'Perfect for startups and new businesses launching their brand identity.',
-      features: [
-        'Logo Design (2 unique concepts)',
-        'Google My Business Profile Setup & Verification',
-        'Social Media Profile Design (2 platforms)',
-        'Professional Business Card Design',
-        'Basic SEO Setup (Title, Description, Keywords)',
-        '1 Month Post-Delivery Support',
-        'All Files in High-Resolution Formats',
-      ],
-      featured: false,
-    },
-    {
-      name: 'Growth',
-      price: '₹14,999',
-      desc: 'Ideal for growing businesses ready for a complete digital presence.',
-      features: [
-        'Logo Design (4 unique concepts + revisions)',
-        'Logo Animation (upto 5 seconds)',
-        '5-Page Professional Business Website',
-        'Hosting Setup & Configuration (1 Year Free)',
-        'Google My Business Complete Optimization',
-        'Product / Service Brochure Design (1 Page)',
-        'On-Page SEO (10 Keywords with Tracking)',
-        'Free SSL Certificate Installation',
-        '3 Months Priority Support',
-      ],
-      featured: true,
-    },
-    {
-      name: 'Enterprise',
-      price: '₹34,999',
-      desc: 'Complete digital transformation and marketing suite for established brands.',
-      features: [
-        'Complete Brand Identity (Logo + Guidelines + Stationery)',
-        'Logo Animation (HD, upto 10 seconds)',
-        '10-Page Custom Website (+ CMS Integration)',
-        'Hosting Management (1 Year Fully Managed)',
-        'Comprehensive SEO (15 Keywords + Technical Audit)',
-        'Google Ads Campaign Setup & 30 Days Management',
-        'Meta Ads (Facebook & Instagram) Campaign Setup',
-        'n8n Automation Workflow (upto 3 workflows)',
-        'Annual Report Design (upto 20 pages)',
-        'Infographics Set (5 designs)',
-        'Product Brochure (upto 3 pages)',
-        '6 Months Dedicated Account Manager',
-      ],
-      featured: false,
-    },
-  ];
-
-  const addons = [
-    { icon: '🔍', title: 'Technical SEO Audit', desc: 'In-depth audit of site speed, core web vitals, mobile optimization & crawl errors.', price: '₹2,999' },
-    { icon: '📈', title: 'Google Ads Month-on-Month', desc: 'Ongoing ad management with A/B testing, optimization & performance reports.', price: '₹3,999/mo' },
-    { icon: '📱', title: 'Meta Ads (Per Campaign)', desc: 'Complete Facebook & Instagram ad setup with creative design & targeting.', price: '₹3,499' },
-    { icon: '🤖', title: 'n8n Workflow (Per Workflow)', desc: 'Custom automation connecting your tools. Includes testing & deployment.', price: '₹2,499' },
-    { icon: '📄', title: 'Company Registration', desc: 'End-to-end assistance for GST, MSME, trademark filing & business incorporation.', price: '₹1,999+' },
-    { icon: '📊', title: 'Infographics (Per Design)', desc: 'Custom data visualization and illustrated infographics for any purpose.', price: '₹999' },
-  ];
-
-  const faqs = [
-    {
-      q: 'How long does it take to deliver a project?',
-      a: 'Timelines depend on the package. Starter projects typically take 3-5 business days. Growth packages take 7-14 business days. Enterprise packages may take 15-30 business days depending on scope. We provide a clear timeline before starting any project.',
-    },
-    {
-      q: 'Can I customize the packages?',
-      a: 'Absolutely! All packages are customizable. You can mix and match services from different packages or add add-on services. Contact us for a custom quote tailored to your specific needs.',
-    },
-    {
-      q: 'Do you provide revisions?',
-      a: 'Yes, all packages include revisions. Starter includes 2 rounds, Growth includes 3 rounds, and Enterprise includes unlimited revisions during the project timeline. Additional revisions beyond the scope can be purchased separately.',
-    },
-    {
-      q: 'What payment methods do you accept?',
-      a: 'We accept bank transfers, UPI, PayPal, and credit/debit cards. A 50% advance is required to start the project, with the remaining 50% due upon delivery or as per agreed milestone schedule.',
-    },
-    {
-      q: 'Do you provide ongoing support after delivery?',
-      a: 'Yes, each package includes post-delivery support. Starter includes 1 month, Growth includes 3 months, and Enterprise includes 6 months of priority support. Extended support and maintenance packages are available separately.',
-    },
-  ];
-
   return (
     <>
       <section className="page-header">
@@ -100,100 +107,107 @@ export default function PackagesPage() {
             <span className="current">Packages</span>
           </div>
           <h1>
-            Our <span>Packages</span>
+            Simple <span>Packages</span>
           </h1>
           <p>
-            Transparent pricing with flexible plans for every business size and budget.
+            Clear starting points for businesses that want to upgrade their website, branding, or
+            both without overcomplicating the process.
           </p>
         </div>
       </section>
 
-      <section className="section-padding pricing-section">
+      <section className="section-padding">
         <div className="container-main">
-          <h2 className="section-title">
-            Choose Your <span className="highlight">Plan</span>
-          </h2>
-          <p className="section-subtitle">
-            Pick the package that fits your needs, or let us create a custom solution for you.
-          </p>
+          <div className="section-heading centered">
+            <span className="eyebrow">Pricing</span>
+            <h2 className="section-title">Choose the package that matches your stage.</h2>
+            <p className="section-subtitle">
+              If none of these fit exactly, we can shape a custom combination around your current
+              priorities.
+            </p>
+          </div>
 
-          <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 28, marginBottom: 60 }}>
-            {plans.map((plan, i) => (
-              <div className={`pricing-card-light ${plan.featured ? 'featured' : ''}`} key={i}>
-                {plan.featured && <div className="popular-badge">Most Popular</div>}
+          <div className="pricing-grid">
+            {plans.map((plan) => (
+              <article
+                key={plan.name}
+                className={`pricing-card-light${plan.featured ? ' featured' : ''}`}
+              >
+                {plan.featured ? <div className="popular-badge">Most Popular</div> : null}
                 <div className="plan-name">{plan.name}</div>
                 <div className="plan-price">
-                  {plan.price} <small>/ project</small>
+                  {plan.price} <small>per project</small>
                 </div>
-                <div className="plan-desc">{plan.desc}</div>
+                <div className="plan-desc">{plan.description}</div>
                 <ul className="plan-features">
-                  {plan.features.map((f, j) => (
-                    <li key={j}>
-                      <i className="fas fa-check"></i> {f}
+                  {plan.features.map((feature) => (
+                    <li key={feature}>
+                      <i className="fas fa-check" />
+                      {feature}
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href="/contact"
-                  className={`btn-custom ${plan.featured ? 'btn-primary-custom' : 'btn-custom'}`}
-                  style={plan.featured ? {} : { background: 'var(--primary)', color: '#fff' }}
-                >
-                  <i className="fas fa-arrow-right"></i> Choose {plan.name}
+                <Link href="/contact" className="btn-custom btn-primary-custom">
+                  <i className="fas fa-arrow-right" />
+                  Choose {plan.name}
                 </Link>
-              </div>
-            ))}
-          </div>
-
-          {/* ADD-ON SERVICES */}
-          <h2 className="section-title">
-            Add-On <span className="highlight">Services</span>
-          </h2>
-          <p className="section-subtitle">
-            Enhance your package with these additional services.
-          </p>
-          <div className="addon-grid">
-            {addons.map((a, i) => (
-              <div className="addon-card" key={i}>
-                <div className="icon">{a.icon}</div>
-                <h4>{a.title}</h4>
-                <p>{a.desc}</p>
-                <div className="price">{a.price}</div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CUSTOM PLAN */}
-      <section className="section-padding" style={{ background: '#f8faff', paddingTop: 0 }}>
+      <section className="section-padding">
+        <div className="container-main">
+          <div className="section-heading centered">
+            <span className="eyebrow">Add-ons</span>
+            <h2 className="section-title">Expand the package only where you need it.</h2>
+          </div>
+
+          <div className="addon-grid">
+            {addons.map((addon) => (
+              <article key={addon.title} className="addon-card">
+                <div className="icon">
+                  <i className={`fas ${addon.icon}`} />
+                </div>
+                <h4>{addon.title}</h4>
+                <p>{addon.description}</p>
+                <div className="price">{addon.price}</div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section-padding">
         <div className="container-main">
           <div className="custom-plan-card">
-            <h3>Need a Custom Plan?</h3>
+            <span className="eyebrow">Custom scope</span>
+            <h3>Need a plan tailored to your business?</h3>
             <p>
-              Every business is unique. Tell us about your specific requirements and we&apos;ll
-              create a tailored package that fits your exact needs and budget.
+              Tell us what you already have, what is missing, and where growth is getting stuck.
+              We will shape a practical package around that.
             </p>
             <Link href="/contact" className="btn-custom btn-primary-custom">
-              <i className="fas fa-magic"></i> Request Custom Quote
+              <i className="fas fa-wand-magic-sparkles" />
+              Request Custom Quote
             </Link>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="section-padding" style={{ background: '#fff' }}>
+      <section className="section-padding">
         <div className="container-main">
-          <h2 className="section-title">
-            Frequently Asked <span className="highlight">Questions</span>
-          </h2>
-          <p className="section-subtitle">
-            Everything you need to know about our packages and process.
-          </p>
+          <div className="section-heading centered">
+            <span className="eyebrow">FAQ</span>
+            <h2 className="section-title">A few common package questions.</h2>
+          </div>
+
           <div className="faq-grid">
-            {faqs.map((faq, i) => (
-              <details className="faq-item" key={i}>
-                <summary>{faq.q}</summary>
-                <div className="faq-answer">{faq.a}</div>
+            {faqs.map((faq) => (
+              <details key={faq.question} className="faq-item">
+                <summary>{faq.question}</summary>
+                <div className="faq-answer">{faq.answer}</div>
               </details>
             ))}
           </div>
@@ -201,31 +215,30 @@ export default function PackagesPage() {
       </section>
 
       <section className="cta-section">
-        <div className="container-main">
-          <h2>Still Have Questions?</h2>
+        <div className="container-main cta-panel">
+          <span className="eyebrow">Still deciding?</span>
+          <h2>We can help you choose the right starting point.</h2>
           <p>
-            We&apos;re here to help you find the perfect package. Reach out for a free consultation.
+            If you are unsure whether to prioritize branding, website work, or growth systems, we
+            can recommend the cleanest next move.
           </p>
           <div className="cta-buttons">
             <Link href="/contact" className="btn-custom btn-primary-custom">
-              <i className="fas fa-paper-plane"></i> Contact Us
+              <i className="fas fa-paper-plane" />
+              Contact Us
             </Link>
             <a
               href="https://wa.me/919818246938"
-              className="btn-custom"
-              style={{
-                background: 'rgba(255,255,255,0.1)',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.2)',
-              }}
+              className="btn-custom btn-outline-custom"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <i className="fab fa-whatsapp"></i> WhatsApp Us
+              <i className="fab fa-whatsapp" />
+              WhatsApp Us
             </a>
           </div>
         </div>
       </section>
     </>
-  );
+  )
 }

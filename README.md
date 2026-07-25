@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TKVibes Agency
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Workspace Structure
+```
+Desktop/
+├── clients/                          ← ALL client projects
+│   ├── mita-dental/                  → Dental clinic (4.9★, no website)
+│   ├── deep-water-tank-cleaning/     → Water tank cleaning (SEO C grade)
+│   ├── tasty-bites-cafe/             → Local cafe (3D website done)
+│   ├── dental-clinic/                → Dental clinic (2 versions done)
+│   └── lets-smile-dental/            → Dental practice (proposal ready)
+├── tkvibes-agency/                   ← OUR agency (2 sub-projects)
+│   ├── (root)                        → Our public website (Next.js 16)
+│   └── operations-dashboard/         → Backend CRM/ops dashboard
+├── LeadGenerationProject/            ← Legacy lead gen project (deprecated)
+└── tkvibes-html-backup/             ← Old HTML backup (pre-Next.js)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Two Main Projects
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Project | Purpose | Tech | Port |
+|---|---|---|---|
+| **tkvibes-agency** (root) | Our public agency website | Next.js 16, Tailwind v4 | 3000 |
+| **operations-dashboard/** | Backend CRM & pipeline tracker | Next.js 16, Prisma, SQLite | 3006 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Client Projects
+Each client in `clients/` has an `AGENTS.md` with their details, generated assets, and pipeline status. The dashboard tracks where each client is in the pipeline and what assets have been generated.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Commands
+- `cd ~/Desktop/tkvibes-agency && npm run dev` — Agency website
+- `cd ~/Desktop/tkvibes-agency/operations-dashboard && npm run dev` — Ops dashboard
+- `cd ~/Desktop/tkvibes-agency/operations-dashboard && npm run seed` — Re-seed database

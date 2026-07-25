@@ -1625,7 +1625,7 @@ select {
   }
 
   .hero-stack-frame {
-    height: 390px;
+    height: 380px;
   }
 
   .hero-stack-card-caption {
@@ -1638,9 +1638,58 @@ select {
     text-align: left;
   }
 
+  .hero-copy h1 {
+    font-size: clamp(2.4rem, 9vw, 3.8rem);
+  }
+
+  .hero-copy p {
+    font-size: 0.98rem;
+  }
+
+  .hero-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .btn-custom {
+    width: 100%;
+  }
+
+  .proof-strip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .proof-strip div {
+    justify-content: flex-start;
+  }
+
+  .section-padding {
+    padding: 3.5rem 0;
+  }
+
   .page-header .container-main,
   .cta-panel {
     padding: 2rem 1.5rem;
+  }
+
+  .page-header .container-main {
+    padding: 2rem;
+  }
+
+  .footer-grid {
+    padding: 1.2rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .cta-buttons .btn-custom {
+    width: 100%;
   }
 
   .form-row {
@@ -1654,15 +1703,73 @@ select {
   }
 
   .site-main {
-    padding-top: 6rem;
+    padding-top: 5.5rem;
   }
 
   .hero-section {
-    padding-top: 3rem;
+    padding-top: 2rem;
   }
 
   .hero-copy h1 {
     max-width: none;
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .hero-stack-frame {
+    height: 320px;
+  }
+
+  .hero-stack-card-caption strong {
+    font-size: 1rem;
+  }
+
+  .hero-stack-card-caption p {
+    font-size: 0.78rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+  }
+
+  .nav-panel {
+    min-height: 64px;
+    padding: 0 0.75rem;
+  }
+
+  .logo-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 0.7rem;
+  }
+
+  .logo-copy {
+    font-size: 1rem;
+  }
+
+  .logo-copy small {
+    font-size: 0.58rem;
+  }
+
+  .feature-card,
+  .process-card,
+  .value-card,
+  .team-card,
+  .addon-card,
+  .testimonial-card,
+  .mission-card,
+  .contact-form-box,
+  .custom-plan-card,
+  .pricing-card-light {
+    padding: 1.2rem;
+  }
+
+  .cta-panel {
+    padding: 1.5rem;
+  }
+
+  .footer-grid {
+    padding: 1rem;
+    gap: 1rem;
   }
 }
 

@@ -1,0 +1,322 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── User (multi-user ready) ───
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("user") // admin, user, viewer
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks             Task[]
+  notes             Note[]
+  communications    Communication[]
+  assignedBusinesses Business[] @relation("AssignedAgent")
+  timelineEvents    TimelineEvent[]
+}
+
+// ─── Business / Lead ───
+model Business {
+  id              String   @id @default(cuid())
+  name            String
+  logo            String?
+  category        String?
+  address         String?
+  phone           String?
+  email           String?
+  website         String?
+  googleMapsLink  String?
+  googleRating    Float?
+  reviewCount     Int?
+  websiteQuality  String?    // none, outdated, good, excellent
+  businessSize    String?    // small, medium, large
+  industry        String?
+  hasPublicEmail  Boolean    @default(false)
+  hasPhone        Boolean    @default(false)
+  socialMediaPresence String? // none, minimal, active, strong
+  notesText       String?
+  stage           String     @default("Discovered") // Kanban stage
+  leadScore       Int        @default(0)
+  expectedRevenue Float?
+  priority        String     @default("medium") // low, medium, high, critical
+  lastContact     DateTime?
+  nextFollowUp    DateTime?
+  assignedAgentId String?
+  assignedAgent   User?      @relation("AssignedAgent", fields: [assignedAgentId], references: [id])
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  contacts          Contact[]
+  communications    Communication[]
+  emails            Email[]
+  tasks             Task[]
+  projects          Project[]
+  generatedAssets   GeneratedAsset[]
+  proposals         Proposal[]
+  meetings          Meeting[]
+  notes             Note[]
+  tags              BusinessTag[]
+  timelineEvents    TimelineEvent[]
+  stageLogs         StageLog[]
+}
+
+// ─── Contact ───
+model Contact {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name       String
+  role       String?
+  phone      String?
+  email      String?
+  isPrimary  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── Communication ───
+model Communication {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  type       String   // email, call, note, meeting, quotation, proposal, website, discovery, won, lost
+  subject    String?
+  content    String?
+  direction  String   @default("outbound") // inbound, outbound
+  status     String   @default("completed") // completed, scheduled, draft, failed
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+}
+
+// ─── Email ───
+model Email {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  from       String
+  to         String
+  subject    String
+  body       String?
+  status     String   @default("draft") // draft, queued, sent, delivered, bounced, opened, clicked, replied, failed
+  sentAt     DateTime?
+  openedAt   DateTime?
+  clickedAt  DateTime?
+  repliedAt  DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── Task ───
+model Task {
+  id          String    @id @default(cuid())
+  businessId  String?
+  business    Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  status      String    @default("pending") // pending, in_progress, completed, cancelled
+  priority    String    @default("medium") // low, medium, high, critical
+  dueDate     DateTime?
+  completedAt DateTime?
+  category    String?   // follow-up, call, quotation, proposal, meeting, general
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  assignedToId String?
+  assignedTo   User?    @relation(fields: [assignedToId], references: [id])
+}
+
+// ─── Project ───
+model Project {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  status      String   @default("active") // active, completed, on_hold, cancelled
+  type        String   @default("website") // website, proposal, deck, other
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Generated Asset ───
+model GeneratedAsset {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  type        String   // website, pitch_deck, proposal, document
+  name        String
+  description String?
+  filePath    String?
+  url         String?
+  status      String   @default("generated") // generated, approved, archived, regenerating
+  approvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Proposal ───
+model Proposal {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  title       String
+  content     String?
+  filePath    String?
+  status      String   @default("draft") // draft, sent, accepted, rejected, revised
+  amount      Float?
+  sentAt      DateTime?
+  acceptedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Meeting ───
+model Meeting {
+  id          String    @id @default(cuid())
+  businessId  String
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  scheduledAt DateTime
+  duration    Int?       // minutes
+  status      String     @default("scheduled") // scheduled, completed, cancelled, rescheduled
+  location    String?    // virtual, in_person, phone
+  notes       String?
+  outcome     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// ─── Note ───
+model Note {
+  id         String   @id @default(cuid())
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  content    String
+  type       String   @default("general") // general, follow-up, call_notes, meeting_notes
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id])
+}
+
+// ─── Tag ───
+model Tag {
+  id        String        @id @default(cuid())
+  name      String        @unique
+  color     String?       @default("#6366f1")
+  businesses BusinessTag[]
+  createdAt DateTime      @default(now())
+}
+
+model BusinessTag {
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  tagId      String
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([businessId, tagId])
+}
+
+// ─── Stage Log ───
+model StageLog {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  fromStage  String
+  toStage    String
+  note       String?
+  createdAt  DateTime @default(now())
+}
+
+// ─── Timeline Event ───
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  businessId  String?
+  business    Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  type        String   // lead_found, website_generated, email_sent, proposal_created, status_changed, etc.
+  title       String
+  description String?
+  metadata    String?  // JSON blob for extra data
+  createdAt   DateTime @default(now())
+
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+}
+
+// ─── Activity Log ───
+model ActivityLog {
+  id          String   @id @default(cuid())
+  type        String   // lead_found, website_generated, email_sent, proposal_created, lead_updated, status_changed, agent_started, agent_stopped, skill_loaded, skill_failed
+  title       String
+  description String?
+  metadata    String?  // JSON blob
+  createdAt   DateTime @default(now())
+}
+
+// ─── Agent Status ───
+model AgentStatus {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  status          String   @default("idle") // running, idle, paused, stopped, busy
+  currentTask     String?
+  lastFinishedTask String?
+  lastError       String?
+  memoryUsage     Float?
+  cpuUsage        Float?
+  tasksCompleted  Int      @default(0)
+  averageRuntime  Float?
+  queueSize       Int      @default(0)
+  heartbeatAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── Skill Status ───
+model SkillStatus {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  version         String?
+  status          String   @default("loaded") // loaded, not_loaded, loading
+  executionCount  Int      @default(0)
+  averageRuntime  Float?
+  successRate     Float?
+  failureRate     Float?
+  lastUsedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── Backup ───
+model Backup {
+  id        String   @id @default(cuid())
+  filePath  String
+  size      Int?
+  type      String   @default("auto") // auto, manual
+  createdAt DateTime @default(now())
+}
+
+// ─── Settings ───
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}

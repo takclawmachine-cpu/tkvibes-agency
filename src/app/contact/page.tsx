@@ -1,11 +1,41 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Contact Us',
+  title: 'Contact',
   description:
-    'Contact TKVibes for a free consultation. Get a quote for logo design, website development, SEO, Google Ads, Meta ads, automation, and digital marketing services.',
-};
+    'Contact TKVibes for website design, branding, SEO, ads, and automation support.',
+}
+
+const contactDetails = [
+  {
+    iconClass: 'fas fa-phone',
+    title: 'Phone',
+    value: '+91 98182 46938',
+    href: 'tel:+919818246938',
+    note: 'Mon to Sat, 10:00 AM to 7:00 PM',
+  },
+  {
+    iconClass: 'fas fa-envelope',
+    title: 'Email',
+    value: 'hello@tkvibes.com',
+    href: 'mailto:hello@tkvibes.com',
+    note: 'Replies usually within 24 hours',
+  },
+  {
+    iconClass: 'fab fa-whatsapp',
+    title: 'WhatsApp',
+    value: '+91 98182 46938',
+    href: 'https://wa.me/919818246938',
+    note: 'Best for the fastest response',
+  },
+  {
+    iconClass: 'fas fa-location-dot',
+    title: 'Location',
+    value: 'India',
+    note: 'Serving clients worldwide',
+  },
+]
 
 export default function ContactPage() {
   return (
@@ -18,191 +48,142 @@ export default function ContactPage() {
             <span className="current">Contact</span>
           </div>
           <h1>
-            Get in <span>Touch</span>
+            Start the <span>Conversation</span>
           </h1>
           <p>
-            Ready to start your digital journey? Let&apos;s talk about your project over a free
-            consultation.
+            If you need a sharper website, a better brand presence, or a more conversion-focused
+            digital experience, we would love to hear about it.
           </p>
         </div>
       </section>
 
-      <section className="section-padding contact-section">
+      <section className="section-padding">
         <div className="container-main">
           <div className="contact-grid">
-            {/* LEFT: Contact Info */}
             <div className="contact-info">
+              <span className="eyebrow">Reach out</span>
               <h3>
-                Let&apos;s Build Your <span>Digital Presence</span>
+                Let&apos;s build a digital presence that feels more premium and more effective.
               </h3>
               <p>
-                Have a project in mind? Fill out the form or reach out directly. We&apos;ll get
-                back to you within 24 hours with a custom proposal tailored to your needs.
+                Share your current challenge, what you want the business to look like online, and
+                what needs fixing first. We will help you map the next step.
               </p>
+
               <div className="contact-details">
-                <div className="contact-detail">
-                  <div
-                    className="cd-icon"
-                    style={{ background: 'rgba(79,70,229,0.1)', color: '#4f46e5' }}
-                  >
-                    <i className="fas fa-phone-alt"></i>
+                {contactDetails.map((item) => (
+                  <div key={item.title} className="contact-detail">
+                    <div className="cd-icon">
+                      <i className={item.iconClass} />
+                    </div>
+                    <div>
+                      <h5>{item.title}</h5>
+                      <p>
+                        {item.href ? (
+                          <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
+                            {item.value}
+                          </a>
+                        ) : (
+                          item.value
+                        )}
+                      </p>
+                      <p className="contact-note">{item.note}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h5>Phone</h5>
-                    <p>
-                      <a href="tel:+919818246938">+91 98182 46938</a>
-                    </p>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
-                      Mon-Sat, 10:00 AM - 7:00 PM
-                    </p>
-                  </div>
-                </div>
-                <div className="contact-detail">
-                  <div
-                    className="cd-icon"
-                    style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}
-                  >
-                    <i className="fas fa-envelope"></i>
-                  </div>
-                  <div>
-                    <h5>Email</h5>
-                    <p>
-                      <a href="mailto:hello@tkvibes.com">hello@tkvibes.com</a>
-                    </p>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
-                      We reply within 24 hours
-                    </p>
-                  </div>
-                </div>
-                <div className="contact-detail">
-                  <div
-                    className="cd-icon"
-                    style={{ background: 'rgba(16,185,129,0.1)', color: '#059669' }}
-                  >
-                    <i className="fab fa-whatsapp"></i>
-                  </div>
-                  <div>
-                    <h5>WhatsApp</h5>
-                    <p>
-                      <a href="https://wa.me/919818246938" target="_blank" rel="noopener noreferrer">
-                        +91 98182 46938
-                      </a>
-                    </p>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
-                      Quickest way to reach us
-                    </p>
-                  </div>
-                </div>
-                <div className="contact-detail">
-                  <div
-                    className="cd-icon"
-                    style={{ background: 'rgba(239,68,68,0.1)', color: '#dc2626' }}
-                  >
-                    <i className="fas fa-map-marker-alt"></i>
-                  </div>
-                  <div>
-                    <h5>Location</h5>
-                    <p>India</p>
-                    <p style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
-                      Serving clients worldwide
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
-            {/* RIGHT: Contact Form */}
             <div className="contact-form-box">
-              <h4>Send Us a Message</h4>
-              <form
-                id="contactForm"
-                action="https://formsubmit.co/hello@tkvibes.com"
-                method="POST"
-              >
-                <input type="hidden" name="_subject" value="New Inquiry from TKVibes Website" />
+              <h4>Send us a message</h4>
+              <form action="https://formsubmit.co/hello@tkvibes.com" method="POST">
+                <input type="hidden" name="_subject" value="New inquiry from TKVibes website" />
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="hidden" name="_template" value="table" />
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>
-                      Your Name <span className="required">*</span>
+                    <label htmlFor="name">
+                      Your name <span className="required">*</span>
                     </label>
-                    <input type="text" name="name" required placeholder="John Doe" />
+                    <input id="name" type="text" name="name" required placeholder="John Doe" />
                   </div>
                   <div className="form-group">
-                    <label>
-                      Phone Number <span className="required">*</span>
+                    <label htmlFor="phone">
+                      Phone number <span className="required">*</span>
                     </label>
-                    <input type="tel" name="phone" required placeholder="+91 98765 43210" />
+                    <input
+                      id="phone"
+                      type="tel"
+                      name="phone"
+                      required
+                      placeholder="+91 98765 43210"
+                    />
                   </div>
                 </div>
+
                 <div className="form-group">
-                  <label>
-                    Email Address <span className="required">*</span>
+                  <label htmlFor="email">
+                    Email address <span className="required">*</span>
                   </label>
-                  <input type="email" name="email" required placeholder="john@example.com" />
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="john@example.com"
+                  />
                 </div>
+
                 <div className="form-group">
-                  <label>Service Interested In</label>
-                  <select name="service">
-                    <option value="">Select a service...</option>
-                    <option>Logo Designing</option>
-                    <option>Logo Animation</option>
-                    <option>Website Designing</option>
-                    <option>Hosting Management</option>
-                    <option>Business Niche Advisory</option>
-                    <option>Company Registration</option>
-                    <option>Annual Reports</option>
-                    <option>Product Brochure Design</option>
-                    <option>SEO Services</option>
-                    <option>Google My Business Listing</option>
-                    <option>Meta Ads</option>
-                    <option>Google Ads</option>
-                    <option>n8n Automation Agents</option>
-                    <option>Infographics</option>
-                    <option>Comprehensive Package</option>
-                    <option>Other / Custom</option>
+                  <label htmlFor="service">Service interested in</label>
+                  <select id="service" name="service" defaultValue="">
+                    <option value="" disabled>
+                      Select a service
+                    </option>
+                    <option>Website design</option>
+                    <option>Brand identity</option>
+                    <option>SEO services</option>
+                    <option>Google ads</option>
+                    <option>Meta ads</option>
+                    <option>Automation workflows</option>
+                    <option>Custom package</option>
                   </select>
                 </div>
+
                 <div className="form-group">
-                  <label>Budget Range</label>
-                  <select name="budget">
-                    <option value="">Select a range...</option>
-                    <option>Under ₹5,000</option>
-                    <option>₹5,000 - ₹15,000</option>
-                    <option>₹15,000 - ₹35,000</option>
-                    <option>₹35,000 - ₹75,000</option>
-                    <option>₹75,000+</option>
-                    <option>Not Sure Yet</option>
+                  <label htmlFor="budget">Budget range</label>
+                  <select id="budget" name="budget" defaultValue="">
+                    <option value="" disabled>
+                      Select a range
+                    </option>
+                    <option>Under Rs 5,000</option>
+                    <option>Rs 5,000 to Rs 15,000</option>
+                    <option>Rs 15,000 to Rs 35,000</option>
+                    <option>Rs 35,000 to Rs 75,000</option>
+                    <option>Rs 75,000+</option>
+                    <option>Not sure yet</option>
                   </select>
                 </div>
+
                 <div className="form-group">
-                  <label>
-                    Project Details <span className="required">*</span>
+                  <label htmlFor="message">
+                    Project details <span className="required">*</span>
                   </label>
                   <textarea
+                    id="message"
                     name="message"
                     required
-                    placeholder="Tell us about your project, requirements, and any specific goals you have in mind..."
-                  ></textarea>
+                    placeholder="Tell us what needs improving, what stage the business is at, and what kind of outcome you want."
+                  />
                 </div>
-                <button
-                  type="submit"
-                  className="btn-custom btn-primary-custom"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                >
-                  <i className="fas fa-paper-plane"></i> Send Message
+
+                <button type="submit" className="btn-custom btn-primary-custom full-width">
+                  <i className="fas fa-paper-plane" />
+                  Send Message
                 </button>
-                <p
-                  style={{
-                    textAlign: 'center',
-                    color: '#94a3b8',
-                    fontSize: '0.8rem',
-                    marginTop: 12,
-                  }}
-                >
-                  We respect your privacy. Your information is safe with us.
+                <p className="contact-privacy">
+                  Your information stays private and is only used to respond to your inquiry.
                 </p>
               </form>
             </div>
@@ -210,27 +191,26 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* MAP */}
-      <section className="section-padding map-section" style={{ paddingTop: 0 }}>
+      <section className="section-padding">
         <div className="container-main">
           <div className="map-container">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15282225.79979123!2d73.725024729412!3d20.750367397265!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30635ff06b92b791%3A0xd78c4fa1854213a6!2sIndia!5e0!3m2!1sen!2sin!4v1"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="TKVibes Location - India"
-            ></iframe>
+              title="TKVibes location"
+            />
           </div>
         </div>
       </section>
 
-      {/* CTA */}
       <section className="cta-section">
-        <div className="container-main">
-          <h2>Prefer a Quick Chat?</h2>
+        <div className="container-main cta-panel">
+          <span className="eyebrow">Need a quick answer?</span>
+          <h2>WhatsApp is the fastest way to reach us.</h2>
           <p>
-            Reach out to us directly on WhatsApp for instant responses. We&apos;re usually online
-            and happy to help.
+            If you already know what needs fixing, send us a message and we can talk through scope,
+            timing, and the best first move.
           </p>
           <div className="cta-buttons">
             <a
@@ -239,22 +219,16 @@ export default function ContactPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <i className="fab fa-whatsapp"></i> WhatsApp Us Now
+              <i className="fab fa-whatsapp" />
+              WhatsApp Us
             </a>
-            <a
-              href="tel:+919818246938"
-              className="btn-custom"
-              style={{
-                background: 'rgba(255,255,255,0.1)',
-                color: '#fff',
-                border: '1px solid rgba(255,255,255,0.2)',
-              }}
-            >
-              <i className="fas fa-phone"></i> Call Us
+            <a href="tel:+919818246938" className="btn-custom btn-outline-custom">
+              <i className="fas fa-phone" />
+              Call Us
             </a>
           </div>
         </div>
       </section>
     </>
-  );
+  )
 }
