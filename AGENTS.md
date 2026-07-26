@@ -1,24 +1,43 @@
-# TKVibes Agency — Static HTML Site
+# TKVibes Agency — Agent guide
 
-## Identity
+Public static site at **tkvibes.com**. Read the memory bank before making non-trivial changes.
 
-Public agency website at tkvibes.com. Plain HTML/CSS/JS — no framework.
+## Start here
 
-## Structure
+1. **[memory/summary.md](memory/summary.md)** — current defaults and key files
+2. **[memory/items.yaml](memory/items.yaml)** — atomic facts (machine-readable)
+3. Topic files in **[memory/](memory/)** as needed
 
-- `index.html`, `about.html`, `services.html`, `packages.html`, `portfolio.html`, `contact.html`
-- `assets/css/styles.css` — all styles
-- `assets/js/main.js` — navbar, aurora scroll, hero stack, portfolio filters, contact multi-select
-- `websites/` — portfolio demos and screenshots
+## Hard rules
 
-## Deployment
+- **No build step** — do not add Next.js, Vite, or npm build unless explicitly requested
+- **Relative paths only** — `/assets/...` breaks local `file://` preview
+- **`styles.css` must stay UTF-8** — use Node scripts to patch if editor tools fail on Windows
+- **No FTP secrets in repo** — only document secret names (`FTP_USER`, `FTP_PASS`, `FTP_HOST`)
+- **Light theme is default** — `localStorage` key `tkvibes-theme`; inline head script prevents flash
+- **New dropdowns/overlays** need `html.light` CSS overrides if they use hardcoded dark colors
 
-Push to `main` → GitHub Actions → FTPS → Hostinger `public_html/`
+## Edit map
 
-No build step. Edit HTML/CSS/JS directly.
+| Task | File(s) |
+|------|---------|
+| Page content / structure | `*.html` |
+| All styling | `assets/css/styles.css` |
+| Interactivity | `assets/js/main.js` |
+| Clean URLs / cache | `.htaccess` |
+| Deploy | `.github/workflows/deploy.yml` |
+| Project knowledge | `memory/*` |
+
+## Stack
+
+HTML + one CSS + one JS → Hostinger `public_html/` via GitHub Actions FTPS on push to `main`.
 
 ## Local preview
 
 ```bash
 npx serve .
 ```
+
+## After significant changes
+
+Update `memory/changelog.md` and relevant facts in `memory/items.yaml`.

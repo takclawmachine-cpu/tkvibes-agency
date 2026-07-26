@@ -48,6 +48,7 @@ jobs:
               --exclude-glob=scripts/** \
               --exclude-glob=README.md \
               --exclude-glob=AGENTS.md \
+              --exclude-glob=memory/** \
               --exclude-glob=.gitignore \
               ./ /public_html/;
             bye;

@@ -1,0 +1,88 @@
+# Atomic facts — update when durable project state changes
+# status: active | superseded
+
+project:
+  name: TKVibes Agency
+  domain: tkvibes.com
+  repo: https://github.com/takclawmachine-cpu/tkvibes-agency.git
+  default_branch: main
+  status: active
+
+stack:
+  type: static-html
+  framework: none
+  build_step: false
+  css_file: assets/css/styles.css
+  js_file: assets/js/main.js
+  encoding_css: utf-8
+  status: active
+
+hosting:
+  provider: Hostinger
+  type: shared
+  remote_path: /public_html/
+  protocol: FTPS
+  deploy_trigger: push to main
+  status: active
+
+github_secrets:
+  - FTP_USER
+  - FTP_PASS
+  - FTP_HOST
+  status: active
+
+theme:
+  default: light
+  storage_key: tkvibes-theme
+  toggle_location: navbar .theme-toggle
+  classes: [html.light, html.dark, body.light, body.dark]
+  flash_prevention: inline script in head of all HTML pages
+  status: active
+
+layout:
+  container_max_px: 1400
+  css_variable: --container-max
+  status: active
+
+brand:
+  mark_logo: tk-vibes-mark.svg
+  full_logo: tk-vibes-logo.svg
+  header_uses: mark
+  footer_uses: mark
+  favicon: favicon.ico
+  status: active
+
+contact:
+  email: services@tkvibes.in
+  phone: "+91 98182 46938"
+  whatsapp: "https://wa.me/919818246938"
+  form_action: https://formsubmit.co/services@tkvibes.in
+  form_provider: FormSubmit
+  status: active
+
+pages:
+  - index.html
+  - about.html
+  - services.html
+  - packages.html
+  - portfolio.html
+  - contact.html
+  - 404.html
+  status: active
+
+fonts:
+  sans: Manrope
+  mono: IBM Plex Mono
+  source: Google Fonts CDN
+  status: active
+
+icons:
+  source: Font Awesome 6.5.1 CDN
+  status: active
+
+migration:
+  from: Next.js
+  to: plain HTML
+  commit: 967c431
+  reason: Hostinger shared hosting compatibility
+  status: active
