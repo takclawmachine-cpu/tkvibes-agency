@@ -49,7 +49,7 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           port: 21
           protocol: ftps
-          security: strict
+          security: loose
           local-dir: out/
           server-dir: /public_html/
           exclude: |
