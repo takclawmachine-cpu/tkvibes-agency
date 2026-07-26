@@ -25,11 +25,6 @@ jobs:
           test -f assets/js/main.js || (echo "::error::main.js not found" && exit 1)
           echo "Static site files OK"
 
-      - name: Compress images for faster FTP transfer
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq optipng
-          find websites/screenshots -name '*.png' -exec optipng -o2 -strip all {} \; 2>/dev/null || true
-
       - name: Install lftp
         run: sudo apt-get install -y -qq lftp
 
@@ -47,7 +42,7 @@ jobs:
             set ftp:rest-list no;
             set ftp:use-mdtm off;
             open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
-            mirror --reverse --verbose --only-newer --transfer-all --no-perms --parallel=3 \
+            mirror --reverse --verbose --only-newer --ignore-time --no-perms --parallel=5 \
               --exclude-glob=.git* \
               --exclude-glob=.github/** \
               --exclude-glob=scripts/** \
