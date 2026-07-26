@@ -53,6 +53,5 @@ jobs:
           exclude: |
             **/.git*
             **/.gitignore
-          dangerous-exclude-symlinks: false
           timeout: 1200
           log-level: minimal
