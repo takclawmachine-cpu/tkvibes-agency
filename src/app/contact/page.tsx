@@ -19,8 +19,8 @@ const contactDetails = [
   {
     iconClass: 'fas fa-envelope',
     title: 'Email',
-    value: 'hello@tkvibes.com',
-    href: 'mailto:hello@tkvibes.com',
+    value: 'services@tkvibes.in',
+    href: 'mailto:services@tkvibes.in',
     note: 'Replies usually within 24 hours',
   },
   {
@@ -104,7 +104,7 @@ export default function ContactPage() {
                 </span>
               </p>
               <h4>Send us a message</h4>
-              <form action="https://formsubmit.co/hello@tkvibes.com" method="POST">
+              <form action="https://formsubmit.co/services@tkvibes.in" method="POST">
                 <input type="hidden" name="_subject" value="New inquiry from TKVibes website" />
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="hidden" name="_template" value="table" />

@@ -183,7 +183,7 @@ export default function RootLayout({
                 >
                   <i className="fab fa-whatsapp" />
                 </a>
-                <a href="mailto:hello@tkvibes.com" aria-label="Email">
+                <a href="mailto:services@tkvibes.in" aria-label="Email">
                   <i className="fas fa-envelope" />
                 </a>
               </div>
@@ -212,7 +212,7 @@ export default function RootLayout({
             <div>
               <h4>Contact</h4>
               <ul>
-                <li><a href="mailto:hello@tkvibes.com">hello@tkvibes.com</a></li>
+                <li><a href="mailto:services@tkvibes.in">services@tkvibes.in</a></li>
                 <li><a href="tel:+919818246938">+91 98182 46938</a></li>
                 <li><a href="https://wa.me/919818246938">WhatsApp</a></li>
                 <li><span>India, serving clients worldwide</span></li>

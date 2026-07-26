@@ -64,8 +64,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:hello@tkvibes.com">
-                  <i className="fas fa-envelope"></i> hello@tkvibes.com
+                <a href="mailto:services@tkvibes.in">
+                  <i className="fas fa-envelope"></i> services@tkvibes.in
                 </a>
               </li>
               <li>
