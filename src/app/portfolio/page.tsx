@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import WebsitePreview from '@/components/WebsitePreview'
+import WebsitePreview from '@/components/ui/WebsitePreview'
 import { portfolioProjects } from '@/lib/portfolio'
 
 const filters = ['all', 'website', 'branding', 'seo', 'design']

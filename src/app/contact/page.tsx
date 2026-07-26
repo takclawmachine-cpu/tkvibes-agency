@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import MultiSelectServices from '@/components/MultiSelectServices'
+import MultiSelectServices from '@/components/ui/MultiSelectServices'
 
 export const metadata: Metadata = {
   title: 'Contact',

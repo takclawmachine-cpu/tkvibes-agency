@@ -4,7 +4,6 @@ export interface PortfolioProject {
   industry: string
   summary: string
   result: string
-  previewPage?: string
   previewImage?: string
   categories: string[]
   services: string[]
@@ -18,7 +17,6 @@ export const portfolioProjects: PortfolioProject[] = [
     summary:
       'A modern clinic website and brand system built to make booking feel simple, trustworthy, and premium.',
     result: 'Better appointment flow and a more polished local brand presence.',
-    previewPage: '/websites/lets-smile-dental.html',
     previewImage: '/websites/screenshots/lets-smile-dental.png',
     categories: ['website', 'branding', 'design'],
     services: ['Website Design', 'Brand Identity', 'Local SEO', 'GMB Setup'],
@@ -30,7 +28,6 @@ export const portfolioProjects: PortfolioProject[] = [
     summary:
       'A warm, image-led cafe experience designed to support discovery, menu browsing, and repeat local orders.',
     result: 'Stronger visual identity with a friendlier digital storefront.',
-    previewPage: '/websites/tasty-bites-3d-cafe.html',
     previewImage: '/websites/screenshots/tasty-bites-3d-cafe.png',
     categories: ['website', 'branding', 'seo'],
     services: ['Website Design', 'Logo and Branding', 'Brochure', 'Meta Ads'],
@@ -42,7 +39,6 @@ export const portfolioProjects: PortfolioProject[] = [
     summary:
       'A conversion-first service website built around trust signals, local discoverability, and direct lead capture.',
     result: 'Clearer lead funnels paired with stronger local search visibility.',
-    previewPage: '/websites/deep-water-tank-cleaning-modern.html',
     previewImage: '/websites/screenshots/deep-water-tank-cleaning-modern.png',
     categories: ['website', 'seo', 'design'],
     services: ['Website Design', 'SEO Services', 'Google Ads', 'GMB'],
@@ -54,7 +50,6 @@ export const portfolioProjects: PortfolioProject[] = [
     summary:
       'A treatment-focused dental website supported by a sharper brand identity and clearer patient messaging.',
     result: 'More confidence-building content for patients across core treatments.',
-    previewPage: '/websites/mita-dental-website.html',
     previewImage: '/websites/screenshots/mita-dental-website.png',
     categories: ['website', 'branding', 'design'],
     services: ['Website Design', 'Logo Design', 'Logo Animation', 'Infographics'],
@@ -66,7 +61,6 @@ export const portfolioProjects: PortfolioProject[] = [
     summary:
       'A broad clinic site architecture for multiple services, team trust, and higher-value treatment discovery.',
     result: 'A more scalable website foundation for multi-service growth.',
-    previewPage: '/websites/dental-clinic-3d.html',
     previewImage: '/websites/screenshots/dental-clinic-3d.png',
     categories: ['website', 'seo'],
     services: ['Website Design', 'SEO', 'GMB Listing', 'Hosting'],

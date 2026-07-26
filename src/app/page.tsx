@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import HeroProjectStack from '@/components/HeroProjectStack'
+import HeroProjectStack from '@/components/ui/HeroProjectStack'
 import { portfolioProjects } from '@/lib/portfolio'
 
 const heroStackProjects = portfolioProjects.filter((project) => project.previewImage).slice(0, 5)

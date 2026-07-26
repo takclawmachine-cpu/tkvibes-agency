@@ -1,32 +1,60 @@
 # TKVibes Agency
 
-## Workspace Structure
+Public agency website for [tkvibes.com](https://tkvibes.com). Built as a **static export** and deployed to **Hostinger shared hosting** via GitHub Actions (FTPS).
+
+## Repository layout
+
 ```
-Desktop/
-├── clients/                          ← ALL client projects
-│   ├── mita-dental/                  → Dental clinic (4.9★, no website)
-│   ├── deep-water-tank-cleaning/     → Water tank cleaning (SEO C grade)
-│   ├── tasty-bites-cafe/             → Local cafe (3D website done)
-│   ├── dental-clinic/                → Dental clinic (2 versions done)
-│   └── lets-smile-dental/            → Dental practice (proposal ready)
-├── tkvibes-agency/                   ← OUR agency (2 sub-projects)
-│   ├── (root)                        → Our public website (Next.js 16)
-│   └── operations-dashboard/         → Backend CRM/ops dashboard
-├── LeadGenerationProject/            ← Legacy lead gen project (deprecated)
-└── tkvibes-html-backup/             ← Old HTML backup (pre-Next.js)
+tkvibes-agency/
+├── src/                          # Agency website source
+│   ├── app/                      # Next.js App Router pages
+│   ├── components/
+│   │   ├── layout/               # Navbar, Footer
+│   │   └── ui/                   # Page-specific UI components
+│   └── lib/                      # Shared data and config
+├── public/
+│   ├── .htaccess                 # Apache cache & security (copied to out/ on build)
+│   └── websites/                 # Portfolio demo sites + screenshots
+└── .github/workflows/
+    ├── ci.yml                    # Lint + build on PR/push
+    └── deploy.yml                # Build + FTPS deploy to Hostinger
 ```
 
-## Two Main Projects
+## Tech stack
 
-| Project | Purpose | Tech | Port |
-|---|---|---|---|
-| **tkvibes-agency** (root) | Our public agency website | Next.js 16, Tailwind v4 | 3000 |
-| **operations-dashboard/** | Backend CRM & pipeline tracker | Next.js 16, Prisma, SQLite | 3006 |
+- Next.js 16 (App Router, `output: 'export'`)
+- React 19 + TypeScript 5
+- Tailwind CSS v4
+- Font Awesome via CDN
 
-## Client Projects
-Each client in `clients/` has an `AGENTS.md` with their details, generated assets, and pipeline status. The dashboard tracks where each client is in the pipeline and what assets have been generated.
+## Local development
 
-## Commands
-- `cd ~/Desktop/tkvibes-agency && npm run dev` — Agency website
-- `cd ~/Desktop/tkvibes-agency/operations-dashboard && npm run dev` — Ops dashboard
-- `cd ~/Desktop/tkvibes-agency/operations-dashboard && npm run seed` — Re-seed database
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # outputs static files to out/
+npm run lint
+```
+
+## Deployment
+
+Push to `main` triggers `.github/workflows/deploy.yml`:
+
+1. `npm ci && npm run build` → static files in `out/`
+2. PNG compression via optipng
+3. FTPS mirror to Hostinger `public_html/`
+
+Required GitHub secrets: `FTP_USER`, `FTP_PASS`, `FTP_HOST`
+
+No VPS or Node.js runtime is needed on the server — shared hosting serves plain HTML/CSS/JS.
+
+## Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Home |
+| `/about` | About |
+| `/services` | Services |
+| `/packages` | Pricing packages |
+| `/portfolio` | Client work showcase |
+| `/contact` | Contact form (FormSubmit.co) |

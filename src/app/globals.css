@@ -187,6 +187,36 @@ select {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.26);
 }
 
+.brand-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  display: block;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.brand-logo-mark {
+  width: auto;
+  height: 2.75rem;
+  max-width: min(9.5rem, 42vw);
+}
+
+.brand-logo-full {
+  width: auto;
+  height: 5.5rem;
+  max-width: 11rem;
+}
+
+.footer-brand-logo.brand-logo-link {
+  margin-bottom: 0.35rem;
+}
+
 .logo {
   display: inline-flex;
   align-items: center;
@@ -1893,18 +1923,14 @@ select {
     padding: 0 0.75rem;
   }
 
-  .logo-icon {
-    width: 2.4rem;
-    height: 2.4rem;
-    font-size: 0.7rem;
+  .brand-logo-mark {
+    height: 2.35rem;
+    max-width: min(8.5rem, 40vw);
   }
 
-  .logo-copy {
-    font-size: 1rem;
-  }
-
-  .logo-copy small {
-    font-size: 0.58rem;
+  .brand-logo-full {
+    height: 4.75rem;
+    max-width: 9.5rem;
   }
 
   .feature-card,
