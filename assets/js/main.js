@@ -9,17 +9,28 @@
   const navbar = document.querySelector('.navbar')
   const navLinks = document.querySelector('.nav-links')
   const mobileToggle = document.querySelector('.mobile-toggle')
-  const currentPath = window.location.pathname
-    .replace(/\/index\.html$/i, '/')
-    .replace(/\.html$/i, '')
-    .replace(/\/$/, '') || '/'
+  function pageKeyFromPath(pathname) {
+    const file = pathname.split('/').pop() || ''
+    if (!file || /^index\.html$/i.test(file)) return 'home'
+    return file.replace(/\.html$/i, '').toLowerCase()
+  }
+
+  function pageKeyFromHref(href) {
+    if (!href || /^(https?:|mailto:|tel:|#)/.test(href)) return null
+    const clean = href.split('?')[0].split('#')[0]
+    const file = clean.replace(/^\.\//, '').split('/').pop() || ''
+    if (!file || file === '/' || /^index\.html$/i.test(file)) return 'home'
+    return file.replace(/\.html$/i, '').toLowerCase()
+  }
+
+  const currentPage = pageKeyFromPath(window.location.pathname)
 
   document.querySelectorAll('.nav-links a').forEach((link) => {
     const href = link.getAttribute('href') || ''
-    const path = href.replace(/\/index\.html$/i, '/').replace(/\.html$/i, '').replace(/\/$/, '') || '/'
-    const isActive = path === '/'
-      ? currentPath === '' || currentPath === '/'
-      : currentPath === path || currentPath.endsWith(path)
+    const path = pageKeyFromHref(href)
+    const isActive = path === 'home'
+      ? currentPage === 'home'
+      : path === currentPage
     if (isActive) link.classList.add('active')
     else link.classList.remove('active')
   })

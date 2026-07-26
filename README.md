@@ -21,12 +21,14 @@ Public agency website for [tkvibes.com](https://tkvibes.com). **Plain HTML/CSS/J
 
 ## Local preview
 
-Open `index.html` in a browser, or serve the folder with any static server:
+Double-click `index.html`, or serve the folder with any static server:
 
 ```bash
 npx serve .
 # or: python -m http.server 8080
 ```
+
+Asset paths are relative, so opening HTML files directly in the browser works without a server.
 
 ## Deployment
 
