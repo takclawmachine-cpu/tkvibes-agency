@@ -51,6 +51,72 @@
     })
   }
 
+
+  /* ── Theme toggle ── */
+  const themeToggle = document.querySelector('.theme-toggle')
+  const storageKey = 'tkvibes-theme'
+
+  function applyTheme(theme) {
+    const isLight = theme === 'light'
+    document.documentElement.classList.toggle('light', isLight)
+    document.documentElement.classList.toggle('dark', !isLight)
+    document.body.classList.toggle('light', isLight)
+    document.body.classList.toggle('dark', !isLight)
+
+    if (themeToggle) {
+      const icon = themeToggle.querySelector('i')
+      themeToggle.setAttribute('aria-pressed', String(isLight))
+      themeToggle.setAttribute(
+        'aria-label',
+        isLight ? 'Switch to dark mode' : 'Switch to light mode',
+      )
+      themeToggle.setAttribute('title', isLight ? 'Dark mode' : 'Light mode')
+      if (icon) icon.className = isLight ? 'fas fa-moon' : 'fas fa-sun'
+    }
+  }
+
+  try {
+    applyTheme(localStorage.getItem(storageKey) || 'light')
+  } catch (error) {
+    applyTheme('light')
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const next = document.documentElement.classList.contains('light') ? 'dark' : 'light'
+      try {
+        localStorage.setItem(storageKey, next)
+      } catch (error) {
+        /* ignore storage errors */
+      }
+      applyTheme(next)
+    })
+  }
+
+
+  /* ── Proof carousel fill ── */
+  const proofCarousel = document.querySelector('.proof-carousel')
+  const proofTrack = document.querySelector('.proof-carousel-track')
+  if (proofCarousel && proofTrack) {
+    const groups = [...proofTrack.querySelectorAll('.proof-carousel-group')]
+    if (groups.length >= 2) {
+      const fillGroups = () => {
+        const minWidth = proofCarousel.clientWidth + 80
+        let guard = 0
+        while (groups[0].scrollWidth < minWidth && guard < 8) {
+          groups.forEach((group) => {
+            group.querySelectorAll('.proof-pill').forEach((pill) => {
+              group.appendChild(pill.cloneNode(true))
+            })
+          })
+          guard += 1
+        }
+      }
+      fillGroups()
+      window.addEventListener('resize', fillGroups)
+    }
+  }
+
   /* ── Footer year ── */
   document.querySelectorAll('[data-year]').forEach((el) => {
     el.textContent = String(new Date().getFullYear())
@@ -81,56 +147,76 @@
     window.addEventListener('resize', onScrollAurora)
   }
 
-  /* ── Hero project stack ── */
+  /* ── Hero butterfly carousel ── */
   const stackFrame = document.querySelector('.hero-stack-frame')
   if (stackFrame) {
     const cards = Array.from(stackFrame.querySelectorAll('.hero-stack-card'))
     const dots = Array.from(document.querySelectorAll('.hero-stack-dot'))
-    let activeIndex = 0
-    let timer = 0
+    let activeIndex = cards.findIndex((card) => card.classList.contains('active'))
+    if (activeIndex < 0) activeIndex = 0
+    let animating = false
 
-    function renderStack() {
-      const total = cards.length
-      cards.forEach((card, index) => {
-        const delta = index - activeIndex
-        const isActive = index === activeIndex
-        const isPrev = delta === -1 || (activeIndex === 0 && index === total - 1)
-        let translateY, translateX, scale, rotate, opacity
+    const motionClasses = [
+      'butterfly-out-left',
+      'butterfly-out-right',
+      'butterfly-in-left',
+      'butterfly-in-right',
+    ]
 
-        if (isActive) {
-          translateY = 0; translateX = 0; scale = 1; rotate = 0; opacity = 1
-        } else if (isPrev) {
-          translateY = -132; translateX = 42; scale = 0.89; rotate = -5.5; opacity = 0
-        } else {
-          const futureOffset = index > activeIndex ? index - activeIndex : total - activeIndex + index
-          translateY = futureOffset * 28
-          translateX = futureOffset * 10
-          scale = clamp(1 - futureOffset * 0.045, 0.7, 1)
-          rotate = futureOffset * -1.4
-          opacity = 1
-        }
-
-        card.classList.toggle('active', isActive)
-        card.style.zIndex = String(isActive ? total : total - index)
-        card.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale}) rotate(${rotate}deg)`
-        card.style.opacity = String(opacity)
-      })
-
-      dots.forEach((dot, i) => dot.classList.toggle('active', i === activeIndex))
+    function clearMotion(card) {
+      motionClasses.forEach((name) => card.classList.remove(name))
     }
 
-    function setIndex(i) {
-      activeIndex = i
-      renderStack()
+    function syncDots(index) {
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
+    }
+
+    function setIndex(nextIndex) {
+      if (nextIndex === activeIndex || animating || !cards[nextIndex]) return
+
+      const total = cards.length
+      const forward = nextIndex > activeIndex || (activeIndex === total - 1 && nextIndex === 0)
+      const outgoing = cards[activeIndex]
+      const incoming = cards[nextIndex]
+
+      animating = true
+      clearMotion(outgoing)
+      clearMotion(incoming)
+      incoming.classList.remove('active')
+
+      if (forward) {
+        outgoing.classList.add('butterfly-out-left')
+        incoming.classList.add('butterfly-in-right')
+      } else {
+        outgoing.classList.add('butterfly-out-right')
+        incoming.classList.add('butterfly-in-left')
+      }
+
+      requestAnimationFrame(() => {
+        incoming.classList.add('active')
+        incoming.classList.remove('butterfly-in-left', 'butterfly-in-right')
+      })
+
+      window.setTimeout(() => {
+        outgoing.classList.remove('active')
+        clearMotion(outgoing)
+        clearMotion(incoming)
+        activeIndex = nextIndex
+        syncDots(activeIndex)
+        animating = false
+      }, 850)
     }
 
     dots.forEach((dot, i) => dot.addEventListener('click', () => setIndex(i)))
 
     if (cards.length > 1) {
-      timer = window.setInterval(() => setIndex((activeIndex + 1) % cards.length), 2000)
+      window.setInterval(() => {
+        if (animating) return
+        setIndex((activeIndex + 1) % cards.length)
+      }, 4500)
     }
 
-    renderStack()
+    syncDots(activeIndex)
   }
 
   /* ── Portfolio filter ── */
