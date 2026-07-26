@@ -35,6 +35,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# static export (now built and deployed by CI)
+/out
+/public_html
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
