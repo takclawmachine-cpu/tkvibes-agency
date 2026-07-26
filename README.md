@@ -1,60 +1,50 @@
 # TKVibes Agency
 
-Public agency website for [tkvibes.com](https://tkvibes.com). Built as a **static export** and deployed to **Hostinger shared hosting** via GitHub Actions (FTPS).
+Public agency website for [tkvibes.com](https://tkvibes.com). **Plain HTML/CSS/JS** — deployed to **Hostinger shared hosting** via GitHub Actions (FTPS).
 
-## Repository layout
+## Structure
 
 ```
-tkvibes-agency/
-├── src/                          # Agency website source
-│   ├── app/                      # Next.js App Router pages
-│   ├── components/
-│   │   ├── layout/               # Navbar, Footer
-│   │   └── ui/                   # Page-specific UI components
-│   └── lib/                      # Shared data and config
-├── public/
-│   ├── .htaccess                 # Apache cache & security (copied to out/ on build)
-│   └── websites/                 # Portfolio demo sites + screenshots
-└── .github/workflows/
-    ├── ci.yml                    # Lint + build on PR/push
-    └── deploy.yml                # Build + FTPS deploy to Hostinger
+├── index.html              # Home
+├── about.html              # About
+├── services.html           # Services
+├── packages.html           # Packages
+├── portfolio.html          # Portfolio
+├── contact.html            # Contact
+├── assets/
+│   ├── css/styles.css      # All styles
+│   └── js/main.js          # Navbar, hero stack, filters, form UI
+├── websites/               # Portfolio demos + screenshots
+├── .htaccess               # Apache cache, security, clean URLs
+└── .github/workflows/      # FTPS deploy on push to main
 ```
 
-## Tech stack
+## Local preview
 
-- Next.js 16 (App Router, `output: 'export'`)
-- React 19 + TypeScript 5
-- Tailwind CSS v4
-- Font Awesome via CDN
-
-## Local development
+Open `index.html` in a browser, or serve the folder with any static server:
 
 ```bash
-npm install
-npm run dev        # http://localhost:3000
-npm run build      # outputs static files to out/
-npm run lint
+npx serve .
+# or: python -m http.server 8080
 ```
 
 ## Deployment
 
-Push to `main` triggers `.github/workflows/deploy.yml`:
+Push to `main` uploads the repo root (excluding `.github/`, `scripts/`, docs) to Hostinger `public_html/`.
 
-1. `npm ci && npm run build` → static files in `out/`
-2. PNG compression via optipng
-3. FTPS mirror to Hostinger `public_html/`
+**No Node.js or build step required on the server.**
 
 Required GitHub secrets: `FTP_USER`, `FTP_PASS`, `FTP_HOST`
 
-No VPS or Node.js runtime is needed on the server — shared hosting serves plain HTML/CSS/JS.
-
 ## Pages
 
-| Route | Description |
-|-------|-------------|
-| `/` | Home |
-| `/about` | About |
-| `/services` | Services |
-| `/packages` | Pricing packages |
-| `/portfolio` | Client work showcase |
-| `/contact` | Contact form (FormSubmit.co) |
+| URL | File |
+|-----|------|
+| `/` | `index.html` |
+| `/about` | `about.html` |
+| `/services` | `services.html` |
+| `/packages` | `packages.html` |
+| `/portfolio` | `portfolio.html` |
+| `/contact` | `contact.html` |
+
+Clean URLs (`/about` → `about.html`) are handled by `.htaccess`.

@@ -22,9 +22,19 @@
   Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Serve pre-compressed files when available
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # Clean URLs: /about -> about.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+
+  # Serve pre-compressed files when available
   RewriteCond %{REQUEST_FILENAME}.gz -f
   RewriteRule ^(.*)$ $1.gz [L]
 </IfModule>
+
+# Custom 404
+ErrorDocument 404 /404.html

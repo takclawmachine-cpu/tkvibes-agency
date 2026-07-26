@@ -18,35 +18,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build static export
-        run: npm run build
-        env:
-          NEXT_TELEMETRY_DISABLED: '1'
-
-      - name: Verify build output
+      - name: Verify static site
         run: |
-          echo "Build output contents:"
-          ls -la out/
-          if [ ! -f out/index.html ]; then
-            echo "::error::out/index.html not found — build did not produce expected static export"
-            exit 1
-          fi
+          test -f index.html || (echo "::error::index.html not found" && exit 1)
+          test -f assets/css/styles.css || (echo "::error::styles.css not found" && exit 1)
+          test -f assets/js/main.js || (echo "::error::main.js not found" && exit 1)
+          echo "Static site files OK"
 
       - name: Compress images for faster FTP transfer
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq optipng
-          find out/ -name '*.png' -exec optipng -o2 -strip all {} \;
-          echo "--- Compressed sizes ---"
-          du -sh out/websites/screenshots/ 2>/dev/null || true
+          find websites/screenshots -name '*.png' -exec optipng -o2 -strip all {} \; 2>/dev/null || true
 
       - name: Install lftp
         run: sudo apt-get install -y -qq lftp
@@ -67,6 +49,11 @@ jobs:
             open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
             mirror --reverse --verbose --only-newer --transfer-all --no-perms --parallel=3 \
               --exclude-glob=.git* \
-              out/ /public_html/;
+              --exclude-glob=.github/** \
+              --exclude-glob=scripts/** \
+              --exclude-glob=README.md \
+              --exclude-glob=AGENTS.md \
+              --exclude-glob=.gitignore \
+              ./ /public_html/;
             bye;
           "
