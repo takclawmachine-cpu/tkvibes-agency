@@ -41,3 +41,6 @@ Earlier commits included FTPS CI tuning (`aacaa30`, `e8b21cb`, `19ae1b3`) for Ho
 ## When to update this file
 
 After any commit that changes architecture, deploy, default theme, hosting, or migration status.
+
+## 2026-07-30
+- Replaced hero right-side butterfly card stack with CSS/SVG globe orbit animation (`.hero-globe-stage`, `hgOrbit` keyframes, 13.33s linear loop). Removed hero-stack/butterfly CSS + JS carousel.
