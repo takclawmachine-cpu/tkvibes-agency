@@ -1,0 +1,245 @@
+import os
+import json
+import argparse
+from dotenv import load_dotenv
+
+from .config import load_config
+from .connectors.google_places import GooglePlacesConnector
+from .enrich import enrich
+from .score import score_lead
+from .dedupe import dedupe, apply_dnc
+from .sheets import SheetWriter
+from .models import Lead
+from .handoff.sample_site import build_site_spec
+from .handoff.pitch_deck import build_deck_spec
+
+TIER_RANK = {"HOT": 0, "WARM": 1, "COLD": 2}
+
+
+def discover_all(cfg: dict, target: int = 0) -> list[Lead]:
+    """Run all enabled connectors and return raw leads.
+
+    If `target` is > 0, stop discovering as soon as we have enough leads
+    (saves Places API spend — a job only needs `target` leads total).
+    """
+    all_leads: list[Lead] = []
+
+    def enough() -> bool:
+        return target > 0 and len(all_leads) >= target
+
+    if cfg["sources"]["google_places"]:
+        api_key = os.environ.get("GOOGLE_MAPS_API_KEY", "")
+        if not api_key:
+            print("  GOOGLE_MAPS_API_KEY not set - skipping Google Places")
+        else:
+            gp = GooglePlacesConnector(api_key)
+            for city in cfg["targets"]["cities"]:
+                if enough():
+                    break
+                for cat in cfg["targets"]["categories"]:
+                    if enough():
+                        break
+                    print(f"  [google_places] {city} / {cat}")
+                    try:
+                        all_leads += gp.discover(
+                            city, cat, cfg["targets"]["max_results_per_query"]
+                        )
+                    except Exception as e:
+                        print(f"    error: {e}")
+
+    if cfg["sources"].get("indiamart"):
+        from .connectors.indiamart import IndiaMartConnector
+        im = IndiaMartConnector(**cfg["rate_limits"])
+        for city in cfg["targets"]["cities"]:
+            if enough():
+                break
+            for cat in cfg["targets"]["categories"]:
+                if enough():
+                    break
+                print(f"  [indiamart] {city} / {cat}")
+                try:
+                    all_leads += im.discover(city, cat)
+                except Exception as e:
+                    print(f"    error: {e}")
+
+    if cfg["sources"].get("justdial"):
+        from .connectors.justdial import JustDialConnector
+        jd = JustDialConnector(**cfg["rate_limits"])
+        for city in cfg["targets"]["cities"]:
+            if enough():
+                break
+            for cat in cfg["targets"]["categories"]:
+                if enough():
+                    break
+                print(f"  [justdial] {city} / {cat}")
+                try:
+                    all_leads += jd.discover(city, cat)
+                except Exception as e:
+                    print(f"    error: {e}")
+
+    return all_leads
+
+
+def process_leads(leads: list[Lead], cfg: dict) -> list[Lead]:
+    """Enrich, score, finalize, dedupe, DNC-filter a batch of leads."""
+    for l in leads:
+        enrich(l)
+        score_lead(l, cfg["scoring"]["high_fit_categories"])
+        l.finalize_dates(cfg["run"]["cache_stale_days"])
+        if not cfg["run"]["collect_personal_data"]:
+            l.owner_name = ""
+
+    leads = dedupe(leads)
+    leads = apply_dnc(leads)
+    leads.sort(key=lambda x: (TIER_RANK.get(x.lead_tier, 9), -x.lead_score))
+
+    ef = cfg.get("email_finder", {}) or {}
+    if ef.get("enabled"):
+        leads = find_emails(leads, ef)
+    return leads
+
+
+def find_emails(leads: list[Lead], ef: dict) -> list[Lead]:
+    """Crawl lead websites to populate the email field (Places API has none)."""
+    from .email_finder import enrich_email
+
+    tier_set = _tier_set(ef.get("min_tier", "WARM"))
+    delay = ef.get("per_site_delay_seconds", 0.8)
+    targets = [l for l in leads
+               if l.lead_tier in tier_set and l.website_url and not l.email]
+    print(f"  [email_finder] crawling {len(targets)} sites for contact emails")
+    found = 0
+    for i, l in enumerate(targets, 1):
+        enrich_email(l, delay=delay)
+        if l.email:
+            found += 1
+            print(f"    [{i}/{len(targets)}] {l.business_name}: {l.email}")
+    no_site = sum(1 for l in leads if l.lead_tier in tier_set and not l.website_url)
+    print(f"  [email_finder] {found}/{len(targets)} emails found "
+          f"({no_site} leads have no website at all)")
+
+    if ef.get("search_fallback"):
+        from .email_search import enrich_email_via_search
+        sd = ef.get("search_delay_seconds", 3.0)
+        rest = [l for l in leads if l.lead_tier in tier_set and not l.email]
+        print(f"  [email_finder] web-search fallback on {len(rest)} leads")
+        for l in rest:
+            enrich_email_via_search(l, delay=sd)
+            if l.email:
+                found += 1
+                print(f"    (search) {l.business_name}: {l.email}")
+
+    # Tell downstream agents which channel is actually usable
+    for l in leads:
+        l.contact_channel = ("email" if l.email
+                             else "whatsapp" if l.whatsapp
+                             else "phone" if l.phone_primary
+                             else "none")
+
+    emailable = sum(1 for l in leads if l.email)
+    print(f"  [email_finder] {emailable}/{len(leads)} leads are email-reachable")
+    return leads
+
+
+def export_for_handoff(leads: list[Lead], cfg: dict) -> str:
+    """Write a JSON file that the downstream email agent reads."""
+    export_path = cfg["handoff"]["export_json"]
+    min_tier = cfg["handoff"]["min_tier"]
+    tier_set = _tier_set(min_tier)
+
+    payload = []
+    for l in leads:
+        if l.lead_tier not in tier_set:
+            continue
+        if l.opt_out:
+            continue
+        entry = l.to_dict()
+        entry["_site_spec"] = build_site_spec(l)
+        entry["_deck_spec"] = build_deck_spec(l)
+        payload.append(entry)
+
+    os.makedirs(os.path.dirname(export_path), exist_ok=True)
+    with open(export_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, ensure_ascii=False, default=str)
+    return export_path
+
+
+def _tier_set(min_tier: str) -> set:
+    # HOT=0, WARM=1, COLD=2 — "min_tier" means include that tier and BETTER
+    order = ["HOT", "WARM", "COLD"]
+    idx = order.index(min_tier) if min_tier in order else 0
+    return set(order[:idx+1])
+
+
+def main():
+    parser = argparse.ArgumentParser(description="TKVibes Lead Engine")
+    parser.add_argument("--config", default="config.yaml")
+    parser.add_argument("--max-leads", type=int, default=None)
+    parser.add_argument("--cities", default=None,
+                        help="comma-separated subset, e.g. 'Delhi,Gurgaon' "
+                             "(limits Places spend)")
+    parser.add_argument("--categories", default=None,
+                        help="comma-separated subset of categories")
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    load_dotenv()
+    cfg = load_config(args.config)
+
+    if args.cities:
+        want = [c.strip().lower() for c in args.cities.split(",") if c.strip()]
+        cfg["targets"]["cities"] = [c for c in cfg["targets"]["cities"]
+                                    if c.lower() in want] or want
+    if args.categories:
+        want = [c.strip().lower() for c in args.categories.split(",") if c.strip()]
+        cfg["targets"]["categories"] = [c for c in cfg["targets"]["categories"]
+                                        if c.lower() in want] or want
+
+    max_leads = args.max_leads or cfg["run"]["max_leads_per_run"]
+
+    # Cap discovery to only what this job needs (20 by default) to limit
+    # billable Places queries — we don't need the whole country per job.
+    discover_target = max_leads
+
+    nq = len(cfg["targets"]["cities"]) * len(cfg["targets"]["categories"])
+    print(f"TKVibes Lead Engine - target: {max_leads} leads this job")
+    print(f"   {len(cfg['targets']['cities'])} cities x "
+          f"{len(cfg['targets']['categories'])} categories = up to {nq} Places queries")
+    raw = discover_all(cfg, target=discover_target)
+    print(f"   discovered {len(raw)} raw leads")
+
+    leads = process_leads(raw, cfg)
+    hot = sum(1 for l in leads if l.lead_tier == "HOT")
+    warm = sum(1 for l in leads if l.lead_tier == "WARM")
+    cold = sum(1 for l in leads if l.lead_tier == "COLD")
+    print(f"   after dedupe/score: {len(leads)} unique - {hot} HOT / {warm} WARM / {cold} COLD")
+
+    leads = leads[:max_leads]
+    print(f"   capped to {len(leads)} leads for this run")
+
+    export_path = export_for_handoff(leads, cfg)
+    print(f"   handoff JSON -> {export_path} ({len(leads)} leads)")
+
+    if args.dry_run:
+        print("   (dry-run - skipping Google Sheets write)")
+        added = 0
+    else:
+        sa_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
+        sheet_id = os.environ.get("GOOGLE_SHEETS_ID", "")
+        if not sa_path or not sheet_id:
+            print("   GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SHEETS_ID not set - skipping sheet write")
+            added = 0
+        else:
+            writer = SheetWriter(sa_path, sheet_id, cfg["sheets"]["worksheet_name"])
+            # One fresh worksheet per job, named by date-time stamp.
+            from datetime import datetime as _dt
+            job_sheet = _dt.now().strftime("%Y-%m-%d %H-%M-%S")
+            added = writer.write_job(leads, job_sheet)
+            print(f"   Google Sheets: wrote {added} leads to new tab '{job_sheet}'")
+
+    print(f"\nDone - {len(leads)} leads processed | {added} new sheet rows | {hot} HOT")
+    print(f"   Handoff JSON: {export_path}")
+
+
+if __name__ == "__main__":
+    main()

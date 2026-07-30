@@ -1,0 +1,128 @@
+run:
+  # Global compliance: enable per jurisdiction as you expand
+  # India: DPDP Act 2023 (personal data minimization)
+  # EU/UK: GDPR (legitimate interest basis for B2B marketing)
+  # US:   CCPA/CPRA + CAN-SPAM (unsubscribe honor)
+  # UAE:  PDPL
+  collect_personal_data: false      # Keep off unless you have a legal basis
+  cache_stale_days: 30              # Places policy-aligned refresh window
+  max_leads_per_run: 20             # pull only 20 leads per job
+
+sources:
+  google_places: true
+  indiamart: false                  # opt-in; review ToS before enabling
+  justdial: false
+
+targets:
+  # Pan-India targeting. Agency is Delhi-based, so NCR leads first —
+  # local proximity is a real selling point and the easiest close.
+  # Cost note: leads pulled = cities x categories x max_results_per_query,
+  # and every Places call is billable. Trim this list, not the categories,
+  # if spend gets high. max_leads_per_run caps what is actually kept.
+  cities:
+    # ── Delhi NCR (home turf — highest priority) ──
+    - "Delhi"
+    - "New Delhi"
+    - "Gurgaon"
+    - "Noida"
+    - "Ghaziabad"
+    - "Faridabad"
+    # ── Tier-1 metros ──
+    - "Mumbai"
+    - "Bengaluru"
+    - "Hyderabad"
+    - "Chennai"
+    - "Kolkata"
+    - "Pune"
+    - "Ahmedabad"
+    # ── Tier-2 (less agency competition, cheaper to win) ──
+    - "Jaipur"
+    - "Lucknow"
+    - "Chandigarh"
+    - "Indore"
+    - "Bhopal"
+    - "Nagpur"
+    - "Surat"
+    - "Kochi"
+    - "Coimbatore"
+    - "Visakhapatnam"
+    - "Bhubaneswar"
+    - "Dehradun"
+  categories:
+    # High-value professionals & clinics (primary targets)
+    - "dental clinic"
+    - "dentist"
+    - "doctor clinic"
+    - "medical clinic"
+    - "lawyer"
+    - "law firm"
+    - "advocate"
+    - "pet clinic"
+    - "veterinary clinic"
+    - "veterinarian"
+    - "orthopedic clinic"
+    - "skin clinic"
+    - "dermatologist"
+    - "cosmetic clinic"
+    - "eye clinic"
+    - "ophthalmologist"
+    - "physiotherapy clinic"
+    - "pediatric clinic"
+    - "cardiology clinic"
+    - "fertility clinic"
+    # High-value service businesses (secondary)
+    - "interior designer"
+    - "architecture firm"
+    - "chartered accountant"
+    - "financial advisor"
+    - "insurance agency"
+    - "real estate agency"
+    - "boutique"
+    - "luxury salon"
+    - "spa"
+    - "jewelry store"
+  max_results_per_query: 60
+
+scoring:
+  hot_threshold: 70
+  warm_threshold: 45
+  high_fit_categories:
+    ["dental clinic","dentist","doctor","clinic","hospital","medical",
+     "lawyer","law firm","advocate","attorney","solicitor",
+     "pet clinic","veterinary","veterinarian","vet",
+     "orthopedic","skin clinic","dermatologist","cosmetic","dermatology",
+     "eye clinic","ophthalmologist","optometry",
+     "physiotherapy","physiotherapist","pediatric","cardiology","fertility",
+     "interior designer","architect","architecture",
+     "chartered accountant","ca firm","financial advisor","wealth management",
+     "insurance","real estate","boutique","luxury","salon","spa","jewelry",
+     "cafe","restaurant","gym","home services","coaching","retail"]
+
+rate_limits:
+  per_domain_delay_seconds: 4
+  max_retries: 3
+
+# ── Email discovery ──
+email_finder:
+  enabled: true
+  # Only crawl sites for leads at/above this tier (saves time on cold leads)
+  min_tier: "WARM"
+  per_site_delay_seconds: 0.8
+  max_pages_per_site: 6
+  timeout_seconds: 12
+  # Fallback: search the open web for leads with no website.
+  # NOTE: free search engines (DuckDuckGo/Bing) actively block scraping and
+  # serve CAPTCHAs, so this yields very little. Leave off unless you plug in
+  # a paid SERP API key (see README "Email coverage").
+  search_fallback: false
+  search_delay_seconds: 3.0
+
+sheets:
+  worksheet_name: "Leads"
+
+# ── Downstream handoff config ──
+handoff:
+  # JSON export path — the email agent reads this file after each run
+  export_json: "data/leads_export.json"
+  # Only export leads at or above this tier
+  min_tier: "WARM"   # HOT, WARM, or COLD

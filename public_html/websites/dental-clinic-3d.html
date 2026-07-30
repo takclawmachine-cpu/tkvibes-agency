@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Dental Clinic by Dr Sakshi | Premium 3D Dental Website</title>
+    <meta name="description" content="The Dental Clinic by Dr Sakshi - Premium dental care in Faridabad. 4.9/5 star rated clinic. Experience modern dentistry with advanced 3D technology.">
+    <meta name="keywords" content="dental clinic, Dr Sakshi, Faridabad, dental care, 3D dentistry, teeth cleaning, root canal, implants">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="The Dental Clinic by Dr Sakshi | Premium Dental Care">
+    <meta property="og:description" content="Premium dental care in Faridabad. 4.9/5 star rated clinic.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_IN">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js removed — replaced with themed SVG motion vector graphic -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0c1222;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
+
+        /* ===== Themed Motion Vector Background (Medical/Dental) ===== */
+        .hero-motion-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0c1222 0%, #0f2940 50%, #0c1f2e 100%);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-motion-bg svg * { animation: none !important; }
+        }
+
+        /* ===== Hero Overlay ===== */
+        .hero-overlay {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(12, 18, 34, 0.4);
+            backdrop-filter: blur(2px);
+            padding: 80px 20px;
+            pointer-events: auto;
+        }
+
+        .glass-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(13, 148, 136, 0.3);
+            box-shadow: 0 8px 40px rgba(13, 148, 136, 0.15);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #0d9488, #38bdf8, #0d9488);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #0d9488, #2563eb);
+        }
+
+        .section-dark { background: #0c1222; }
+        .section-darker { background: #08101e; }
+        .section-light { background: #111827; }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .glow-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(13, 148, 136, 0.2);
+        }
+        .glow-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 40px rgba(13, 148, 136, 0.4);
+        }
+
+        .service-card, .why-card, .testimonial-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: perspective(1000px) rotateX(0deg);
+        }
+        .service-card:hover, .why-card:hover, .testimonial-card:hover {
+            transform: perspective(1000px) rotateX(2deg) translateY(-8px);
+        }
+
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glow-line {
+            height: 3px;
+            width: 60px;
+            background: linear-gradient(90deg, #0d9488, #38bdf8);
+            border-radius: 3px;
+            margin: 10px auto 0;
+        }
+
+        .floating-particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #0d9488;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+            animation: float-particle linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+
+        .hours-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s;
+        }
+        .hours-row:hover {
+            background: rgba(13, 148, 136, 0.08);
+        }
+        .hours-row:last-child { border-bottom: none; }
+        .hours-row.closed .day-name { color: #ef4444; }
+        .hours-row.closed .hours-time { color: #ef4444; }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+        }
+        .form-input::placeholder { color: rgba(255,255,255,0.3); }
+
+        /* Nav */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 30px;
+            transition: all 0.4s;
+            background: rgba(12, 18, 34, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .nav-link:hover, .nav-link.active { color: #0d9488; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .section-title { font-size: 1.8rem; }
+            .mobile-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(12, 18, 34, 0.98);
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            .mobile-nav.open { display: flex; }
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99;
+            width: 56px;
+            height: 56px;
+            background: #25d366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Particles Background -->
+    <div id="particles-container" style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#home" class="flex items-center gap-3 text-white font-bold text-lg">
+                <svg width="36" height="36" viewBox="0 0 36 36"><rect width="36" height="36" rx="8" fill="#0d9488"/><text x="18" y="24" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="20" fill="white">D</text></svg>
+                <span class="hidden sm:inline">The Dental Clinic</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8" id="desktopNav">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#why" class="nav-link">Why Us</a>
+                <a href="#location" class="nav-link">Location</a>
+                <a href="#hours" class="nav-link">Hours</a>
+                <a href="#testimonials" class="nav-link">Reviews</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <button onclick="document.getElementById('mobileNav').classList.toggle('open')" class="md:hidden text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="mobile-nav md:hidden" id="mobileNav">
+            <a href="#home" class="nav-link" onclick="closeNav()">Home</a>
+            <a href="#about" class="nav-link" onclick="closeNav()">About</a>
+            <a href="#services" class="nav-link" onclick="closeNav()">Services</a>
+            <a href="#why" class="nav-link" onclick="closeNav()">Why Us</a>
+            <a href="#location" class="nav-link" onclick="closeNav()">Location</a>
+            <a href="#hours" class="nav-link" onclick="closeNav()">Hours</a>
+            <a href="#testimonials" class="nav-link" onclick="closeNav()">Reviews</a>
+            <a href="#contact" class="nav-link" onclick="closeNav()">Contact</a>
+        </div>
+    </nav>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/919667788196" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- ===== 3D HERO ===== -->
+    <section id="home">
+        <!-- Themed Medical/Dental Motion Vector Graphic -->
+        <div class="hero-motion-bg" aria-hidden="true">
+            <svg viewBox="0 0 800 600" style="width:100%;height:100%;">
+                <!-- Pulsing rings -->
+                <circle cx="400" cy="300" r="40" fill="none" stroke="rgba(14,165,233,0.12)" stroke-width="3">
+                    <animate attributeName="r" values="30;120;30" dur="5s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.5;0;0.5" dur="5s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="400" cy="300" r="40" fill="none" stroke="rgba(20,184,166,0.08)" stroke-width="2">
+                    <animate attributeName="r" values="30;160;30" dur="6s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.3;0;0.3" dur="6s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="400" cy="300" r="40" fill="none" stroke="rgba(56,189,248,0.06)" stroke-width="1.5">
+                    <animate attributeName="r" values="30;200;30" dur="7s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.2;0;0.2" dur="7s" repeatCount="indefinite"/>
+                </circle>
+                <!-- Floating cross icon -->
+                <g>
+                    <animateTransform attributeName="transform" type="translate" values="0,0;25,-35;0,0" dur="8s" repeatCount="indefinite"/>
+                    <path d="M100,100 L100,70 L130,70 L130,100 L160,100 L160,130 L130,130 L130,160 L100,160 L100,130 L70,130 L70,100 Z" fill="rgba(14,165,233,0.15)"/>
+                </g>
+                <!-- Floating tooth icon -->
+                <g>
+                    <animateTransform attributeName="transform" type="translate" values="0,0;-20,-30;0,0" dur="9s" repeatCount="indefinite"/>
+                    <path d="M680,120 Q700,120 700,150 Q700,190 690,210 Q680,230 670,210 Q660,190 660,150 Q660,120 680,120 Z" fill="rgba(20,184,166,0.12)"/>
+                </g>
+                <!-- Heartbeat line -->
+                <path d="M0,380 L100,380 L120,380 L130,330 L140,430 L150,380 L200,380 L220,380 L230,330 L240,430 L250,380 L800,380" fill="none" stroke="rgba(14,165,233,0.12)" stroke-width="2">
+                    <animate attributeName="stroke-dashoffset" values="900;0" dur="6s" repeatCount="indefinite"/>
+                    <set attributeName="stroke-dasharray" to="900"/>
+                </path>
+                <!-- Floating particles -->
+                <circle cx="200" cy="450" r="3" fill="rgba(14,165,233,0.25)">
+                    <animate attributeName="cy" values="520;0" dur="12s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;0.4;0" dur="12s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="350" cy="480" r="2" fill="rgba(20,184,166,0.25)">
+                    <animate attributeName="cy" values="520;0" dur="14s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;0.3;0" dur="14s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="550" cy="460" r="2.5" fill="rgba(56,189,248,0.2)">
+                    <animate attributeName="cy" values="520;0" dur="11s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;0.35;0" dur="11s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="650" cy="490" r="2" fill="rgba(14,165,233,0.2)">
+                    <animate attributeName="cy" values="520;0" dur="16s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;0.25;0" dur="16s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+        <div class="hero-overlay">
+            <div class="text-center max-w-4xl mx-auto px-4">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm mb-8">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <span>4.9 ★ Rated on Google Maps</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-4 gradient-text leading-tight">
+                    The Dental Clinic
+                </h1>
+                <p class="text-2xl md:text-3xl font-light text-white/80 mb-2">by Dr Sakshi</p>
+                <p class="text-xl md:text-2xl text-teal-300/70 mb-6 font-light">थे डेंटल क्लिनिक बाय डॉ साक्षी</p>
+                <p class="text-lg text-white/60 mb-10 max-w-2xl mx-auto">Excel in Every Smile We Create — Premium dental care in Faridabad with cutting-edge technology</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="tel:+919667788196" class="glow-btn inline-flex items-center gap-3 px-8 py-4 rounded-full gradient-bg text-white font-semibold text-lg">
+                        <i class="fas fa-phone-alt"></i> Call Now
+                    </a>
+                    <a href="#contact" class="glow-btn inline-flex items-center gap-3 px-8 py-4 rounded-full border border-teal-500/50 text-teal-300 font-semibold text-lg hover:bg-teal-500/10">
+                        <i class="fas fa-calendar-check"></i> Book Appointment
+                    </a>
+                    <a href="#services" class="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/10 text-white/70 font-medium text-lg hover:bg-white/5">
+                        <i class="fas fa-chevron-down"></i> Our Services
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parallax Divider -->
+    <section style="position:relative;z-index:1;padding:60px 0;text-align:center;background:linear-gradient(135deg,#0d9488 0%,#1e3a5f 100%);">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Your Smile, Our Commitment</h2>
+            <p class="text-lg text-white/80">Trusted by hundreds of patients in Faridabad for premium, compassionate dental care.</p>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section id="about" class="section-light py-24" style="position:relative;z-index:1;">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="scroll-fade">
+                    <h2 class="section-title gradient-text">About Dr Sakshi</h2>
+                    <div class="glow-line mb-6"></div>
+                    <p class="text-gray-400 leading-relaxed mb-4">Dr Sakshi is a highly qualified and experienced dental professional dedicated to providing exceptional dental care in Faridabad. With a commitment to excellence and patient comfort, Dr Sakshi combines modern dental techniques with a compassionate approach.</p>
+                    <p class="text-gray-400 leading-relaxed mb-4">Specializing in comprehensive dental care, Dr Sakshi has built a reputation for professionalism, precision, and bedside manner. The clinic emphasizes preventive care, early detection, and personalized treatment plans.</p>
+                    <p class="text-gray-400 leading-relaxed">The clinic is equipped with the latest dental technology and follows strict sterilization protocols to ensure patient safety and comfort.</p>
+                </div>
+                <div class="scroll-fade relative">
+                    <svg width="100%" height="400" viewBox="0 0 600 400" class="rounded-2xl">
+                        <defs><linearGradient id="abg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:1" /><stop offset="100%" style="stop-color:#0d9488;stop-opacity:1" /></linearGradient></defs>
+                        <rect width="600" height="400" fill="url(#abg)" rx="16"/>
+                        <circle cx="300" cy="140" r="65" fill="white" opacity="0.95"/>
+                        <ellipse cx="300" cy="320" rx="110" ry="60" fill="white" opacity="0.95"/>
+                        <text x="300" y="275" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="22" fill="#1e3a5f">Dr. Sakshi</text>
+                        <text x="300" y="302" text-anchor="middle" font-family="Arial" font-size="14" fill="white">Dental Surgeon</text>
+                        <circle cx="80" cy="340" r="35" fill="white" opacity="0.1"/>
+                        <circle cx="520" cy="340" r="45" fill="white" opacity="0.1"/>
+                        <circle cx="540" cy="60" r="25" fill="white" opacity="0.08"/>
+                    </svg>
+                    <div class="absolute bottom-6 right-6 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 text-center">
+                        <div class="text-3xl font-bold gradient-text">15+</div>
+                        <div class="text-xs text-gray-400">Years of Excellence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SERVICES ===== -->
+    <section id="services" class="section-darker py-24" style="position:relative;z-index:1;">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 scroll-fade">
+                <h2 class="section-title gradient-text">Our Dental Services</h2>
+                <p class="text-gray-400 mt-2">Comprehensive dental care for you and your family</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-tooth"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Teeth Cleaning</h3>
+                    <p class="text-gray-400 text-sm">Professional cleaning to remove plaque, tartar, and stains for a healthier smile.</p>
+                </div>
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-cubes"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Fillings</h3>
+                    <p class="text-gray-400 text-sm">Durable tooth-colored fillings to repair cavities and restore damaged teeth.</p>
+                </div>
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-heartbeat"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Root Canal</h3>
+                    <p class="text-gray-400 text-sm">Advanced root canal treatment to save infected teeth and relieve pain.</p>
+                </div>
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-sun"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Teeth Whitening</h3>
+                    <p class="text-gray-400 text-sm">Safe and effective whitening for a brighter, more confident smile.</p>
+                </div>
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-crown"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Crowns</h3>
+                    <p class="text-gray-400 text-sm">Custom-fitted dental crowns to protect and restore damaged teeth.</p>
+                </div>
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-child"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Pediatric Dentistry</h3>
+                    <p class="text-gray-400 text-sm">Specialized dental care for children in a friendly, comfortable environment.</p>
+                </div>
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-smile"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Orthodontics</h3>
+                    <p class="text-gray-400 text-sm">Braces and aligners for perfectly aligned smiles.</p>
+                </div>
+                <div class="service-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-14 h-14 mx-auto rounded-xl gradient-bg flex items-center justify-center text-white text-2xl mb-5"><i class="fas fa-gem"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-3">Dental Implants</h3>
+                    <p class="text-gray-400 text-sm">Permanent implant solutions for missing teeth restoration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WHY CHOOSE US ===== -->
+    <section id="why" class="section-light py-24" style="position:relative;z-index:1;">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 scroll-fade">
+                <h2 class="section-title gradient-text">Why Choose Us</h2>
+                <p class="text-gray-400 mt-2">What sets us apart in providing exceptional dental care</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="why-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-3xl mb-5"><i class="fas fa-star"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-2">4.9/5 Google Rating</h3>
+                    <p class="text-gray-400 text-sm">Exceptional patient satisfaction reflected in our outstanding reviews.</p>
+                </div>
+                <div class="why-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 text-3xl mb-5"><i class="fas fa-user-md"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Expert Dentist</h3>
+                    <p class="text-gray-400 text-sm">Years of experience and specialized training for the best care.</p>
+                </div>
+                <div class="why-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-3xl mb-5"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Safety First</h3>
+                    <p class="text-gray-400 text-sm">Advanced sterilization protocols and modern equipment for your safety.</p>
+                </div>
+                <div class="why-card glass-card p-8 text-center scroll-fade">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-3xl mb-5"><i class="fas fa-clock"></i></div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Convenient Hours</h3>
+                    <p class="text-gray-400 text-sm">Extended hours Monday to Saturday to fit your busy schedule.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== LOCATION ===== -->
+    <section id="location" class="section-darker py-24" style="position:relative;z-index:1;">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 scroll-fade">
+                <h2 class="section-title gradient-text">Find Us & Visit</h2>
+                <p class="text-gray-400 mt-2">Your trusted dental clinic in Sector 35, Faridabad</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="scroll-fade">
+                    <div class="glass-card p-8">
+                        <h3 class="text-xl font-semibold text-white mb-4"><i class="fas fa-map-marker-alt text-teal-400"></i> Our Location</h3>
+                        <div class="text-gray-300 leading-relaxed mb-6">
+                            <strong class="text-white">The Dental Clinic by Dr Sakshi</strong><br>
+                            458, near DevSthal mandir,<br>
+                            behind crown interiors mall,<br>
+                            Ashoka Enclave 3, Ashoka Enclave Part 3,<br>
+                            Subash Nagar, Sector 35,<br>
+                            Faridabad, Haryana 121003<br>
+                            India
+                        </div>
+                        <div class="text-gray-400 text-sm mb-6">
+                            <strong class="text-gray-300">Nearby Landmarks:</strong><br>
+                            • Devsthal Mandir Temple (0.0 km)<br>
+                            • Crown Interiors Mall (0.3 km)<br>
+                            • Ashoka Enclave Main Road<br>
+                            • Near Metro Station accessible
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <a href="tel:+919667788196" class="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-300 hover:bg-teal-500/20 transition-all">
+                                <i class="fas fa-phone-alt"></i> 096677 88196
+                            </a>
+                            <a href="https://wa.me/919667788196" class="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-300 hover:bg-green-500/20 transition-all">
+                                <i class="fab fa-whatsapp"></i> WhatsApp Chat
+                            </a>
+                            <a href="tel:+919667788196" class="gradient-bg text-center text-white font-semibold px-5 py-3 rounded-xl glow-btn mt-2">
+                                <i class="fas fa-phone"></i> Call to Book Appointment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="scroll-fade">
+                    <div style="border-radius:16px;overflow:hidden;height:450px;border:1px solid rgba(255,255,255,0.1);">
+                        <iframe
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBxCQX6U6nqaSimRPwO5XskUZF9IQDycNA&q=458+near+DevSthal+mandir+behind+crown+interiors+mall+Ashoka+Enclave+3+Sector+35+Faridabad+Haryana+India&zoom=15"
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOURS ===== -->
+    <section id="hours" class="section-light py-24" style="position:relative;z-index:1;">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="text-center mb-12 scroll-fade">
+                <h2 class="section-title gradient-text">Clinic Hours</h2>
+                <p class="text-gray-400 mt-2">Plan your visit with our convenient schedule</p>
+            </div>
+            <div class="glass-card overflow-hidden scroll-fade">
+                <div class="gradient-bg p-5 text-center">
+                    <h3 class="text-xl font-bold text-white">Clinic Timings</h3>
+                    <p class="text-white/70 text-sm mt-1">Monday to Saturday | Closed on Sundays</p>
+                </div>
+                <div class="p-2">
+                    <div class="hours-row"><span class="day-name text-white font-medium">Monday</span><span class="hours-time text-gray-300">9:30 AM - 1:00 PM & 5:00 PM - 8:00 PM</span></div>
+                    <div class="hours-row"><span class="day-name text-white font-medium">Tuesday</span><span class="hours-time text-gray-300">9:30 AM - 1:00 PM & 5:00 PM - 8:00 PM</span></div>
+                    <div class="hours-row"><span class="day-name text-white font-medium">Wednesday</span><span class="hours-time text-gray-300">9:30 AM - 1:00 PM & 5:00 PM - 8:00 PM</span></div>
+                    <div class="hours-row"><span class="day-name text-white font-medium">Thursday</span><span class="hours-time text-gray-300">9:30 AM - 1:00 PM & 5:00 PM - 8:00 PM</span></div>
+                    <div class="hours-row"><span class="day-name text-white font-medium">Friday</span><span class="hours-time text-gray-300">9:30 AM - 1:00 PM & 5:00 PM - 8:00 PM</span></div>
+                    <div class="hours-row"><span class="day-name text-white font-medium">Saturday</span><span class="hours-time text-gray-300">9:30 AM - 1:00 PM & 5:00 PM - 8:00 PM</span></div>
+                    <div class="hours-row closed"><span class="day-name">Sunday</span><span class="hours-time">Closed</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TESTIMONIALS ===== -->
+    <section id="testimonials" class="section-darker py-24" style="position:relative;z-index:1;">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16 scroll-fade">
+                <h2 class="section-title gradient-text">What Patients Say</h2>
+                <p class="text-gray-400 mt-2">Genuine reviews from our 4.9/5 star rated dental clinic</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="testimonial-card glass-card p-6 scroll-fade">
+                    <div class="flex gap-1 text-yellow-400 mb-4 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-300 text-sm italic mb-5">&ldquo;Excellent service! Dr Sakshi is very professional and skilled. My teeth cleaning was painless and the clinic is spotless.&rdquo;</p>
+                    <div class="flex items-center gap-3">
+                        <svg width="44" height="44"><circle cx="22" cy="22" r="22" fill="#e74c3c"/><text x="22" y="28" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="16" fill="white">RS</text></svg>
+                        <div><h4 class="text-white text-sm font-semibold">Rahul Sharma</h4><p class="text-gray-500 text-xs">Business Owner</p></div>
+                    </div>
+                </div>
+                <div class="testimonial-card glass-card p-6 scroll-fade">
+                    <div class="flex gap-1 text-yellow-400 mb-4 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-300 text-sm italic mb-5">&ldquo;Amazing experience! The staff is friendly and Dr Sakshi explains everything clearly. My filling was quick and painless.&rdquo;</p>
+                    <div class="flex items-center gap-3">
+                        <svg width="44" height="44"><circle cx="22" cy="22" r="22" fill="#3498db"/><text x="22" y="28" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="16" fill="white">AP</text></svg>
+                        <div><h4 class="text-white text-sm font-semibold">Anita Patel</h4><p class="text-gray-500 text-xs">Teacher</p></div>
+                    </div>
+                </div>
+                <div class="testimonial-card glass-card p-6 scroll-fade">
+                    <div class="flex gap-1 text-yellow-400 mb-4 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-300 text-sm italic mb-5">&ldquo;Best dental clinic in Sector 35! The orthodontics treatment has been life-changing. Dr Sakshi&rsquo;s expertise is unmatched!&rdquo;</p>
+                    <div class="flex items-center gap-3">
+                        <svg width="44" height="44"><circle cx="22" cy="22" r="22" fill="#2ecc71"/><text x="22" y="28" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="16" fill="white">VM</text></svg>
+                        <div><h4 class="text-white text-sm font-semibold">Vikram Mehta</h4><p class="text-gray-500 text-xs">Engineer</p></div>
+                    </div>
+                </div>
+                <div class="testimonial-card glass-card p-6 scroll-fade">
+                    <div class="flex gap-1 text-yellow-400 mb-4 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                    <p class="text-gray-300 text-sm italic mb-5">&ldquo;Perfect teeth whitening experience! The results are amazing and natural-looking. Very clean facilities and professional staff.&rdquo;</p>
+                    <div class="flex items-center gap-3">
+                        <svg width="44" height="44"><circle cx="22" cy="22" r="22" fill="#f39c12"/><text x="22" y="28" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="16" fill="white">SC</text></svg>
+                        <div><h4 class="text-white text-sm font-semibold">Sneha Chaudhary</h4><p class="text-gray-500 text-xs">Entrepreneur</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact" class="section-light py-24" style="position:relative;z-index:1;">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="text-center mb-16 scroll-fade">
+                <h2 class="section-title gradient-text">Contact & Book Appointment</h2>
+                <p class="text-gray-400 mt-2">We&rsquo;re here to help you achieve your best smile</p>
+            </div>
+            <div class="glass-card p-8 md:p-12 scroll-fade">
+                <form id="appointmentForm" class="grid md:grid-cols-2 gap-5">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Full Name</label>
+                        <input type="text" class="form-input" placeholder="Your name" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Phone Number</label>
+                        <input type="tel" class="form-input" placeholder="Your phone number" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Email</label>
+                        <input type="email" class="form-input" placeholder="Your email">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Preferred Date</label>
+                        <input type="date" class="form-input">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Service Needed</label>
+                        <select class="form-input">
+                            <option value="" class="bg-gray-900">Select a service</option>
+                            <option value="cleaning" class="bg-gray-900">Teeth Cleaning</option>
+                            <option value="filling" class="bg-gray-900">Fillings</option>
+                            <option value="root-canal" class="bg-gray-900">Root Canal</option>
+                            <option value="whitening" class="bg-gray-900">Teeth Whitening</option>
+                            <option value="crowns" class="bg-gray-900">Crowns</option>
+                            <option value="pediatric" class="bg-gray-900">Pediatric Dentistry</option>
+                            <option value="ortho" class="bg-gray-900">Orthodontics</option>
+                            <option value="implants" class="bg-gray-900">Dental Implants</option>
+                            <option value="other" class="bg-gray-900">Other</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm text-gray-400 mb-2 font-medium">Message</label>
+                        <textarea class="form-input" rows="4" placeholder="Any specific concerns or questions..."></textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full gradient-bg text-white font-semibold py-4 rounded-xl glow-btn text-lg">
+                            <i class="fas fa-paper-plane"></i> Book Appointment
+                        </button>
+                    </div>
+                </form>
+                <div class="mt-8 pt-8 border-t border-white/5 text-center">
+                    <p class="text-gray-400 text-sm mb-4">Or call us directly:</p>
+                    <a href="tel:+919667788196" class="inline-flex items-center gap-3 gradient-bg text-white font-semibold px-8 py-4 rounded-full glow-btn text-lg">
+                        <i class="fas fa-phone-alt"></i> 096677 88196
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="position:relative;z-index:1;background:#060c18;border-top:1px solid rgba(255,255,255,0.05);padding:60px 20px 30px;">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 text-white font-bold text-xl mb-4">
+                        <svg width="36" height="36" viewBox="0 0 36 36"><rect width="36" height="36" rx="8" fill="#0d9488"/><text x="18" y="24" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="20" fill="white">D</text></svg>
+                        The Dental Clinic by Dr Sakshi
+                    </div>
+                    <p class="text-gray-500 text-sm max-w-md leading-relaxed">Premium dental care in Faridabad with 4.9/5 star rating. Excel in Every Smile We Create.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <div class="flex flex-col gap-2 text-sm">
+                        <a href="#home" class="text-gray-500 hover:text-teal-400 transition-colors">Home</a>
+                        <a href="#about" class="text-gray-500 hover:text-teal-400 transition-colors">About</a>
+                        <a href="#services" class="text-gray-500 hover:text-teal-400 transition-colors">Services</a>
+                        <a href="#contact" class="text-gray-500 hover:text-teal-400 transition-colors">Contact</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Contact</h4>
+                    <div class="flex flex-col gap-3 text-sm">
+                        <a href="tel:+919667788196" class="text-gray-500 hover:text-teal-400 transition-colors"><i class="fas fa-phone mr-2"></i> 096677 88196</a>
+                        <a href="https://wa.me/919667788196" class="text-gray-500 hover:text-teal-400 transition-colors"><i class="fab fa-whatsapp mr-2"></i> WhatsApp</a>
+                        <span class="text-gray-500"><i class="fas fa-map-marker-alt mr-2"></i> Sector 35, Faridabad</span>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/5 pt-6 text-center text-gray-600 text-sm">
+                &copy; 2026 The Dental Clinic by Dr Sakshi. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function closeNav() { document.getElementById('mobileNav').classList.remove('open'); }
+
+        // ===== Floating Particles =====
+        (function() {
+            const container = document.getElementById('particles-container');
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'floating-particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (10 + Math.random() * 20) + 's';
+                p.style.animationDelay = Math.random() * 20 + 's';
+                p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+                container.appendChild(p);
+            }
+        })();
+
+        // ===== Scroll Fade Observer =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.scroll-fade').forEach(el => observer.observe(el));
+
+        // ===== Nav Active on Scroll =====
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            let current = '';
+            sections.forEach(s => {
+                const top = s.offsetTop - 120;
+                if (window.pageYOffset >= top) current = s.getAttribute('id');
+            });
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+            });
+        });
+
+        // ===== Form Submit =====
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type=submit]');
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Request Sent!';
+                btn.style.background = 'linear-gradient(135deg, #16a34a, #22c55e)';
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    this.reset();
+                    alert('Thank you! We will contact you shortly to confirm your appointment.');
+                }, 2000);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
