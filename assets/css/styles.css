@@ -389,13 +389,13 @@ html.light * {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   gap: 2rem;
-  align-items: start;
+  align-items: center;
 }
 
 .hero-copy {
   position: relative;
   top: auto;
-  align-self: start;
+  align-self: center;
 }
 
 .hero-copy h1 {
@@ -426,6 +426,10 @@ html.light * {
   justify-content: center;
   gap: 1rem;
   margin-top: 2rem;
+}
+
+.hero-actions {
+  justify-content: flex-start;
 }
 
 .eyebrow {
@@ -505,6 +509,9 @@ html.light .hero-metric-icon {
 .hero-visual {
   position: relative;
   min-height: 100%;
+  overflow-x: clip;
+  display: flex;
+  align-items: center;
 }
 
 .hero-window {
@@ -2241,7 +2248,8 @@ html.light ::selection {
 /* ── Hero globe orbit ── */
 .hero-globe-stage {
   position: relative;
-  height: min(72vh, 780px);
+  height: 100%;
+  min-height: min(62vh, 620px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2252,13 +2260,13 @@ html.light ::selection {
   position: absolute;
   width: clamp(200px, 24vw, 320px);
   height: auto;
-  top: 6%;
+  top: 50%;
   opacity: 0.85;
   filter: drop-shadow(0 0 44px rgba(108, 123, 255, 0.4));
   animation: hgFloat 9s ease-in-out infinite;
 }
 
-@keyframes hgFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes hgFloat { 0%, 100% { transform: translateY(-50%); } 50% { transform: translateY(calc(-50% - 14px)); } }
 
 .hg-lat, .hg-lon { fill: none; stroke: rgba(140, 155, 255, 0.45); stroke-width: 1; }
 .hg-outline { fill: url(#tkGlobeFill); stroke: rgba(160, 170, 255, 0.7); stroke-width: 1.6; }
