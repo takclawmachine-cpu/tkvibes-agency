@@ -33,10 +33,16 @@ html {
   scroll-behavior: smooth;
 }
 
+html {
+  min-height: 100%;
+  background: #05070b;
+}
+
 body {
   margin: 0;
   color: var(--color-text-primary);
-  background: linear-gradient(180deg, #05070b 0%, #070b12 48%, #05070b 100%);
+  background: linear-gradient(180deg, #05070b 0%, #070b12 48%, #05070b 100%) fixed;
+  background-attachment: fixed;
   font-family: var(--font-sans), sans-serif;
   min-height: 100vh;
 }
@@ -57,17 +63,71 @@ select {
   color: #ffffff;
 }
 
+/* Themed scrollbar (WebKit/Blink + Firefox) */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 11px;
+  height: 11px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(124, 140, 255, 0.05);
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(124, 140, 255, 0.28);
   border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 140, 255, 0.45);
+  background-clip: padding-box;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 140, 255, 0.35) rgba(124, 140, 255, 0.06);
+}
+
+/* Dark theme: keep the glowing blue rail visible on the dark canvas */
+html.dark ::-webkit-scrollbar-track {
+  background: rgba(124, 140, 255, 0.06);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(124, 140, 255, 0.3);
+  background-clip: padding-box;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 140, 255, 0.5);
+  background-clip: padding-box;
+}
+
+html.dark * {
+  scrollbar-color: rgba(124, 140, 255, 0.4) rgba(124, 140, 255, 0.07);
+}
+
+/* Light theme: deeper blue rail so it reads on the light canvas */
+html.light ::-webkit-scrollbar-track {
+  background: rgba(91, 108, 255, 0.07);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(91, 108, 255, 0.4);
+  background-clip: padding-box;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(91, 108, 255, 0.6);
+  background-clip: padding-box;
+}
+
+html.light * {
+  scrollbar-color: rgba(91, 108, 255, 0.45) rgba(91, 108, 255, 0.08);
 }
 
 .site-noise {
@@ -1985,7 +2045,8 @@ html.light {
 }
 
 html.light body {
-  background: linear-gradient(180deg, #f8faff 0%, #f1f5fc 48%, #f8faff 100%);
+  background: linear-gradient(180deg, #f8faff 0%, #f1f5fc 48%, #f8faff 100%) fixed;
+  background-attachment: fixed;
 }
 
 html.light .site-aurora,
@@ -2201,8 +2262,8 @@ html.light ::selection {
 
 .hg-lat, .hg-lon { fill: none; stroke: rgba(140, 155, 255, 0.45); stroke-width: 1; }
 .hg-outline { fill: url(#tkGlobeFill); stroke: rgba(160, 170, 255, 0.7); stroke-width: 1.6; }
-.hg-lon-spin { animation: hgLonSpin 14s linear infinite; transform-origin: 170px 170px; }
-@keyframes hgLonSpin { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+.hg-lon-spin { transform-box: fill-box; transform-origin: center; animation: hgLonSpin 14s linear infinite; }
+@keyframes hgLonSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 .hero-globe-glow {
   position: absolute;
