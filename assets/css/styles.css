@@ -2255,6 +2255,8 @@ html.light ::selection {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  transform: translateZ(0);
+  contain: layout style paint;
 }
 
 .hero-globe {
@@ -2272,7 +2274,7 @@ html.light ::selection {
 .hg-lat, .hg-lon { fill: none; stroke: rgba(140, 155, 255, 0.45); stroke-width: 1; }
 .hg-outline { fill: url(#tkGlobeFill); stroke: rgba(160, 170, 255, 0.7); stroke-width: 1.6; }
 .hg-lon-spin { transform-box: fill-box; transform-origin: center; animation: hgLonSpin 14s linear infinite; }
-@keyframes hgLonSpin { 0% { transform: scaleX(1); } 25% { transform: scaleX(0); } 50% { transform: scaleX(-1); } 75% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes hgLonSpin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
 
 .hero-globe-glow {
   position: absolute;
@@ -2324,8 +2326,10 @@ html.light ::selection {
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(108, 123, 255, 0.08);
   animation: hgOrbit 13.33s linear infinite;
   animation-delay: calc(var(--i) * -2.666s);
-  will-change: transform, filter, opacity;
+  will-change: transform, opacity;
+  transform: translateZ(0);
   backface-visibility: hidden;
+  contain: layout style paint;
 }
 
 .hero-orbit-card::before {
@@ -2408,15 +2412,15 @@ html.light ::selection {
 }
 
 @keyframes hgOrbit {
-  0%    { transform: translate3d(0%, 22%, 0) scale(1);    z-index: 30; opacity: 1;    filter: blur(0) brightness(1); }
-  12.5% { transform: translate3d(24%, 14%, 0) scale(0.72); z-index: 22; opacity: 1;    filter: blur(0.2px) brightness(0.95); }
-  25%   { transform: translate3d(34%, -4%, 0) scale(0.46); z-index: 15; opacity: 0.9;  filter: blur(0.7px) brightness(0.82); }
-  37.5% { transform: translate3d(24%, -22%, 0) scale(0.36); z-index: 6;  opacity: 0.7;  filter: blur(1.2px) brightness(0.68); }
-  50%   { transform: translate3d(0%, -30%, 0) scale(0.32); z-index: 1;  opacity: 0.55; filter: blur(1.5px) brightness(0.6); }
-  62.5% { transform: translate3d(-24%, -22%, 0) scale(0.36); z-index: 6;  opacity: 0.7;  filter: blur(1.2px) brightness(0.68); }
-  75%   { transform: translate3d(-34%, -4%, 0) scale(0.46); z-index: 15; opacity: 0.9;  filter: blur(0.7px) brightness(0.82); }
-  87.5% { transform: translate3d(-24%, 14%, 0) scale(0.72); z-index: 22; opacity: 1;    filter: blur(0.2px) brightness(0.95); }
-  100%  { transform: translate3d(0%, 22%, 0) scale(1);    z-index: 30; opacity: 1;    filter: blur(0) brightness(1); }
+  0%    { transform: translate3d(0%, 22%, 0) scale(1);    z-index: 30; opacity: 1; }
+  12.5% { transform: translate3d(24%, 14%, 0) scale(0.72); z-index: 22; opacity: 1; }
+  25%   { transform: translate3d(34%, -4%, 0) scale(0.46); z-index: 15; opacity: 0.9; }
+  37.5% { transform: translate3d(24%, -22%, 0) scale(0.36); z-index: 6;  opacity: 0.7; }
+  50%   { transform: translate3d(0%, -30%, 0) scale(0.32); z-index: 1;  opacity: 0.55; }
+  62.5% { transform: translate3d(-24%, -22%, 0) scale(0.36); z-index: 6;  opacity: 0.7; }
+  75%   { transform: translate3d(-34%, -4%, 0) scale(0.46); z-index: 15; opacity: 0.9; }
+  87.5% { transform: translate3d(-24%, 14%, 0) scale(0.72); z-index: 22; opacity: 1; }
+  100%  { transform: translate3d(0%, 22%, 0) scale(1);    z-index: 30; opacity: 1; }
 }
 
 html.light .hero-orbit-card { border-color: rgba(91, 108, 255, 0.25); box-shadow: 0 24px 60px rgba(30, 34, 90, 0.25); }
