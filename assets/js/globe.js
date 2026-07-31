@@ -200,9 +200,7 @@
     // Clear
     ctx.clearRect(0, 0, W, H);
 
-    // Background fill
-    ctx.fillStyle = p.bg;
-    ctx.fillRect(0, 0, W, H);
+    // Canvas is transparent — page background shows through
 
     // Stars (dark mode only)
     drawStars(p);
