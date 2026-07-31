@@ -2310,15 +2310,15 @@ html.light ::selection {
   left: 50%;
   width: clamp(340px, 36vw, 520px);
   aspect-ratio: 52 / 34;
-  margin: calc(clamp(340px, 36vw, 520px) * -0.327) 0 0 calc(clamp(340px, 36vw, 520px) * -0.5);
+  margin: calc(clamp(340px, 36vw, 520px) * 34 / 52 * -0.5) 0 0 calc(clamp(340px, 36vw, 520px) * -0.5);
   border-radius: 16px;
   overflow: hidden;
   background: #101026;
   border: 1px solid rgba(160, 170, 255, 0.28);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(108, 123, 255, 0.08);
-  animation: hgOrbit 13.33s linear infinite;
-  animation-delay: calc(var(--i) * -2.666s);
-  will-change: transform, opacity;
+  animation: hgOrbit 16s linear infinite;
+  animation-delay: calc(var(--i) * -3.2s);
+  will-change: transform, opacity, z-index;
   transform: translateZ(0);
   backface-visibility: hidden;
   contain: layout style paint;
@@ -2332,8 +2332,8 @@ html.light ::selection {
   pointer-events: none;
   background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.09) 48%, transparent 62%);
   background-size: 250% 100%;
-  animation: hgSheen 13.33s linear infinite;
-  animation-delay: calc(var(--i) * -2.666s);
+  animation: hgSheen 16s linear infinite;
+  animation-delay: calc(var(--i) * -3.2s);
 }
 
 @keyframes hgSheen {
@@ -2351,8 +2351,8 @@ html.light ::selection {
   border-radius: 16px;
   box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.55), 0 0 34px rgba(108, 123, 255, 0.35);
   opacity: 0;
-  animation: hgEdgeGlow 13.33s linear infinite;
-  animation-delay: calc(var(--i) * -2.666s);
+  animation: hgEdgeGlow 16s linear infinite;
+  animation-delay: calc(var(--i) * -3.2s);
 }
 
 @keyframes hgEdgeGlow { 0% { opacity: 0; } 4%, 15% { opacity: 1; } 19%, 100% { opacity: 0; } }
@@ -2404,15 +2404,15 @@ html.light ::selection {
 }
 
 @keyframes hgOrbit {
-  0%    { transform: translate3d(0%, 22%, 0) scale(1);    z-index: 30; opacity: 1; }
-  12.5% { transform: translate3d(24%, 14%, 0) scale(0.72); z-index: 22; opacity: 1; }
-  25%   { transform: translate3d(34%, -4%, 0) scale(0.46); z-index: 15; opacity: 0.9; }
-  37.5% { transform: translate3d(24%, -22%, 0) scale(0.36); z-index: 6;  opacity: 0.7; }
-  50%   { transform: translate3d(0%, -30%, 0) scale(0.32); z-index: 1;  opacity: 0.55; }
-  62.5% { transform: translate3d(-24%, -22%, 0) scale(0.36); z-index: 6;  opacity: 0.7; }
-  75%   { transform: translate3d(-34%, -4%, 0) scale(0.46); z-index: 15; opacity: 0.9; }
-  87.5% { transform: translate3d(-24%, 14%, 0) scale(0.72); z-index: 22; opacity: 1; }
-  100%  { transform: translate3d(0%, 22%, 0) scale(1);    z-index: 30; opacity: 1; }
+  0%    { transform: translate3d(0%, 18%, 0) scale(1.0);  z-index: 30; opacity: 1;    }
+  12.5% { transform: translate3d(22%, 10%, 0) scale(0.78); z-index: 24; opacity: 1;    }
+  25%   { transform: translate3d(30%, -6%, 0) scale(0.52); z-index: 16; opacity: 0.92; }
+  37.5% { transform: translate3d(18%, -20%, 0) scale(0.38); z-index: 8;  opacity: 0.72; }
+  50%   { transform: translate3d(0%, -26%, 0) scale(0.32); z-index: 1;  opacity: 0.55; }
+  62.5% { transform: translate3d(-18%, -20%, 0) scale(0.38); z-index: 8;  opacity: 0.72; }
+  75%   { transform: translate3d(-30%, -6%, 0) scale(0.52); z-index: 16; opacity: 0.92; }
+  87.5% { transform: translate3d(-22%, 10%, 0) scale(0.78); z-index: 24; opacity: 1;    }
+  100%  { transform: translate3d(0%, 18%, 0) scale(1.0);  z-index: 30; opacity: 1;    }
 }
 
 html.light .hero-orbit-card { border-color: rgba(91, 108, 255, 0.25); box-shadow: 0 24px 60px rgba(30, 34, 90, 0.25); }
@@ -2422,7 +2422,7 @@ html.light #hero-globe-canvas { opacity: 1; }
 
 @media (max-width: 991px) {
   .hero-globe-stage { height: 420px; }
-  .hero-orbit-card { width: clamp(260px, 70vw, 360px); margin-left: calc(clamp(260px, 70vw, 360px) * -0.5); margin-top: calc(clamp(260px, 70vw, 360px) * -0.327); }
+  .hero-orbit-card { width: clamp(260px, 70vw, 360px); margin-left: calc(clamp(260px, 70vw, 360px) * -0.5); margin-top: calc(clamp(260px, 70vw, 360px) * 34 / 52 * -0.5); }
 }
 
 @media (prefers-reduced-motion: reduce) {
