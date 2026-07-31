@@ -2318,8 +2318,8 @@ html.light ::selection {
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(108, 123, 255, 0.08);
   animation: hgOrbit 16s linear infinite;
   animation-delay: calc(var(--i) * -3.2s);
-  will-change: transform, opacity, z-index;
-  transform: translateZ(0);
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
   backface-visibility: hidden;
   contain: layout style paint;
 }
@@ -2404,15 +2404,13 @@ html.light ::selection {
 }
 
 @keyframes hgOrbit {
-  0%    { transform: translate3d(0%, 18%, 0) scale(1.0);  z-index: 30; opacity: 1;    }
-  12.5% { transform: translate3d(22%, 10%, 0) scale(0.78); z-index: 24; opacity: 1;    }
-  25%   { transform: translate3d(30%, -6%, 0) scale(0.52); z-index: 16; opacity: 0.92; }
-  37.5% { transform: translate3d(18%, -20%, 0) scale(0.38); z-index: 8;  opacity: 0.72; }
-  50%   { transform: translate3d(0%, -26%, 0) scale(0.32); z-index: 1;  opacity: 0.55; }
-  62.5% { transform: translate3d(-18%, -20%, 0) scale(0.38); z-index: 8;  opacity: 0.72; }
-  75%   { transform: translate3d(-30%, -6%, 0) scale(0.52); z-index: 16; opacity: 0.92; }
-  87.5% { transform: translate3d(-22%, 10%, 0) scale(0.78); z-index: 24; opacity: 1;    }
-  100%  { transform: translate3d(0%, 18%, 0) scale(1.0);  z-index: 30; opacity: 1;    }
+  0%    { transform: translate3d(0%, 18%, 0) scale(1.0)  rotateY(0deg);    opacity: 1;    }
+  6%    { opacity: 1;    }
+  25%   { transform: translate3d(30%, -6%, 0) scale(0.72) rotateY(90deg);   opacity: 0;    }
+  50%   { transform: translate3d(0%, -26%, 0) scale(0.5) rotateY(180deg);  opacity: 0;    }
+  75%   { transform: translate3d(-30%, -6%, 0) scale(0.72) rotateY(270deg);  opacity: 0;    }
+  94%   { opacity: 0;    }
+  100%  { transform: translate3d(0%, 18%, 0) scale(1.0)  rotateY(360deg);  opacity: 1;    }
 }
 
 html.light .hero-orbit-card { border-color: rgba(91, 108, 255, 0.25); box-shadow: 0 24px 60px rgba(30, 34, 90, 0.25); }
