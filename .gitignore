@@ -15,3 +15,8 @@ Thumbs.db
 
 # Legacy Next.js
 next-env.d.ts
+
+# Hermes local config / credentials
+.hermes/gsc-*
+.hermes/__pycache__/
+.hermes/desktop-attachments/
