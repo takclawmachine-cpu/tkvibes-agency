@@ -3118,8 +3118,15 @@ html.light .plan-service-item.selected {
   }
 
   .nav-button {
-    display: none;
-  }
+      display: none;
+    }
+
+    .nav-links.open .nav-button-mobile {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      margin-top: 0.3rem;
+    }
 
   .mobile-toggle {
     display: inline-flex;
