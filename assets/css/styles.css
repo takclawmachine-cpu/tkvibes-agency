@@ -1675,7 +1675,7 @@ html.light .enterprise-form select {
   backdrop-filter: blur(6px);
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 5rem 1rem 2rem;
 }
 
 .plan-modal-overlay.open {
@@ -1688,11 +1688,10 @@ html.light .enterprise-form select {
   border-radius: 1.4rem;
   width: 100%;
   max-width: 780px;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
   position: relative;
   animation: modalFadeIn 0.25s ease-out;
-  margin: 5rem auto 2rem;
 }
 
 @keyframes modalFadeIn {
