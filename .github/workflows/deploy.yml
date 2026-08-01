@@ -35,14 +35,16 @@ jobs:
             set ftp:ssl-protect-data yes;
             set ftp:ssl-force yes;
             set ssl:verify-certificate no;
-            set net:timeout 60;
-            set net:max-retries 10;
-            set net:reconnect-interval-base 5;
-            set net:reconnect-interval-max 30;
+            set ftp:passive-mode yes;
+            set dns:order 'inet inet6';
+            set net:timeout 120;
+            set net:max-retries 15;
+            set net:reconnect-interval-base 10;
+            set net:reconnect-interval-max 60;
             set ftp:rest-list no;
             set ftp:use-mdtm off;
             open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
-            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=5 \
+            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 \
               --exclude-glob=.git* \
               --exclude-glob=.github/** \
               --exclude-glob=scripts/** \

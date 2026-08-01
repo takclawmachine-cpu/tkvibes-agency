@@ -20,3 +20,5 @@ next-env.d.ts
 .hermes/gsc-*
 .hermes/__pycache__/
 .hermes/desktop-attachments/
+.hermes-verify-tmp.js
+local-llm/
