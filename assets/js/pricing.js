@@ -49,9 +49,34 @@
     return currencyCode + ' ' + Math.round(amount).toLocaleString('en-US')
   }
 
+  /* ── Convert text containing INR numbers ─────── */
+  function convertInrText(text, rate, currencyCode) {
+    // Replace all "Rs [number]" patterns with converted currency
+    return text.replace(/Rs\s*([\d,]+)/g, function (match, numStr) {
+      var inrVal = parseFloat(numStr.replace(/,/g, ''))
+      if (isNaN(inrVal)) return match
+      var convertedVal = inrVal * rate * MARKUP
+      return formatCurrency(convertedVal, currencyCode)
+    })
+  }
+
   function updatePrices(currencyCode, rate) {
     prices.forEach(function (el) {
       var raw = el.getAttribute('data-inr')
+      // ── Select elements (e.g. budget dropdown) ──
+      if (el.tagName === 'SELECT') {
+        var options = el.querySelectorAll('option[data-inr-value]')
+        options.forEach(function (opt) {
+          // Store original text on first run
+          if (!opt.hasAttribute('data-original-text')) {
+            opt.setAttribute('data-original-text', opt.textContent)
+          }
+          var original = opt.getAttribute('data-original-text')
+          opt.textContent = convertInrText(original, rate, currencyCode)
+        })
+        return
+      }
+      // ── Regular price spans ──
       if (!raw) return
       var inrVal = parseFloat(raw.replace(/,/g, ''))
       if (isNaN(inrVal)) return

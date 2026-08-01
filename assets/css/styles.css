@@ -6,6 +6,8 @@
   --color-surface: rgba(16, 20, 30, 0.76);
   --color-surface-strong: #111827;
   --color-surface-elevated: rgba(22, 28, 40, 0.94);
+   --color-bg: var(--color-background);
+   --color-card-bg: var(--color-surface-elevated);
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-strong: rgba(255, 255, 255, 0.16);
   --color-text-primary: #f5f7fb;
@@ -1316,11 +1318,422 @@ html.light .team-card .team-avatar {
   color: var(--color-primary-strong);
   font-weight: 700;
 }
-
+/* ── CTA / custom plan card ─────────────────── */
 .custom-plan-card {
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
+}
+
+.custom-plan-trigger {
+  margin-top: 2.4rem;
+  text-align: center;
+}
+
+.custom-plan-trigger .btn-build-plan {
+  font-size: 1.05rem;
+  padding: 0.9rem 2.2rem;
+}
+
+.plan-trigger-sub {
+  margin-top: 0.6rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Service Menu Grid ──────────────────────── */
+.service-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+
+.service-menu-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: 1.2rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-card-bg);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.service-menu-card:hover {
+  border-color: var(--color-primary-strong);
+  transform: translateY(-2px);
+}
+
+.service-menu-card .sm-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.7rem;
+  background: linear-gradient(135deg, rgba(124, 140, 255, 0.15), rgba(124, 140, 255, 0.05));
+  color: var(--color-primary-strong);
+  font-size: 1.1rem;
+}
+
+.service-menu-card .sm-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.service-menu-card .sm-body h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.service-menu-card .sm-body p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.service-menu-card .sm-price {
+  margin-top: 0.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-primary-strong);
+}
+
+.service-menu-card .sm-price small {
+  font-weight: 400;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Plan Builder Modal ─────────────────────── */
+.plan-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.plan-modal-overlay.open {
+  display: flex;
+}
+
+.plan-modal {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 1.4rem;
+  width: 100%;
+  max-width: 780px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.plan-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.plan-modal-close:hover {
+  background: rgba(124, 140, 255, 0.1);
+  color: var(--color-text-primary);
+}
+
+.plan-modal-header {
+  padding: 1.6rem 1.6rem 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.plan-modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plan-modal-header h3 i {
+  color: var(--color-primary-strong);
+}
+
+.plan-modal-header p {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  max-width: 500px;
+}
+
+.plan-modal-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  padding: 1.2rem 1.6rem 1.6rem;
+}
+
+@media (max-width: 700px) {
+  .plan-modal-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plan-modal-services h4,
+.plan-modal-summary h4 {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono), monospace;
+}
+
+.plan-service-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 0.4rem;
+}
+
+.plan-service-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+}
+
+.plan-service-item:hover {
+  border-color: var(--color-primary-strong);
+}
+
+.plan-service-item.selected {
+  border-color: var(--color-primary-strong);
+  background: rgba(124, 140, 255, 0.08);
+}
+
+.plan-service-item .psi-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.plan-service-item.selected .psi-check {
+  background: var(--color-primary-strong);
+  border-color: var(--color-primary-strong);
+  color: #fff;
+}
+
+.plan-service-item .psi-check i {
+  font-size: 0.65rem;
+  display: none;
+}
+
+.plan-service-item.selected .psi-check i {
+  display: block;
+}
+
+.plan-service-item .psi-name {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.plan-service-item .psi-price {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-strong);
+  white-space: nowrap;
+}
+
+/* ── Summary panel ─────────────────────────── */
+.plan-summary-items {
+  min-height: 60px;
+  margin-bottom: 0.6rem;
+}
+
+.plan-summary-empty {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.plan-summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.plan-summary-item:last-child {
+  border-bottom: none;
+}
+
+.plan-summary-item .psi-item-name {
+  color: var(--color-text-muted);
+}
+
+.plan-summary-item .psi-item-price {
+  font-weight: 600;
+}
+
+.plan-summary-total {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0.6rem 0 1rem;
+  padding-top: 0.6rem;
+  border-top: 2px solid var(--color-primary-strong);
+  color: var(--color-primary-strong);
+}
+
+/* ── Form inside modal ─────────────────────── */
+.plan-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.plan-modal-form input,
+.plan-modal-form textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.6rem;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.plan-modal-form input:focus,
+.plan-modal-form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-strong);
+}
+
+.plan-modal-form .btn-custom {
+  margin-top: 0.4rem;
+}
+
+.plan-modal-note {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+/* ── Success overlay ───────────────────────── */
+.plan-success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.plan-success-overlay.open {
+  display: flex;
+}
+
+.plan-success {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 1.4rem;
+  padding: 2.4rem 2rem;
+  max-width: 440px;
+  text-align: center;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.plan-success-icon {
+  font-size: 3rem;
+  color: #22c55e;
+  margin-bottom: 0.6rem;
+}
+
+.plan-success h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.plan-success p {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1.2rem;
+  line-height: 1.5;
+}
+
+.plan-success-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.plan-success-links .btn-custom {
+  font-size: 0.85rem;
+}
+
+html.light .plan-modal-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+html.light .plan-success-links .btn-outline-custom {
+  border-color: var(--color-border);
+}
+
+html.light .plan-service-item.selected {
+  background: rgba(124, 140, 255, 0.06);
 }
 
 .faq-grid {
@@ -2040,6 +2453,8 @@ html.light {
   --color-surface: rgba(255, 255, 255, 0.92);
   --color-surface-strong: #ffffff;
   --color-surface-elevated: rgba(255, 255, 255, 0.98);
+   --color-bg: var(--color-background);
+   --color-card-bg: var(--color-surface-elevated);
   --color-border: rgba(15, 23, 42, 0.08);
   --color-border-strong: rgba(15, 23, 42, 0.14);
   --color-text-primary: #0f172a;
