@@ -1688,10 +1688,11 @@ html.light .enterprise-form select {
   border-radius: 1.4rem;
   width: 100%;
   max-width: 780px;
-  max-height: 90vh;
+  max-height: 80vh;
   overflow-y: auto;
   position: relative;
   animation: modalFadeIn 0.25s ease-out;
+  margin: 5rem auto 2rem;
 }
 
 @keyframes modalFadeIn {
