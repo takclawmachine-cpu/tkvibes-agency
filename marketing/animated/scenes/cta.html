@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html><head><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1920px;overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#6C5CE7 0%,#2D3436 100%)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(108,92,231,0.3)}50%{box-shadow:0 0 50px rgba(108,92,231,0.6)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes popIn{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+
+.scene{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow:hidden}
+
+/* USP cards */
+.usp-title{font-size:44px;font-weight:900;color:#FFFFFF;margin-bottom:30px;animation:fadeIn 0.5s 0.1s both;text-align:center}
+.usp-title span{color:#FDCB6E}
+
+.usp-grid{display:grid;grid-template-columns:1fr;gap:14px;width:82%;z-index:2}
+.usp{background:rgba(255,255,255,0.06);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:18px;border:1px solid rgba(255,255,255,0.1);animation:slideUp 0.4s both}
+.usp:nth-child(1){animation-delay:0.3s}.usp:nth-child(2){animation-delay:0.6s}.usp:nth-child(3){animation-delay:0.9s}
+.usp-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.usp-text{font-size:28px;font-weight:700;color:#FFFFFF}
+.usp-sub{font-size:18px;color:#BDC3C7;margin-top:2px}
+.icon-purple{background:rgba(155,89,182,0.2);color:#BB86FC}
+.icon-green{background:rgba(46,204,113,0.2);color:#2ECC71}
+.icon-gold{background:rgba(253,203,110,0.2);color:#FDCB6E}
+
+/* CTA Buttons */
+.cta-row{display:flex;flex-direction:column;gap:12px;width:82%;margin-top:20px;animation:slideUp 0.5s 1.3s both}
+.cta-btn{padding:18px 24px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:28px;font-weight:700;animation:fadeIn 0.5s both}
+.cta-btn.primary{background:linear-gradient(135deg,#FDCB6E,#E67E22);color:#2D3436;animation:glow 3s infinite}
+.cta-btn.secondary{background:rgba(255,255,255,0.08);color:#FFFFFF;border:2px solid rgba(255,255,255,0.15)}
+
+/* Contact */
+.contact{display:flex;gap:30px;margin-top:16px;animation:slideUp 0.5s 1.8s both}
+.ci{text-align:center}
+.ci .ci-icon{font-size:28px}
+.ci .ci-val{font-size:20px;color:#FFFFFF;font-weight:600;margin-top:5px}
+.ci .ci-lbl{font-size:14px;color:#888}
+
+/* Bottom brand */
+.brand-arc{position:absolute;bottom:3%;font-size:80px;font-weight:900;color:rgba(108,92,231,0.15);letter-spacing:8px}
+
+/* Floating elements */
+.f1,.f2{position:absolute;border-radius:50%;opacity:0.06}
+.f1{width:250px;height:250px;background:#6C5CE7;top:-60px;right:-60px;animation:float 5s infinite}
+.f2{width:180px;height:180px;background:#00CEC9;bottom:20%;left:-50px;animation:float 4s infinite 1s}
+</style></head><body>
+<div class="scene">
+  <div class="f1"></div><div class="f2"></div>
+  <div class="brand-arc">TKVIBES</div>
+
+  <div class="usp-title">Why <span>TKVibes?</span></div>
+
+  <div class="usp-grid">
+    <div class="usp">
+      <div class="usp-icon icon-green">&#127760;</div>
+      <div><div class="usp-text">Free Sample Website</div><div class="usp-sub">See what we can build for you, before you commit</div></div>
+    </div>
+    <div class="usp">
+      <div class="usp-icon icon-purple">&#128196;</div>
+      <div><div class="usp-text">Custom Pitch Deck</div><div class="usp-sub">Tailored strategy deck for your business goals</div></div>
+    </div>
+    <div class="usp">
+      <div class="usp-icon icon-gold">&#128736;</div>
+      <div><div class="usp-text">Flexible Plans</div><div class="usp-sub">Customizable packages designed around your budget</div></div>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <div class="cta-btn primary">&#128222; Book Free Consultation</div>
+    <div class="cta-btn secondary">&#127760; Visit tkvibes.in</div>
+  </div>
+
+  <div class="contact">
+    <div class="ci"><div class="ci-icon">&#128222;</div><div class="ci-val">+91 98182 46938</div><div class="ci-lbl">Call Now</div></div>
+    <div class="ci"><div class="ci-icon">&#9993;</div><div class="ci-val">services@tkvibes.in</div><div class="ci-lbl">Email Us</div></div>
+  </div>
+</div>
+</body></html>

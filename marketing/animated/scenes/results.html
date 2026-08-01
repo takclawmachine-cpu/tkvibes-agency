@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html><head><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1920px;overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#00CEC9 0%,#6C5CE7 100%)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes countNum{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:translateY(0)}}
+
+.scene{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px}
+.title{font-size:48px;font-weight:900;color:#FFFFFF;margin-bottom:35px;animation:fadeIn 0.5s 0.1s both;text-align:center}
+.title span{color:#FDCB6E}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:82%;z-index:2}
+.card{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border-radius:18px;padding:24px;text-align:center;border:1px solid rgba(255,255,255,0.12);animation:slideUp 0.4s both}
+.card:nth-child(1){animation-delay:0.3s}.card:nth-child(2){animation-delay:0.6s}
+.card:nth-child(3){animation-delay:0.9s}.card:nth-child(4){animation-delay:1.2s}
+.num{font-size:52px;font-weight:900;color:#FDCB6E;animation:countNum 0.5s both}
+.card:nth-child(1) .num{animation-delay:0.5s}
+.lbl{font-size:18px;color:#BDC3C7;margin-top:6px}
+.ico{font-size:32px;margin-bottom:8px}
+
+/* Testimonial */
+.test{width:82%;background:rgba(255,255,255,0.06);backdrop-filter:blur(10px);border-radius:18px;padding:22px 28px;margin-top:20px;border:1px solid rgba(255,255,255,0.12);animation:slideUp 0.5s 1.6s both;position:relative}
+.test .qm{font-size:50px;color:#FDCB6E;opacity:0.4;position:absolute;top:8px;left:16px}
+.test p{font-size:24px;color:#FFFFFF;line-height:1.4;font-style:italic;margin:8px 0 12px}
+.test .auth{font-size:20px;color:#FDCB6E;font-weight:700}
+.test .role{font-size:16px;color:#BDC3C7}
+
+/* Clients ribbon */
+.ribbon{display:flex;gap:14px;margin-top:18px;animation:fadeIn 0.5s 2.2s both}
+.rd{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:rgba(255,255,255,0.4)}
+</style></head><body>
+<div class="scene">
+  <div class="title">Proof in the <span>Results</span></div>
+
+  <div class="grid">
+    <div class="card"><div class="ico">&#127760;</div><div class="num">50+</div><div class="lbl">Websites Delivered</div></div>
+    <div class="card"><div class="ico">&#128200;</div><div class="num">#1</div><div class="lbl">Google Rankings</div></div>
+    <div class="card"><div class="ico">&#128176;</div><div class="num">2.5x</div><div class="lbl">Avg Return on Ads</div></div>
+    <div class="card"><div class="ico">&#128101;</div><div class="num">98%</div><div class="lbl">Client Satisfaction</div></div>
+  </div>
+
+  <div class="test">
+    <div class="qm">&ldquo;</div>
+    <p>They transformed our online presence completely. Our leads went up 3x in the first month. Highly recommended!</p>
+    <div class="auth">- Rahul Sharma</div>
+    <div class="role">Founder, TechStart India</div>
+  </div>
+
+  <div class="ribbon">
+    <div class="rd">T</div><div class="rd">D</div><div class="rd">M</div><div class="rd">S</div><div class="rd">R</div><div class="rd">+</div>
+  </div>
+</div>
+</body></html>

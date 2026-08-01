@@ -485,8 +485,8 @@
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
         @media (max-width: 640px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
         .gallery-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; }
-        .gallery-item svg { width: 100%; height: 100%; display: block; transition: transform 0.6s; }
-        .gallery-item:hover svg { transform: scale(1.1); }
+        .gallery-item svg, .gallery-item img { width: 100%; height: 100%; display: block; transition: transform 0.6s; }
+                .gallery-item:hover svg, .gallery-item:hover img { transform: scale(1.1); }
         .gallery-badge { position: absolute; top: 10px; left: 10px; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
         .gallery-badge.before { background: rgba(239,68,68,0.85); color: white; }
         .gallery-badge.after { background: rgba(34,197,94,0.85); color: white; }
@@ -804,7 +804,7 @@
                 <div class="relative hidden lg:block" data-gsap="fade-up" data-delay="0.2">
                     <div class="relative">
                         <!-- Replaced YouTube video with relatable water tank cleaning technology video -->
-                        <iframe class="w-full aspect-video rounded-2xl shadow-2xl border border-white/10" src="https://www.youtube.com/embed/HSjzfjgYh0E?modestbranding=1&rel=0" title="Water Tank Cleaning Process" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe class="w-full aspect-video rounded-2xl shadow-2xl border border-white/10" src="https://www.youtube.com/embed/EseNNEVo87E?modestbranding=1&rel=0" title="Water Tank Cleaning Process" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         <div class="absolute -bottom-4 -left-4 glass-strong rounded-xl px-5 py-3 flex items-center gap-3">
                             <i class="fas fa-shield-halved text-2xl gradient-text"></i>
                             <div><span class="block font-bold text-sm">93%</span><span class="block text-xs text-slate-400">Satisfaction Rate</span></div>
@@ -866,32 +866,14 @@
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div data-gsap="fade-right">
                     <div class="relative">
-                        <!-- SVG Person Silhouette instead of external image -->
-                        <svg viewBox="0 0 400 500" class="w-full max-w-sm mx-auto rounded-2xl shadow-2xl border border-white/10" style="background: linear-gradient(135deg, #1a237e, #0e7490);">
-                            <defs>
-                                <linearGradient id="abg" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#0e7490"/>
-                                </linearGradient>
-                            </defs>
-                            <rect width="400" height="500" rx="16" fill="url(#abg)"/>
-                            <!-- Decorative circles -->
-                            <circle cx="200" cy="150" r="80" fill="rgba(255,255,255,0.08)"/>
-                            <circle cx="200" cy="150" r="60" fill="rgba(255,255,255,0.1)"/>
-                            <circle cx="200" cy="150" r="45" fill="rgba(255,255,255,0.15)"/>
-                            <circle cx="200" cy="150" r="50" fill="rgba(255,255,255,0.95)"/>
-                            <!-- Person -->
-                            <circle cx="200" cy="130" r="30" fill="#1e3a8a"/>
-                            <ellipse cx="200" cy="200" rx="50" ry="30" fill="#1e3a8a"/>
-                            <rect x="150" y="220" width="100" height="120" rx="10" fill="#1e3a8a"/>
-                            <!-- Name badge -->
-                            <rect x="100" y="380" width="200" height="60" rx="30" fill="rgba(255,255,255,0.15)"/>
-                            <text x="200" y="408" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="18" fill="white">Mr. Deepak</text>
-                            <text x="200" y="428" text-anchor="middle" font-family="Inter" font-weight="500" font-size="13" fill="rgba(255,255,255,0.7)">Proprietor</text>
-                            <!-- Water drop accent -->
-                            <path d="M360,80 L375,110 L345,110 Z" fill="rgba(6,182,212,0.3)"/>
-                            <!-- Star -->
-                            <text x="50" y="470" font-size="12" fill="rgba(255,255,255,0.3)" font-family="sans-serif">★★★</text>
-                        </svg>
+                        <!-- Mr. Deepak - Proprietor -->
+                        <div class="relative w-full max-w-sm mx-auto">
+                            <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/08/601a0ef2-5391-463e-899e-c3d275bcef2a-1.jpg" alt="Mr. Deepak - Proprietor" class="w-full rounded-2xl shadow-2xl border border-white/10 object-cover" style="max-height: 480px; object-position: top center;">
+                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 glass-strong rounded-xl px-6 py-3 text-center">
+                                <span class="block font-heading font-bold text-white text-lg">Mr. Deepak</span>
+                                <span class="block text-sm text-slate-400">Proprietor</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div data-gsap="fade-left">
@@ -1018,98 +1000,37 @@
             </div>
 
             <div class="gallery-grid" data-gsap="fade-up">
-                <!-- All gallery items as inline SVG (no external image dependencies) -->
+                <!-- Real before/after images from the client's website -->
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #1e293b, #334155);">
-                        <rect width="300" height="300" fill="rgba(239,68,68,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(239,68,68,0.15)">B</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(239,68,68,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(239,68,68,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(239,68,68,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(239,68,68,0.1)"/>
-                    </svg>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/09/53966dc1-8b88-44ee-a2f3-3f5778566b49-1.jpg" alt="Water Tank Before Cleaning" style="width:100%;height:100%;object-fit:cover;">
                     <span class="gallery-badge before">Before</span>
                 </div>
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #064e3b, #059669);">
-                        <rect width="300" height="300" fill="rgba(34,197,94,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(34,197,94,0.15)">A</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(34,197,94,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(34,197,94,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(34,197,94,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(34,197,94,0.1)"/>
-                        <path d="M120,180 L145,200 L185,160" stroke="#34d399" stroke-width="3" fill="none"/>
-                    </svg>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/09/3f098439-c092-44ce-933e-31dba9d2bf96-1.jpg" alt="Water Tank After Cleaning" style="width:100%;height:100%;object-fit:cover;">
                     <span class="gallery-badge after">After</span>
                 </div>
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #1e293b, #334155);">
-                        <rect width="300" height="300" fill="rgba(239,68,68,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(239,68,68,0.15)">B</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(239,68,68,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(239,68,68,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(239,68,68,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(239,68,68,0.1)"/>
-                    </svg>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/09/124f598b-2eea-47bc-a040-9edc70a45d6e-1.jpg" alt="Water Tank Before Cleaning" style="width:100%;height:100%;object-fit:cover;">
                     <span class="gallery-badge before">Before</span>
                 </div>
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #064e3b, #059669);">
-                        <rect width="300" height="300" fill="rgba(34,197,94,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(34,197,94,0.15)">A</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(34,197,94,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(34,197,94,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(34,197,94,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(34,197,94,0.1)"/>
-                        <path d="M120,180 L145,200 L185,160" stroke="#34d399" stroke-width="3" fill="none"/>
-                    </svg>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/09/d719448b-9e49-4f88-90cf-578140c903f4-1.jpg" alt="Water Tank After Cleaning" style="width:100%;height:100%;object-fit:cover;">
                     <span class="gallery-badge after">After</span>
                 </div>
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #1e293b, #334155);">
-                        <rect width="300" height="300" fill="rgba(239,68,68,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(239,68,68,0.15)">B</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(239,68,68,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(239,68,68,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(239,68,68,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(239,68,68,0.1)"/>
-                    </svg>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/08/WhatsApp-Image-2020-08-17-at-10.02.58-PM-1.jpg" alt="Water Tank Before Cleaning" style="width:100%;height:100%;object-fit:cover;">
                     <span class="gallery-badge before">Before</span>
                 </div>
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #064e3b, #059669);">
-                        <rect width="300" height="300" fill="rgba(34,197,94,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(34,197,94,0.15)">A</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(34,197,94,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(34,197,94,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(34,197,94,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(34,197,94,0.1)"/>
-                        <path d="M120,180 L145,200 L185,160" stroke="#34d399" stroke-width="3" fill="none"/>
-                    </svg>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/08/WhatsApp-Image-2020-08-17-at-10.03.03-PM-1.jpg" alt="Water Tank After Cleaning" style="width:100%;height:100%;object-fit:cover;">
                     <span class="gallery-badge after">After</span>
                 </div>
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #064e3b, #059669);">
-                        <rect width="300" height="300" fill="rgba(34,197,94,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(34,197,94,0.15)">A</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(34,197,94,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(34,197,94,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(34,197,94,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(34,197,94,0.1)"/>
-                        <path d="M120,180 L145,200 L185,160" stroke="#34d399" stroke-width="3" fill="none"/>
-                    </svg>
-                    <span class="gallery-badge after">After</span>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/08/WhatsApp-Image-2020-08-17-at-10.02.46-PM.jpg" alt="Tank Cleaning Service" style="width:100%;height:100%;object-fit:cover;">
+                    <span class="gallery-badge before">Before</span>
                 </div>
                 <div class="gallery-item">
-                    <svg viewBox="0 0 300 300" style="background: linear-gradient(135deg, #064e3b, #059669);">
-                        <rect width="300" height="300" fill="rgba(34,197,94,0.05)"/>
-                        <text x="150" y="100" text-anchor="middle" font-family="Poppins" font-weight="700" font-size="90" fill="rgba(34,197,94,0.15)">A</text>
-                        <circle cx="150" cy="180" r="40" fill="rgba(34,197,94,0.1)"/>
-                        <rect x="80" y="140" width="140" height="4" rx="2" fill="rgba(34,197,94,0.2)"/>
-                        <rect x="100" y="160" width="100" height="3" rx="1.5" fill="rgba(34,197,94,0.15)"/>
-                        <rect x="110" y="175" width="80" height="2" rx="1" fill="rgba(34,197,94,0.1)"/>
-                        <path d="M120,180 L145,200 L185,160" stroke="#34d399" stroke-width="3" fill="none"/>
-                    </svg>
+                    <img src="https://deepwatertankcleaning.in/wp-content/uploads/2020/08/WhatsApp-Image-2020-08-17-at-10.03.06-PM-1.jpg" alt="Tank Cleaning Result" style="width:100%;height:100%;object-fit:cover;">
                     <span class="gallery-badge after">After</span>
                 </div>
             </div>
@@ -1611,7 +1532,7 @@
 
         console.log('Deep Water Tank Cleaning — Futuristic Website Loaded');
         console.log('Built with ♥ using Glassmorphism + Neumorphism + Skewmorphism');
-        console.log('All images are inline SVG — zero external image dependencies');
+        console.log('Gallery images sourced from deepwatertankcleaning.in');
     </script>
 </body>
 </html>

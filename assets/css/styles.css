@@ -1318,6 +1318,261 @@ html.light .team-card .team-avatar {
   color: var(--color-primary-strong);
   font-weight: 700;
 }
+
+/* ── Pricing Tabs ─────────────────────────── */
+.pricing-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.35rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pricing-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: var(--font-sans), sans-serif;
+}
+
+.pricing-tab i {
+  font-size: 0.85rem;
+}
+
+.pricing-tab:hover {
+  color: var(--color-text-primary);
+}
+
+.pricing-tab.active {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124, 140, 255, 0.3);
+}
+
+/* ── Tab Panels ───────────────────────────── */
+.tab-panel {
+  display: none;
+  animation: tabFadeIn 0.35s ease-out;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Enterprise Grid ──────────────────────── */
+.enterprise-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .enterprise-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.enterprise-card {
+  position: relative;
+}
+
+.enterprise-card .plan-badge {
+  position: absolute;
+  top: -0.8rem;
+  left: 1.6rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #dcb676 0%, #f0d6a0 100%);
+  color: #08111b;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.enterprise-card .plan-badge.flagship {
+  background: linear-gradient(135deg, #7c8cff 0%, #a8b4ff 100%);
+  color: #fff;
+}
+
+.enterprise-card .plan-features li {
+  font-size: 0.88rem;
+}
+
+/* Enterprise+ flagship card styling */
+.enterprise-flagship {
+  border-color: rgba(124, 140, 255, 0.28);
+  background: linear-gradient(180deg, rgba(124, 140, 255, 0.06), rgba(124, 140, 255, 0.02));
+  box-shadow: 0 24px 70px rgba(124, 140, 255, 0.12);
+}
+
+html.light .enterprise-flagship {
+  border-color: rgba(91, 108, 255, 0.2);
+  background: linear-gradient(180deg, rgba(91, 108, 255, 0.04), rgba(91, 108, 255, 0.01));
+}
+
+.plan-price-consult .price-amount {
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, var(--color-primary-strong), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Consultation CTA button */
+.btn-consult-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: #fff;
+  background: linear-gradient(135deg, #7c8cff 0%, #a06eff 100%);
+  box-shadow: 0 4px 24px rgba(124, 140, 255, 0.35);
+  font-family: var(--font-sans), sans-serif;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1.2rem;
+}
+
+.btn-consult-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(124, 140, 255, 0.45);
+}
+
+.btn-consult-custom i {
+  font-size: 1rem;
+}
+
+.enterprise-footnote {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-top: 1.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Enterprise Inquiry Modal ─────────────── */
+.plan-modal-enterprise {
+  max-width: 640px;
+}
+
+.enterprise-form {
+  padding: 1.2rem 1.6rem 1.6rem;
+}
+
+.enterprise-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .enterprise-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.enterprise-form input,
+.enterprise-form select,
+.enterprise-form textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-background-soft);
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  font-family: var(--font-sans), sans-serif;
+}
+
+.enterprise-form input:focus,
+.enterprise-form select:focus,
+.enterprise-form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-strong);
+}
+
+.enterprise-form select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23bcc3d6' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.enterprise-form textarea {
+  resize: vertical;
+  min-height: 90px;
+  margin-bottom: 0.8rem;
+}
+
+.enterprise-form-submit {
+  display: flex;
+  justify-content: center;
+}
+
+.enterprise-form-submit .btn-consult-custom {
+  width: auto;
+  min-width: 280px;
+  padding: 0.85rem 2rem;
+  font-size: 0.95rem;
+}
+
+/* ── Light overrides for enterprise form ──── */
+html.light .enterprise-form input,
+html.light .enterprise-form select,
+html.light .enterprise-form textarea {
+  background: #f9faff;
+  color: #111827;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+html.light .enterprise-form input:focus,
+html.light .enterprise-form select:focus,
+html.light .enterprise-form textarea:focus {
+  border-color: var(--color-primary-strong);
+}
+
+html.light .enterprise-form select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7280' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+}
 /* ── CTA / custom plan card ─────────────────── */
 .custom-plan-card {
   max-width: 900px;

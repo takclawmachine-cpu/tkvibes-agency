@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html><head><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1920px;overflow:hidden;font-family:Arial,sans-serif;background:linear-gradient(135deg,#2D3436 0%,#6C5CE7 100%)}
+@keyframes slideUp{from{transform:translateY(80px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.scene{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
+.title{font-size:44px;font-weight:900;color:#FFFFFF;margin-bottom:40px;animation:fadeIn 0.5s 0.1s both;text-align:center}
+.title span{color:#FDCB6E}
+
+.card{width:85%;background:rgba(255,255,255,0.06);backdrop-filter:blur(10px);border-radius:20px;padding:22px 28px;margin:10px 0;display:flex;align-items:center;gap:20px;border:1px solid rgba(255,255,255,0.08)}
+.card-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.card-text{font-size:32px;font-weight:700;color:#FFFFFF}
+.card-sub{font-size:20px;color:#BDC3C7;margin-top:2px}
+.ani-1{animation:slideUp 0.5s 0.3s both}
+.ani-2{animation:slideUp 0.5s 0.7s both}
+.ani-3{animation:slideUp 0.5s 1.1s both}
+.ani-4{animation:slideUp 0.5s 1.5s both}
+.ani-5{animation:slideUp 0.5s 1.9s both}
+.icon-red{background:rgba(231,76,60,0.2);color:#E74C3C}
+.icon-yellow{background:rgba(241,196,15,0.2);color:#F1C40F}
+.icon-blue{background:rgba(52,152,219,0.2);color:#3498DB}
+.icon-green{background:rgba(46,204,113,0.2);color:#2ECC71}
+.icon-purple{background:rgba(155,89,182,0.2);color:#9B59B6}
+</style></head><body>
+<div class="scene">
+  <div class="title">Sound Familiar? <span>You're Not Alone</span></div>
+
+  <div class="card ani-1">
+    <div class="card-icon icon-red">&#128200;</div>
+    <div><div class="card-text">Sales Are Dropping</div><div class="card-sub">Your website isn't converting visitors</div></div>
+  </div>
+  <div class="card ani-2">
+    <div class="card-icon icon-yellow">&#128270;</div>
+    <div><div class="card-text">Nobody Finds You</div><div class="card-sub">Page 5 of Google = invisible</div></div>
+  </div>
+  <div class="card ani-3">
+    <div class="card-icon icon-blue">&#128176;</div>
+    <div><div class="card-text">Wasting on Ads</div><div class="card-sub">High spend, zero conversions</div></div>
+  </div>
+  <div class="card ani-4">
+    <div class="card-icon icon-green">&#128241;</div>
+    <div><div class="card-text">Not Mobile Friendly</div><div class="card-sub">60% of traffic walks away</div></div>
+  </div>
+  <div class="card ani-5">
+    <div class="card-icon icon-purple">&#128119;</div>
+    <div><div class="card-text">No Brand Identity</div><div class="card-sub">You look like everyone else</div></div>
+  </div>
+</div>
+</body></html>

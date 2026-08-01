@@ -444,10 +444,13 @@
     cardData.sort((a, b) => a.z - b.z);
 
     cardData.forEach((d, sortOrder) => {
-      const scale = 0.55 + d.depth * 0.55;
-      const opacity = 0.25 + d.depth * 0.75;
-      const blur = d.depth < 0.25 ? (1 - d.depth / 0.25) * 2 : 0;
-      const y = (1 - d.depth) * -15; // slight vertical shift for depth
+      // cos(angleRad): +1 at front (0°), 0 at sides (90°/270°), -1 at back (180°)
+      const cosAngle = Math.cos(d.angleDeg * DEG);
+      const frontness = (cosAngle + 1) / 2; // 0 (back) → 1 (front)
+      const scale = 0.30 + frontness * 1.20;
+      const opacity = 0.10 + frontness * 0.90;
+      const blur = frontness < 0.4 ? (1 - frontness / 0.4) * 3 : 0;
+      const y = (1 - frontness) * -18;
 
       d.card.style.transform =
         `translateX(${d.x.toFixed(1)}px) translateY(${y.toFixed(1)}px) scale(${scale.toFixed(3)})`;

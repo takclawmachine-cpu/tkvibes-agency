@@ -44,3 +44,11 @@ After any commit that changes architecture, deploy, default theme, hosting, or m
 
 ## 2026-07-30
 - Replaced hero right-side butterfly card stack with CSS/SVG globe orbit animation (`.hero-globe-stage`, `hgOrbit` keyframes, 13.33s linear loop). Removed hero-stack/butterfly CSS + JS carousel.
+
+## 2026-08-01
+- Complete pricing restructure: tabbed Individual/Enterprise design on packages page
+- Individual: Starter Rs 9,999 / Growth Rs 14,999 / Pro Rs 24,999 (all +5k)
+- Enterprise: Business Rs 69,999 / Enterprise+ (Book Free Consultation, no price)
+- New CSS: pricing tabs, enterprise grid, consult CTA, enterprise inquiry modal
+- New JS: tab switching (pricing.js) + enterprise inquiry modal (enterprise-inquiry.js)
+- Enterprise+ form captures name, org, email, phone, company size, budget, project details
