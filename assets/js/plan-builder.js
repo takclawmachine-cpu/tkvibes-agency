@@ -3,16 +3,6 @@
 
   const MARKUP = 1.20 // 20% increase for non-India visitors (mirrors pricing.js)
 
-  /* ── Browser locale → USD fallback for non-India users ── */
-  function guessNotIndia () {
-    try {
-      var lang = (navigator.language || navigator.userLanguage || '').toLowerCase()
-      if (/^en-?(us|gb|au|ca|nz|sg|ph)/.test(lang)) return true
-      if (/^(de|fr|es|pt|it|nl|sv|no|da|fi|pl|cs|hu|ro|ar|ja|zh|ko|th|vi|id|ms|tr)/.test(lang)) return true
-    } catch (e) {}
-    return false
-  }
-
   /* ── Geo-aware price formatting ───────────── */
   function fmtPrice (n) {
     var geo = window.__tkvibes_geo
@@ -20,13 +10,7 @@
       var converted = Math.round(n * geo.rate * MARKUP)
       return geo.fmt.sym + ' ' + converted.toLocaleString(geo.fmt.loc)
     }
-    // Fallback: check browser locale for non-India users
-    if (guessNotIndia()) {
-      // Rough USD conversion (~84 INR = 1 USD, +20% markup = ~100 INR = 1 USD)
-      var approxUsd = Math.round(n / 100)
-      return '$ ' + approxUsd.toLocaleString('en-US')
-    }
-    // Last resort: INR
+    // No geo data yet — INR is always the safe default
     return '\u20B9 ' + n.toLocaleString('en-IN')
   }
 
