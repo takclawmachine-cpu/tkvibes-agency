@@ -3,7 +3,10 @@
 
   /* ── Config ──────────────────────────────────── */
   const MARKUP = 1.20 // 20% increase for non-India visitors
-  const GEO_API = 'https://ipapi.co/json/'
+  const GEO_APIS = [
+    'https://ipapi.co/json/',
+    'https://ip-api.com/json/?fields=countryCode,currency'
+  ]
   const FX_API = 'https://open.er-api.com/v6/latest/INR'
 
   /* ── Currency display map ────────────────────── */
@@ -38,9 +41,28 @@
   if (!prices.length) return
 
   let converted = false
-
-  /* ── Expose geo data globally for plan-builder ── */
   var currentGeo = null
+
+  /* ── Browser locale → currency guess ───────── */
+  function guessCurrencyFromLocale () {
+    try {
+      var lang = (navigator.language || navigator.userLanguage || '').toLowerCase()
+      var localeMap = {
+        'en-us': 'USD', 'en-gb': 'GBP', 'de-de': 'EUR', 'fr-fr': 'EUR',
+        'ja-jp': 'JPY', 'zh-cn': 'CNY', 'en-au': 'AUD', 'en-ca': 'CAD',
+        'en-sg': 'SGD', 'ar-ae': 'AED', 'ar-sa': 'SAR', 'pt-br': 'BRL',
+        'es-mx': 'MXN', 'de-ch': 'CHF', 'sv-se': 'SEK', 'nb-no': 'NOK',
+        'da-dk': 'DKK', 'en-nz': 'NZD', 'ms-my': 'MYR', 'th-th': 'THB',
+        'id-id': 'IDR', 'en-ph': 'PHP', 'vi-vn': 'VND', 'ur-pk': 'PKR',
+        'hi-in': 'INR', 'en-in': 'INR', 'mr-in': 'INR', 'ta-in': 'INR',
+        'te-in': 'INR', 'bn-in': 'INR', 'gu-in': 'INR', 'kn-in': 'INR',
+        'ml-in': 'INR', 'pa-in': 'INR'
+      }
+      return localeMap[lang] || null
+    } catch (e) {
+      return null
+    }
+  }
 
   function formatCurrency(amount, currencyCode) {
     const fmt = CURRENCY_FMT[currencyCode]
@@ -48,7 +70,6 @@
       const formatted = Math.round(amount).toLocaleString(fmt.loc)
       return fmt.sym + ' ' + formatted
     }
-    // Fallback: use currency code
     return currencyCode + ' ' + Math.round(amount).toLocaleString('en-US')
   }
 
@@ -63,10 +84,8 @@
     btn.addEventListener('click', function () {
       var tab = btn.getAttribute('data-tab')
       if (!tab || !tabPanels[tab]) return
-
       tabBtns.forEach(function (b) { b.classList.remove('active') })
       btn.classList.add('active')
-
       Object.keys(tabPanels).forEach(function (key) {
         tabPanels[key].classList.toggle('active', key === tab)
       })
@@ -82,7 +101,6 @@
   if (consultBtns.length && entOverlay) {
     consultBtns.forEach(function (btn) {
       btn.addEventListener('click', function (e) {
-        // Only intercept if it's not a plain link (keep href fallback)
         if (entOverlay) {
           e.preventDefault()
           entOverlay.classList.add('open')
@@ -107,8 +125,8 @@
       }
     })
   }
+
   function convertInrText(text, rate, currencyCode) {
-    // Replace all "Rs [number]" patterns with converted currency
     return text.replace(/Rs\s*([\d,]+)/g, function (match, numStr) {
       var inrVal = parseFloat(numStr.replace(/,/g, ''))
       if (isNaN(inrVal)) return match
@@ -120,11 +138,9 @@
   function updatePrices(currencyCode, rate) {
     prices.forEach(function (el) {
       var raw = el.getAttribute('data-inr')
-      // ── Select elements (e.g. budget dropdown) ──
       if (el.tagName === 'SELECT') {
         var options = el.querySelectorAll('option[data-inr-value]')
         options.forEach(function (opt) {
-          // Store original text on first run
           if (!opt.hasAttribute('data-original-text')) {
             opt.setAttribute('data-original-text', opt.textContent)
           }
@@ -133,14 +149,11 @@
         })
         return
       }
-      // ── Regular price spans ──
       if (!raw) return
       var inrVal = parseFloat(raw.replace(/,/g, ''))
       if (isNaN(inrVal)) return
-
       var convertedVal = inrVal * rate * MARKUP
       var formatted = formatCurrency(convertedVal, currencyCode)
-
       var amountEl = el.querySelector('.price-amount')
       if (amountEl) {
         amountEl.textContent = formatted
@@ -156,29 +169,92 @@
     window.dispatchEvent(new CustomEvent('tkvibes:geo', { detail: currentGeo }))
   }
 
-  /* ── Step 1: detect location ─────────────────── */
-  fetch(GEO_API)
-    .then(function (r) { return r.json() })
-    .then(function (data) {
-      // India — no conversion needed
-      if (data.country_code === 'IN') return
+  /* ── Try geo APIs with timeout + fallback ───── */
+  function fetchWithTimeout (url, ms) {
+    return new Promise(function (resolve, reject) {
+      var controller
+      if (typeof AbortController !== 'undefined') {
+        controller = new AbortController()
+      }
+      var timer = setTimeout(function () {
+        if (controller) controller.abort()
+        reject(new Error('timeout'))
+      }, ms)
+      fetch(url, controller ? { signal: controller.signal } : {})
+        .then(function (r) {
+          clearTimeout(timer)
+          // ip-api.com returns status text, ipapi.co doesn't
+          return r.json().then(function (data) { resolve(data) })
+        })
+        .catch(function (e) {
+          clearTimeout(timer)
+          reject(e)
+        })
+    })
+  }
 
-      var currency = data.currency || 'USD'
+  function detectGeo () {
+    var localeGuess = guessCurrencyFromLocale()
 
-      // Step 2: fetch exchange rate
-      fetch(FX_API)
-        .then(function (r) { return r.json() })
-        .then(function (fxData) {
-          var rate = fxData.rates[currency]
-          if (!rate) return // fallback: leave INR
-          updatePrices(currency, rate)
-          setGeo(currency, rate)
+    // Try each geo API in order until one succeeds
+    function tryApi (index) {
+      if (index >= GEO_APIS.length) {
+        // All APIs failed — use locale guess as last resort
+        if (localeGuess && localeGuess !== 'INR') {
+          fetch(FX_API)
+            .then(function (r) { return r.json() })
+            .then(function (fxData) {
+              var rate = fxData.rates[localeGuess]
+              if (rate) {
+                updatePrices(localeGuess, rate)
+                setGeo(localeGuess, rate)
+              }
+            })
+            .catch(function () {})
+        }
+        return
+      }
+
+      fetchWithTimeout(GEO_APIS[index], 5000)
+        .then(function (data) {
+          var countryCode = (data.country_code || data.countryCode || '').toUpperCase()
+          if (countryCode === 'IN') return // India — stay on INR
+
+          var currency = data.currency || localeGuess || 'USD'
+          if (!currency || currency === 'INR') return
+
+          fetch(FX_API)
+            .then(function (r) { return r.json() })
+            .then(function (fxData) {
+              var rate = fxData.rates[currency]
+              if (rate) {
+                updatePrices(currency, rate)
+                setGeo(currency, rate)
+              }
+            })
+            .catch(function () {})
         })
         .catch(function () {
-          // Exchange rate API failed — stay on INR
+          // Try next API, but also fall back to locale guess
+          if (localeGuess && localeGuess !== 'INR') {
+            fetch(FX_API)
+              .then(function (r) { return r.json() })
+              .then(function (fxData) {
+                var rate = fxData.rates[localeGuess]
+                if (rate) {
+                  updatePrices(localeGuess, rate)
+                  setGeo(localeGuess, rate)
+                }
+              })
+              .catch(function () {})
+          }
+          tryApi(index + 1)
         })
-    })
-    .catch(function () {
-      // Geolocation failed — stay on INR
-    })
+    }
+
+    tryApi(0)
+  }
+
+  /* ── Start detection ─────────────────────────── */
+  detectGeo()
 })()
