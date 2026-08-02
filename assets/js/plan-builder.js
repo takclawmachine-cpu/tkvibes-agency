@@ -1,6 +1,19 @@
 (function () {
   'use strict'
 
+  const MARKUP = 1.20 // 20% increase for non-India visitors (mirrors pricing.js)
+
+  /* ── Geo-aware price formatting ───────────── */
+  function fmtPrice (n) {
+    var geo = window.__tkvibes_geo
+    if (geo && geo.rate && geo.fmt) {
+      var converted = Math.round(n * geo.rate * MARKUP)
+      return geo.fmt.sym + ' ' + converted.toLocaleString(geo.fmt.loc)
+    }
+    // Fallback: INR
+    return '\u20B9 ' + n.toLocaleString('en-IN')
+  }
+
   /* ── Services catalog ──────────────────────── */
   const SERVICES = [
     { name: 'Logo Design', price: 1999 },
@@ -50,7 +63,7 @@
       btn.className = 'plan-service-item' + (selected[i] ? ' selected' : '')
       btn.setAttribute('data-index', i)
 
-      var formatted = 'Rs ' + svc.price.toLocaleString('en-IN')
+      var formatted = fmtPrice(svc.price)
 
       btn.innerHTML =
         '<span class="psi-check"><i class="fas fa-check"></i></span>' +
@@ -81,7 +94,7 @@
     var names = Object.keys(selected)
     if (names.length === 0) {
       summaryItems.innerHTML = '<p class="plan-summary-empty">No services selected yet.</p>'
-      summaryTotal.textContent = 'Rs 0'
+      summaryTotal.textContent = fmtPrice(0)
       submitBtn.disabled = true
       return
     }
@@ -93,11 +106,11 @@
       total += svc.price
       html += '<div class="plan-summary-item">' +
         '<span class="psi-item-name">' + svc.name + '</span>' +
-        '<span class="psi-item-price">Rs ' + svc.price.toLocaleString('en-IN') + '</span>' +
+        '<span class="psi-item-price">' + fmtPrice(svc.price) + '</span>' +
         '</div>'
     })
     summaryItems.innerHTML = html
-    summaryTotal.textContent = 'Rs ' + total.toLocaleString('en-IN')
+    summaryTotal.textContent = fmtPrice(total)
     submitBtn.disabled = false
   }
 
@@ -120,9 +133,11 @@
     return valid
   }
 
-  /* ── Format INR ────────────────────────────── */
+  /* ── Format price for WhatsApp text ────────── */
   function fmtINR (n) {
-    return 'Rs ' + n.toLocaleString('en-IN')
+    var s = fmtPrice(n)
+    // Remove HTML entities, use plain text
+    return s.replace(/\u20B9/g, 'Rs').replace(/\u00A3/g, 'GBP ').replace(/\u20AC/g, 'EUR ').replace(/\u0024/g, '$')
   }
 
   /* ── Build WhatsApp message ────────────────── */
@@ -287,5 +302,13 @@
       }
     })
   }
+
+  // Re-render prices when geo data arrives (pricing.js fires this)
+  window.addEventListener('tkvibes:geo', function () {
+    if (overlay && overlay.classList.contains('open')) {
+      renderServices()
+      updateSummary()
+    }
+  })
 
 })()

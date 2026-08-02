@@ -39,6 +39,9 @@
 
   let converted = false
 
+  /* ── Expose geo data globally for plan-builder ── */
+  var currentGeo = null
+
   function formatCurrency(amount, currencyCode) {
     const fmt = CURRENCY_FMT[currencyCode]
     if (fmt) {
@@ -146,6 +149,13 @@
     converted = true
   }
 
+  /* ── Expose geo globally for other modules ──── */
+  function setGeo (currency, rate) {
+    currentGeo = { currency: currency, rate: rate, fmt: CURRENCY_FMT[currency] || null }
+    window.__tkvibes_geo = currentGeo
+    window.dispatchEvent(new CustomEvent('tkvibes:geo', { detail: currentGeo }))
+  }
+
   /* ── Step 1: detect location ─────────────────── */
   fetch(GEO_API)
     .then(function (r) { return r.json() })
@@ -162,6 +172,7 @@
           var rate = fxData.rates[currency]
           if (!rate) return // fallback: leave INR
           updatePrices(currency, rate)
+          setGeo(currency, rate)
         })
         .catch(function () {
           // Exchange rate API failed — stay on INR
