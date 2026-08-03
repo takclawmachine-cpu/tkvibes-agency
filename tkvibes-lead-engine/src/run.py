@@ -20,16 +20,25 @@ from .push_crm import push_leads
 TIER_RANK = {"HOT": 0, "WARM": 1, "COLD": 2}
 
 
-def discover_all(cfg: dict, target: int = 0) -> list[Lead]:
-    """Run all enabled connectors and return raw leads.
+def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
+    """Run all enabled connectors grouped by country and return raw leads.
 
-    If `target` is > 0, stop discovering as soon as we have enough leads
-    (saves Places API spend — a job only needs `target` leads total).
+    Cities are split by country, and each country is discovered independently
+    up to ``per_country_target``. This guarantees geographic diversity instead
+    of letting one country's cities (e.g. India) drown out another (e.g. Canada).
     """
+    from .regions import resolve as resolve_region
+
+    # Group config cities by country
+    country_cities: dict[str, list[str]] = {}
+    for city in cfg["targets"]["cities"]:
+        _, country = resolve_region(city)
+        country_cities.setdefault(country, []).append(city)
+
     all_leads: list[Lead] = []
 
-    def enough() -> bool:
-        return target > 0 and len(all_leads) >= target
+    def enough(country_leads: list[Lead]) -> bool:
+        return per_country_target > 0 and len(country_leads) >= per_country_target
 
     if cfg["sources"]["google_places"]:
         api_key = os.environ.get("GOOGLE_MAPS_API_KEY", "")
@@ -37,19 +46,24 @@ def discover_all(cfg: dict, target: int = 0) -> list[Lead]:
             print("  GOOGLE_MAPS_API_KEY not set - skipping Google Places")
         else:
             gp = GooglePlacesConnector(api_key)
-            for city in cfg["targets"]["cities"]:
-                if enough():
-                    break
-                for cat in cfg["targets"]["categories"]:
-                    if enough():
+            for country in sorted(country_cities):  # deterministic order
+                country_pool: list[Lead] = []
+                print(f"\n  ── [{country}] ──")
+                for city in country_cities[country]:
+                    if enough(country_pool):
                         break
-                    print(f"  [google_places] {city} / {cat}")
-                    try:
-                        all_leads += gp.discover(
-                            city, cat, cfg["targets"]["max_results_per_query"]
-                        )
-                    except Exception as e:
-                        print(f"    error: {e}")
+                    for cat in cfg["targets"]["categories"]:
+                        if enough(country_pool):
+                            break
+                        print(f"  [google_places] {city} / {cat}")
+                        try:
+                            country_pool += gp.discover(
+                                city, cat, cfg["targets"]["max_results_per_query"]
+                            )
+                        except Exception as e:
+                            print(f"    error: {e}")
+                all_leads += country_pool
+                print(f"  [{country}] {len(country_pool)} raw leads")
 
     if cfg["sources"].get("indiamart"):
         from .connectors.indiamart import IndiaMartConnector
@@ -216,15 +230,15 @@ def main():
 
     max_leads = args.max_leads or cfg["run"]["max_leads_per_run"]
 
-    # Cap discovery to only what this job needs (20 by default) to limit
-    # billable Places queries — we don't need the whole country per job.
-    discover_target = max_leads
+    # Per-country discovery target — splits leads evenly across countries
+    employees = len(cfg.get("crm", {}).get("country_assignments", {}) or {})
+    per_country = (max_leads // employees) if employees else max_leads
 
     nq = len(cfg["targets"]["cities"]) * len(cfg["targets"]["categories"])
     print(f"TKVibes Lead Engine - target: {max_leads} leads this job")
     print(f"   {len(cfg['targets']['cities'])} cities x "
           f"{len(cfg['targets']['categories'])} categories = up to {nq} Places queries")
-    raw = discover_all(cfg, target=discover_target)
+    raw = discover_all(cfg, per_country_target=per_country)
     print(f"   discovered {len(raw)} raw leads")
 
     leads = process_leads(raw, cfg)

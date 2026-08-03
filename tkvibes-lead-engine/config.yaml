@@ -6,7 +6,7 @@ run:
   # UAE:  PDPL
   collect_personal_data: false      # Keep off unless you have a legal basis
   cache_stale_days: 30              # Places policy-aligned refresh window
-  max_leads_per_run: 20             # pull only 20 leads per job
+  max_leads_per_run: 40             # 20 per employee (Jashmit=India, Tishya=Canada)
 
 sources:
   google_places: true
