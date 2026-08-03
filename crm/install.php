@@ -11,7 +11,7 @@ $step = $_GET['step'] ?? $_POST['step'] ?? 'welcome';
 // If config.local.php already exists, check if DB is set up
 $config_exists = file_exists(__DIR__ . '/config.local.php');
 
-if ($config_exists && $step !== 'done') {
+if ($config_exists && $step !== 'done' && $step !== 'config') {
     try {
         require __DIR__ . '/lib/db.php';
         $pdo = get_db();
@@ -19,8 +19,8 @@ if ($config_exists && $step !== 'done') {
         // Already set up — redirect to login
         header('Location: index.php');
         exit;
-    } catch (Exception $e) {
-        // DB setup needed
+    } catch (Throwable $e) {
+        // DB setup needed — fall through to the wizard
     }
 }
 
@@ -92,7 +92,7 @@ PHP;
                 $stmt->execute([$name, $email, $hash]);
                 header('Location: install.php?step=done');
                 exit;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $error = $e->getMessage();
             }
         }
