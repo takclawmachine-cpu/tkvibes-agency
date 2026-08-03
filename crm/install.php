@@ -4,7 +4,7 @@
  * Handles first-run setup: DB creation, employee creation, config writing.
  */
 
-$step = $_GET['step'] ?? 'welcome';
+$step = $_GET['step'] ?? $_POST['step'] ?? 'welcome';
 
 // If config.local.php already exists, check if DB is set up
 $config_exists = file_exists(__DIR__ . '/config.local.php');

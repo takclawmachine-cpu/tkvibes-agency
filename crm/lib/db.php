@@ -12,6 +12,15 @@ function get_db(): PDO
     $cfg = require __DIR__ . '/../config.local.php';
     $db = $cfg['db'];
 
+    // Ensure data directory exists for SQLite
+    if (str_starts_with($db['dsn'], 'sqlite:')) {
+        $dbPath = substr($db['dsn'], 7); // strip 'sqlite:'
+        $dir = dirname($dbPath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+    }
+
     $pdo = new PDO($db['dsn'], $db['username'] ?? null, $db['password'] ?? null, [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
