@@ -171,10 +171,10 @@ def publish(lead_key: str = None, dry_run: bool = False) -> list[dict]:
 
 
 def _push_urls_to_crm(published: list[dict]):
-    """Push GitHub URLs to CRM so they show up in lead detail view."""
+    """Push GitHub URLs to CRM via sync.php (API key auth only, no session needed)."""
     cfg_path = os.path.join(os.path.dirname(__file__), "..", "config.yaml")
     if not os.path.isfile(cfg_path):
-        print("  ⚠️  config.yaml not found — skipping CRM URL update")
+        print("  \u26a0\ufe0f  config.yaml not found — skipping CRM URL update")
         return
 
     cfg = load_config(cfg_path)
@@ -183,7 +183,7 @@ def _push_urls_to_crm(published: list[dict]):
     api_key = crm_cfg.get("api_key", "")
 
     if not api_url or not api_key:
-        print("  ⚠️  CRM API not configured — skipping CRM URL update")
+        print("  \u26a0\ufe0f  CRM API not configured — skipping CRM URL update")
         return
 
     for p in published:
@@ -191,41 +191,34 @@ def _push_urls_to_crm(published: list[dict]):
         if not lead_key:
             continue
 
-        # Update sample_site_url
+        # Build a lead record with URL fields — sync.php handles upsert
+        lead = {"lead_key": lead_key}
+        updated_fields = []
         if p.get("sample_site_url"):
-            try:
-                payload = json.dumps({
-                    "key": api_key,
-                    "lead_key": lead_key,
-                    "action": "update",
-                    "field": "sample_site_url",
-                    "value": p["sample_site_url"],
-                }).encode("utf-8")
-                req = Request(f"{api_url}/api/leads.php", data=payload, method="POST")
-                req.add_header("Content-Type", "application/json")
-                with urlopen(req, timeout=15) as resp:
-                    json.loads(resp.read().decode())
-                print(f"  ✅ CRM: updated sample_site_url for {lead_key}")
-            except Exception as e:
-                print(f"  ⚠️  CRM: failed to update sample_site_url for {lead_key}: {e}")
-
-        # Update pitch_deck_url
+            lead["sample_site_url"] = p["sample_site_url"]
+            updated_fields.append("sample_site_url")
         if p.get("pitch_deck_url"):
-            try:
-                payload = json.dumps({
-                    "key": api_key,
-                    "lead_key": lead_key,
-                    "action": "update",
-                    "field": "pitch_deck_url",
-                    "value": p["pitch_deck_url"],
-                }).encode("utf-8")
-                req = Request(f"{api_url}/api/leads.php", data=payload, method="POST")
-                req.add_header("Content-Type", "application/json")
-                with urlopen(req, timeout=15) as resp:
-                    json.loads(resp.read().decode())
-                print(f"  ✅ CRM: updated pitch_deck_url for {lead_key}")
-            except Exception as e:
-                print(f"  ⚠️  CRM: failed to update pitch_deck_url for {lead_key}: {e}")
+            lead["pitch_deck_url"] = p["pitch_deck_url"]
+            updated_fields.append("pitch_deck_url")
+
+        if not updated_fields:
+            continue
+
+        try:
+            payload = json.dumps({
+                "key": api_key,
+                "leads": [lead],
+            }).encode("utf-8")
+            req = Request(f"{api_url}/api/sync.php", data=payload, method="POST")
+            req.add_header("Content-Type", "application/json")
+            with urlopen(req, timeout=15) as resp:
+                result = json.loads(resp.read().decode())
+            if result.get("status") == "ok":
+                print(f"  \u2705 CRM: synced {', '.join(updated_fields)} for {lead_key}")
+            else:
+                print(f"  \u26a0\ufe0f  CRM: sync returned {result.get('status', '?')} for {lead_key}")
+        except Exception as e:
+            print(f"  \u26a0\ufe0f  CRM: failed to update URLs for {lead_key}: {e}")
 
 
 def main():
