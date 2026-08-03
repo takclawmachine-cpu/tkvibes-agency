@@ -49,20 +49,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = $db_pass;
         }
 
-        $config = <<<PHP
-<?php
-return [
-    'db' => [
-        'dsn'      => '$dsn',
-        'username' => $username ? "'$username'" : 'null',
-        'password' => $password ? "'$password'" : 'null',
-    ],
-    'secret' => '$secret',
-    'google_service_account' => null,
-    'google_sheet_id' => '$sheet_id',
-    'api_key' => '$api_key',
-];
-PHP;
+        $u = $username === null ? 'null' : var_export($username, true);
+        $p = $password === null ? 'null' : var_export($password, true);
+        $config = '<?php' . PHP_EOL . 'return [' . PHP_EOL
+            . "    'db' => [" . PHP_EOL
+            . "        'dsn'      => " . var_export($dsn, true) . "," . PHP_EOL
+            . "        'username' => $u," . PHP_EOL
+            . "        'password' => $p," . PHP_EOL
+            . "    ]," . PHP_EOL
+            . "    'secret' => " . var_export($secret, true) . "," . PHP_EOL
+            . "    'google_service_account' => null," . PHP_EOL
+            . "    'google_sheet_id' => " . var_export($sheet_id, true) . "," . PHP_EOL
+            . "    'api_key' => " . var_export($api_key, true) . "," . PHP_EOL
+            . '];' . PHP_EOL;
 
         file_put_contents(__DIR__ . '/config.local.php', $config);
         header('Location: install.php?step=admin');
