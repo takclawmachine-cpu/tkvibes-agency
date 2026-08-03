@@ -4,6 +4,8 @@
  * Handles first-run setup: DB creation, employee creation, config writing.
  */
 
+require __DIR__ . '/lib/functions.php';
+
 $step = $_GET['step'] ?? $_POST['step'] ?? 'welcome';
 
 // If config.local.php already exists, check if DB is set up
