@@ -125,14 +125,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             json_response(['error' => 'Access denied'], 403);
         }
 
+        // Ensure the proposal_generation_jobs table exists
+        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        try {
+            $pdo->query("SELECT 1 FROM proposal_generation_jobs LIMIT 1");
+        } catch (PDOException $e) {
+            // Table doesn't exist — create it
+            if ($driver === 'sqlite') {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS proposal_generation_jobs (
+                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                    lead_key    TEXT    NOT NULL,
+                    feedback    TEXT    NOT NULL DEFAULT '',
+                    status      TEXT    NOT NULL DEFAULT 'pending',
+                    created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+                    updated_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+                    FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
+                )");
+            } else {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS proposal_generation_jobs (
+                    id          INT AUTO_INCREMENT PRIMARY KEY,
+                    lead_key    VARCHAR(255) NOT NULL,
+                    feedback    TEXT         NOT NULL DEFAULT '',
+                    status      VARCHAR(20)  NOT NULL DEFAULT 'pending',
+                    created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            }
+        }
+
         // Check if proposals already exist
         $has_sample = lead_has_proposal($lead_key, 'sample_site');
         $has_deck = lead_has_proposal($lead_key, 'pitch_deck');
 
         // Check if a pending/running job already exists
-        $stmt = $pdo->prepare("SELECT id FROM proposal_generation_jobs WHERE lead_key = ? AND status IN ('pending', 'running') LIMIT 1");
-        $stmt->execute([$lead_key]);
-        $existing = $stmt->fetch();
+        try {
+            $stmt = $pdo->prepare("SELECT id FROM proposal_generation_jobs WHERE lead_key = ? AND status IN ('pending', 'running') LIMIT 1");
+            $stmt->execute([$lead_key]);
+            $existing = $stmt->fetch();
+        } catch (PDOException $e) {
+            $existing = false;
+        }
 
         if ($existing) {
             json_response(['error' => 'A generation job is already in progress'], 409);
@@ -144,21 +177,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Create the job
-        if ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
-            $stmt = $pdo->prepare("
-                INSERT INTO proposal_generation_jobs (lead_key, feedback, status, created_at, updated_at)
-                VALUES (?, ?, 'pending', datetime('now'), datetime('now'))
-            ");
-        } else {
-            $stmt = $pdo->prepare("
-                INSERT INTO proposal_generation_jobs (lead_key, feedback, status, created_at, updated_at)
-                VALUES (?, ?, 'pending', NOW(), NOW())
-            ");
+        try {
+            if ($driver === 'sqlite') {
+                $stmt = $pdo->prepare("
+                    INSERT INTO proposal_generation_jobs (lead_key, feedback, status, created_at, updated_at)
+                    VALUES (?, ?, 'pending', datetime('now'), datetime('now'))
+                ");
+            } else {
+                $stmt = $pdo->prepare("
+                    INSERT INTO proposal_generation_jobs (lead_key, feedback, status, created_at, updated_at)
+                    VALUES (?, ?, 'pending', NOW(), NOW())
+                ");
+            }
+            $stmt->execute([$lead_key, $feedback]);
+            $job_id = $pdo->lastInsertId();
+            json_response(['status' => 'ok', 'job_id' => (int)$job_id]);
+        } catch (PDOException $e) {
+            json_response(['error' => 'Database error creating job: ' . $e->getMessage()], 500);
         }
-        $stmt->execute([$lead_key, $feedback]);
-        $job_id = $pdo->lastInsertId();
-
-        json_response(['status' => 'ok', 'job_id' => (int)$job_id]);
 
     } elseif ($action === 'status') {
         // ── Get job status ────────────────────────────────────────────
