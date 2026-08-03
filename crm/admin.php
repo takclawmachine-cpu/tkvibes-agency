@@ -45,6 +45,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'reset_password') {
+        $id       = (int)($_POST['id'] ?? 0);
+        $new_pw   = trim($_POST['password'] ?? '');
+        if ($id && $new_pw && strlen($new_pw) >= 6) {
+            $hash = password_hash($new_pw, PASSWORD_BCRYPT);
+            $pdo->prepare("UPDATE employees SET password=?, updated_at=datetime('now') WHERE id=?")
+                ->execute([$hash, $id]);
+            flash_set('success', "Password reset for employee #$id.");
+        } else {
+            flash_set('error', "Password must be at least 6 characters.");
+        }
+        header('Location: admin.php?tab=employees');
+        exit;
+    }
+
     if ($action === 'edit_employee') {
         $id      = (int)($_POST['id'] ?? 0);
         $name    = trim($_POST['name'] ?? '');
@@ -157,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 flash_set('success', "Synced $imported new leads from Google Sheet.");
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 flash_set('error', "Sync failed: " . $e->getMessage());
             }
         } else {
@@ -324,7 +339,10 @@ foreach ($regions_data as $r) {
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" name="password" class="form-control" required minlength="6">
+                        <div class="pw-wrap">
+                            <input type="password" name="password" id="add_password" class="form-control" required minlength="6">
+                            <button type="button" class="pw-toggle" data-target="add_password" aria-label="Show password">👁</button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Role</label>
@@ -372,7 +390,8 @@ foreach ($regions_data as $r) {
                                 <?php endforeach; ?>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline" onclick="editEmployee(<?= $e['id'] ?>, '<?= e(addslashes($e['name'])) ?>', '<?= e($e['email']) ?>', '<?= e($e['role']) ?>', <?= $e['active'] ? 'true' : 'false' ?>, <?= e(json_encode(array_map(fn($r) => $r['region'] . '|' . $r['country'], $e['regions']))) ?>)">Edit</button>
+                                <button class="btn btn-sm btn-outline" onclick="editEmployee(<?= $e['id'] ?>, '<?= e(addslashes($e['name'])) ?>', '<?= e($e['email']) ?>', '<?= e($e['role']) ?>', <?= $e['active'] ? 'true' : 'false' ?>, <?= e(json_encode(array_map(fn($r) => $r['region'] . '|' . $r['country'], $e['regions']))) ?>)"">Edit</button>
+                                <button type="button" class="btn btn-sm btn-outline" onclick="resetPassword(<?= $e['id'] ?>, '<?= e(addslashes($e['name'])) ?>')">Reset PW</button>
                                 <?php if ((int)$e['id'] !== $emp['id']): ?>
                                     <form method="post" style="display:inline" onsubmit="return confirm('Delete this employee?')">
                                         <input type="hidden" name="action" value="delete_employee">
@@ -407,7 +426,10 @@ foreach ($regions_data as $r) {
                     </div>
                     <div class="form-group">
                         <label>New Password (leave blank to keep current)</label>
-                        <input type="password" name="password" class="form-control" minlength="6" placeholder="Leave blank to keep existing">
+                        <div class="pw-wrap">
+                            <input type="password" name="password" id="edit_password" class="form-control" minlength="6" placeholder="Leave blank to keep existing">
+                            <button type="button" class="pw-toggle" data-target="edit_password" aria-label="Show password">👁</button>
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
@@ -552,6 +574,31 @@ function editEmployee(id, name, email, role, active, regions) {
 }
 function closeModal() {
     document.getElementById('editEmployeeModal').style.display = 'none';
+}
+// Password visibility toggle (eye icon)
+document.querySelectorAll('.pw-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        const inp = document.getElementById(btn.dataset.target);
+        if (!inp) return;
+        const show = inp.type === 'password';
+        inp.type = show ? 'text' : 'password';
+        btn.textContent = show ? '🙈' : '👁';
+        btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
+});
+// Reset password (isolated action)
+function resetPassword(id, name) {
+    const pw = prompt('Set a new password for ' + name + ' (min 6 chars):');
+    if (pw === null) return;
+    if (pw.length < 6) { alert('Password must be at least 6 characters.'); return; }
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.style.display = 'none';
+    form.innerHTML = '<input name="action" value="reset_password">' +
+        '<input name="id" value="' + id + '">' +
+        '<input name="password" value="' + pw.replace(/"/g, '&quot;') + '">';
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 </body>

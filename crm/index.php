@@ -37,7 +37,7 @@ if ($config_exists) {
     try {
         $pdo = get_db();
         $pdo->query("SELECT 1 FROM employees LIMIT 1");
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         $needs_setup = true;
     }
 } else {
