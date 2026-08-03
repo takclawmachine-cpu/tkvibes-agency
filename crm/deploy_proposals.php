@@ -67,11 +67,15 @@ foreach ($leads as $l) {
 echo "\nDone: $ok deployed, $fail failed\n";
 
 function fetch_github(string $url, string $token): ?string {
-    $opts = ['http' => [
-        'method' => 'GET',
-        'header' => "Authorization: Bearer $token\r\n",
-        'timeout' => 15,
-    ]];
-    $html = @file_get_contents($url, false, stream_context_create($opts));
-    return $html !== false ? $html : null;
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => ["Authorization: Bearer $token"],
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_FOLLOWLOCATION => true,
+    ]);
+    $html = curl_exec($ch);
+    $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    return ($http === 200 && $html !== false) ? $html : null;
 }
