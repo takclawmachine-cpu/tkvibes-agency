@@ -2,31 +2,24 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 require __DIR__ . '/lib/db.php';
+require __DIR__ . '/lib/auth.php';
 require __DIR__ . '/lib/functions.php';
 $pdo = get_db();
-$rows = $pdo->query("SELECT id, name, email, role, active, length(password) AS pwlen, substr(password,1,12) AS pwsample FROM employees ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
-echo "=== employees ===\n";
-foreach ($rows as $r) {
-    echo "id={$r['id']} name={$r['name']} email={$r['email']} role={$r['role']} active={$r['active']} pwlen={$r['pwlen']} sample={$r['pwsample']}\n";
-}
-// Find jashmit
-$j = $pdo->prepare("SELECT * FROM employees WHERE name LIKE ? OR email LIKE ?");
-$j->execute(['%jashmit%', '%jashmit%']);
-$row = $j->fetch(PDO::FETCH_ASSOC);
-if ($row) {
-    echo "=== jashmit found id={$row['id']} ===\n";
-    echo "password column length: " . strlen($row['password']) . "\n";
-    echo "password starts with \$2y\$: " . (strpos($row['password'], '$2y$') === 0 ? 'yes' : 'NO -> not a bcrypt hash') . "\n";
-    // Test the admin-set new password candidate if provided
-    if (!empty($_GET['test'])) {
-        $ok = password_verify($_GET['test'], $row['password']);
-        echo "password_verify('{$_GET['test']}') => " . ($ok ? 'MATCH' : 'no match') . "\n";
-    }
-} else {
-    echo "jashmit NOT found by name/email search\n";
-}
-// Also dump table schema for password column
-$col = $pdo->query("PRAGMA table_info(employees)")->fetchAll(PDO::FETCH_ASSOC);
-foreach ($col as $c) {
-    if ($c['name'] === 'password') echo "password column type: {$c['type']}\n";
-}
+
+$newpw = 'Tkvibes@123';
+$hash = password_hash($newpw, PASSWORD_BCRYPT);
+$upd = $pdo->prepare("UPDATE employees SET password=?, active=1, updated_at=datetime('now') WHERE id=3");
+$upd->execute([$hash]);
+echo "reset jashmit(id=3) password, rows=" . $upd->rowCount() . "\n";
+
+// Verify via the REAL login() function
+$emp = login('jashmit@tkvibes.in', $newpw);
+echo "login('jashmit@tkvibes.in','Tkvibes@123') => " . ($emp ? "SUCCESS role={$emp['role']}" : 'FAILED') . "\n";
+
+// Also confirm old-wrong behavior: a bad password is rejected
+$bad = login('jashmit@tkvibes.in', 'wrongpass');
+echo "login bad password => " . ($bad ? 'UNEXPECTED SUCCESS' : 'correctly rejected') . "\n";
+
+// Confirm the edit_employee re-hash path produces a verify-able hash (simulate)
+$testhash = password_hash('newpass99', PASSWORD_BCRYPT);
+echo "verify('newpass99') against fresh hash => " . (password_verify('newpass99', $testhash) ? 'ok' : 'FAIL') . "\n";
