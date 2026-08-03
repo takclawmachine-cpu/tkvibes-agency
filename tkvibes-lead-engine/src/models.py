@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 # ── CRM-aware schema ─────────────────────────────────────────────────────────
 # 35 original fields + wa_link + region/country/assignment + pain points/pitch.
@@ -44,7 +44,7 @@ class Lead:
     place_id: str = ""
     lead_score: int = 0
     lead_tier: str = "COLD"
-    data_fetched_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    data_fetched_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     stale_after: str = ""
     outreach_status: str = "new"
     opt_out: bool = False
@@ -65,6 +65,38 @@ class Lead:
     last_contacted_at: str = ""
     next_callback_at: str = ""
     lead_key: str = ""
+
+    def __post_init__(self):
+        """Validate and coerce types after construction."""
+        if self.rating is not None:
+            try:
+                self.rating = float(self.rating)
+            except (ValueError, TypeError):
+                self.rating = None
+        if self.review_count is not None:
+            try:
+                self.review_count = int(self.review_count)
+            except (ValueError, TypeError):
+                self.review_count = None
+        if self.lead_score is not None:
+            try:
+                self.lead_score = int(self.lead_score)
+            except (ValueError, TypeError):
+                self.lead_score = 0
+        if isinstance(self.has_website, str):
+            self.has_website = self.has_website.lower() in ("true", "1", "yes")
+        if isinstance(self.opt_out, str):
+            self.opt_out = self.opt_out.lower() in ("true", "1", "yes")
+        if isinstance(self.latitude, str):
+            try:
+                self.latitude = float(self.latitude)
+            except (ValueError, TypeError):
+                self.latitude = None
+        if isinstance(self.longitude, str):
+            try:
+                self.longitude = float(self.longitude)
+            except (ValueError, TypeError):
+                self.longitude = None
 
     def finalize_dates(self, stale_days: int = 30):
         fetched = datetime.fromisoformat(self.data_fetched_at)

@@ -1,5 +1,8 @@
 import re
 import phonenumbers
+from .log_config import get_logger
+
+logger = get_logger(__name__)
 
 SOCIAL_ONLY = ("facebook.com", "instagram.com", "linktr.ee", "wa.me", "google.com/maps")
 MICROSITE = ("indiamart.com", "justdial.com", "sulekha.com", "tradeindia.com")
@@ -31,8 +34,10 @@ def normalize_phone(raw: str, region: str | None = None) -> str:
         num = phonenumbers.parse(raw, region)
         if phonenumbers.is_valid_number(num):
             return phonenumbers.format_number(num, phonenumbers.PhoneNumberFormat.E164)
+    except phonenumbers.NumberParseException:
+        logger.debug("Could not parse phone: %s", raw)
     except Exception:
-        pass
+        logger.debug("Unexpected phone parse error: %s", raw)
     return raw
 
 

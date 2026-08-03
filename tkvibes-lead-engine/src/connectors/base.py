@@ -1,6 +1,11 @@
-import time, random, urllib.robotparser as rp
+import time
+import random
+import urllib.robotparser as rp
 from urllib.parse import urlparse
 from tenacity import retry, stop_after_attempt, wait_exponential
+from ..log_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class BaseConnector:
@@ -19,7 +24,8 @@ class BaseConnector:
             r.set_url(f"https://{host}/robots.txt")
             try:
                 r.read()
-            except Exception:
+            except Exception as e:
+                logger.debug("robots.txt unavailable for %s: %s", host, e)
                 r = None
             self._robots[host] = r
         r = self._robots[host]
@@ -30,7 +36,8 @@ class BaseConnector:
         last = self._last_hit.get(host, 0)
         wait = self.delay - (time.time() - last)
         if wait > 0:
-            time.sleep(wait + random.uniform(0, 1.5))  # jitter
+            jitter = random.uniform(0, 1.5)
+            time.sleep(wait + jitter)  # jitter
         self._last_hit[host] = time.time()
 
     def discover(self, city: str, category: str, limit: int) -> list:
