@@ -169,3 +169,8 @@ crm:
   # Fallback employee mapping (used when CRM API is unreachable).
   # Each entry: {name: "Employee Name", regions: ["Delhi NCR", "Mumbai Metro"]}
   employees: []
+  # Country-level assignment (highest priority — wins over region mapping).
+  # Every lead whose country matches gets assigned to this employee.
+  country_assignments:
+    "India": "Jashmit Bhalla"
+    "Canada": "Tishya Kane"

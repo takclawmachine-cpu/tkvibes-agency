@@ -443,3 +443,40 @@ textarea.form-control { resize: vertical; min-height: 60px; }
     .login-container, .install-container { padding: 1rem; }
     .login-form { padding: 1rem; }
 }
+
+/* ── Edit Mode ───────────────────────────────────────────────────── */
+.btn-edit { background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-primary); }
+.btn-edit:hover { border-color: var(--accent); color: var(--accent-hover); }
+.btn-edit.btn-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.edit-cell { transition: background 0.2s; border-radius: var(--radius-sm); padding: 0.15rem 0; }
+
+.edit-input {
+    background: var(--bg-input);
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    padding: 0.35rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+.edit-input:focus { outline: none; border-color: var(--accent-hover); box-shadow: 0 0 0 2px rgba(99,102,241,0.3); }
+textarea.edit-input { min-height: 60px; resize: vertical; }
+
+.edit-actions-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 1rem 0;
+    position: sticky;
+    bottom: 0.5rem;
+    z-index: 100;
+}
+.edit-actions-bar .btn { white-space: nowrap; }
+#editStatus { font-size: 0.85rem; }

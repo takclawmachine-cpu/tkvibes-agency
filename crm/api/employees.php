@@ -1,7 +1,7 @@
 <?php
 /**
  * TKVibes CRM — Employee mapping API
- * Returns employee→region mapping for the lead engine.
+ * Returns employee region and country coverage for the lead engine.
  * Protected by shared API key.
  */
 require __DIR__ . '/../lib/db.php';
@@ -21,14 +21,22 @@ $result = [];
 foreach ($employees as $emp) {
     $stmt = $pdo->prepare("SELECT region, country FROM employee_regions WHERE employee_id = ?");
     $stmt->execute([$emp['id']]);
-    $regions = $stmt->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_UNIQUE);
+    $region_rows = $stmt->fetchAll();
+
+    $regions = [];
+    $countries = [];
+    foreach ($region_rows as $r) {
+        $regions[] = $r['region'];
+        $countries[$r['country']] = true;
+    }
 
     $result[] = [
-        'id'      => (int)$emp['id'],
-        'name'    => $emp['name'],
-        'email'   => $emp['email'],
-        'role'    => $emp['role'],
-        'regions' => array_keys($regions),
+        'id'        => (int)$emp['id'],
+        'name'      => $emp['name'],
+        'email'     => $emp['email'],
+        'role'      => $emp['role'],
+        'regions'   => array_values(array_unique($regions)),
+        'countries' => array_keys($countries),
     ];
 }
 

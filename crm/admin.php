@@ -143,14 +143,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'sync_from_sheet') {
         // Trigger sync from Google Sheets (if configured)
+        // Uses sheets_sync helper for both read and write-back
         $cfg = require __DIR__ . '/config.local.php';
         if ($cfg['google_service_account'] && $cfg['google_sheet_id']) {
             try {
-                require __DIR__ . '/lib/GoogleSheetsClient.php';
-                $client = new GoogleSheetsClient($cfg['google_service_account'], $cfg['google_sheet_id']);
+                require_once __DIR__ . '/lib/sheets_sync.php';
+                $client = get_sheets_client();
+                if (!$client) {
+                    throw new RuntimeException('Failed to initialize Sheets client');
+                }
                 [$header, $rows] = $client->read_sheet();
-                // Import rows into leads table
+                if (empty($header)) {
+                    flash_set('error', 'Sheet is empty or has no header row.');
+                    header('Location: admin.php?tab=leads');
+                    exit;
+                }
                 $imported = 0;
+                $updated = 0;
+                // Map sheet column names to DB column names
+                $allowed_fields = [
+                    'business_name', 'category', 'owner_name', 'phone_primary', 'phone_secondary',
+                    'whatsapp', 'email', 'address', 'city', 'pincode', 'region', 'country',
+                    'website_url', 'website_quality', 'rating', 'review_count', 'years_in_business',
+                    'socials', 'pain_points', 'recommended_pitch', 'notes', 'contact_channel',
+                    'opening_hours', 'has_website', 'source', 'source_url', 'lead_score', 'lead_tier',
+                    'assigned_employee', 'outreach_status', 'wa_link',
+                ];
                 foreach ($rows as $row) {
                     if (empty($row)) continue;
                     $data = array_combine($header, array_pad($row, count($header), ''));
@@ -159,19 +177,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     $stmt = $pdo->prepare("SELECT lead_key FROM leads WHERE lead_key = ?");
                     $stmt->execute([$lk]);
-                    if (!$stmt->fetch()) {
-                        $ins = $pdo->prepare("INSERT INTO leads (lead_key, business_name, category, city, phone_primary, email, region, country, assigned_employee, pain_points, recommended_pitch, crm_status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', datetime('now'), datetime('now'))");
-                        $ins->execute([
-                            $lk, $data['business_name'] ?? '', $data['category'] ?? '',
-                            $data['city'] ?? '', $data['phone_primary'] ?? '', $data['email'] ?? '',
-                            $data['region'] ?? '', $data['country'] ?? '',
-                            $data['assigned_employee'] ?? '', $data['pain_points'] ?? '',
-                            $data['recommended_pitch'] ?? '',
-                        ]);
+                    $exists = $stmt->fetch();
+
+                    // Build field list from allowed sheet columns
+                    $set_parts = [];
+                    $set_params = [];
+                    foreach ($allowed_fields as $f) {
+                        if (isset($data[$f]) && $data[$f] !== '') {
+                            $set_parts[] = "$f = ?";
+                            $set_params[] = $data[$f];
+                        }
+                    }
+                    if (empty($set_parts)) continue;
+
+                    if ($exists) {
+                        // Update existing lead (engine fields only — don't overwrite CRM state)
+                        $set_parts[] = "updated_at = datetime('now')";
+                        $set_params[] = $lk;
+                        $pdo->prepare("UPDATE leads SET " . implode(', ', $set_parts) . " WHERE lead_key = ?")
+                            ->execute($set_params);
+                        $updated++;
+                    } else {
+                        // Insert new lead
+                        $cols = ['lead_key', 'crm_status', 'created_at', 'updated_at'];
+                        $vals = ['?', "'new'", "datetime('now')", "datetime('now')"];
+                        $params = [$lk];
+                        foreach ($allowed_fields as $f) {
+                            if (isset($data[$f]) && $data[$f] !== '') {
+                                $cols[] = $f;
+                                $vals[] = '?';
+                                $params[] = $data[$f];
+                            }
+                        }
+                        $pdo->prepare("INSERT INTO leads (" . implode(',', $cols) . ") VALUES (" . implode(',', $vals) . ")")
+                            ->execute($params);
                         $imported++;
                     }
                 }
-                flash_set('success', "Synced $imported new leads from Google Sheet.");
+                flash_set('success', "Synced from sheet: $imported new, $updated updated.");
             } catch (Throwable $e) {
                 flash_set('error', "Sync failed: " . $e->getMessage());
             }

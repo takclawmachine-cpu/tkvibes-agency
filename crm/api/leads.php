@@ -6,6 +6,7 @@
 require __DIR__ . '/../lib/db.php';
 require __DIR__ . '/../lib/auth.php';
 require __DIR__ . '/../lib/functions.php';
+require_once __DIR__ . '/../lib/sheets_sync.php';
 
 $emp = require_auth();
 $pdo = get_db();
@@ -32,6 +33,57 @@ if (!lead_accessible_to($emp, $lead)) {
 
 switch ($action) {
 
+    case 'update':
+        // Accept JSON body for field updates
+        $body = body_json();
+        $field = $body['field'] ?? $_POST['field'] ?? '';
+        $value  = $body['value'] ?? $_POST['value'] ?? '';
+
+        if (!$field) {
+            json_response(['error' => 'field is required'], 400);
+        }
+
+        // Whitelist editable fields
+        $editable = [
+            'business_name', 'category', 'owner_name', 'phone_primary', 'phone_secondary',
+            'whatsapp', 'email', 'address', 'city', 'pincode', 'region', 'country',
+            'website_url', 'website_quality', 'rating', 'review_count', 'years_in_business',
+            'socials', 'pain_points', 'recommended_pitch', 'notes', 'contact_channel',
+            'opening_hours', 'has_website', 'source', 'source_url',
+        ];
+        if (!in_array($field, $editable, true)) {
+            json_response(['error' => 'Field not editable: ' . $field], 400);
+        }
+
+        $old_value = (string)($lead[$field] ?? '');
+
+        // Sanitize value
+        if (in_array($field, ['rating', 'review_count', 'lead_score', 'has_website'], true)) {
+            $value = $value === '' ? null : (float)$value;
+            if ($field === 'review_count' || $field === 'lead_score' || $field === 'has_website') {
+                $value = $value === null ? null : (int)$value;
+            }
+            $stmt = $pdo->prepare("UPDATE leads SET \"$field\" = ?, updated_at = datetime('now') WHERE lead_key = ?");
+            $stmt->execute([$value, $lead_key]);
+        } else {
+            $value = (string)$value;
+            $stmt = $pdo->prepare("UPDATE leads SET \"$field\" = ?, updated_at = datetime('now') WHERE lead_key = ?");
+            $stmt->execute([$value, $lead_key]);
+        }
+
+        $desc = "Updated $field";
+        if ($old_value !== (string)$value) {
+            $desc = "Updated $field: '" . mb_substr($old_value, 0, 80) . "' → '" . mb_substr((string)$value, 0, 80) . "'";
+        }
+
+        log_activity($emp['id'], $lead_key, 'updated', $old_value, (string)$value, $desc);
+
+        // Real-time sync back to Google Sheets
+        sheets_writeback($lead_key, [$field => (string)$value]);
+
+        json_response(['status' => 'ok', 'field' => $field, 'old_value' => $old_value, 'new_value' => (string)$value]);
+        break;
+
     case 'tag':
         $new_status = $_POST['status'] ?? '';
         if (!in_array($new_status, ['qualified', 'callback', 'not_qualified'])) {
@@ -44,6 +96,9 @@ switch ($action) {
 
         log_activity($emp['id'], $lead_key, 'tagged', $old_status, $new_status,
             "Changed status from $old_status to $new_status");
+
+        // Real-time sync back to Google Sheets
+        sheets_writeback($lead_key, ['crm_status' => $new_status]);
 
         json_response(['status' => 'ok', 'new_status' => $new_status]);
         break;
@@ -62,6 +117,9 @@ switch ($action) {
 
         log_activity($emp['id'], $lead_key, 'note', null, null, $note);
 
+        // Real-time sync back to Google Sheets
+        sheets_writeback($lead_key, ['crm_notes' => $updated]);
+
         json_response(['status' => 'ok', 'note' => $note]);
         break;
 
@@ -70,6 +128,9 @@ switch ($action) {
         $stmt->execute([$lead_key]);
 
         log_activity($emp['id'], $lead_key, 'called', null, null, 'Marked as contacted');
+
+        // Real-time sync back to Google Sheets
+        sheets_writeback($lead_key, ['last_contacted_at' => date('Y-m-d H:i:s')]);
 
         json_response(['status' => 'ok']);
         break;

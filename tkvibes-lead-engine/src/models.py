@@ -13,6 +13,8 @@ SCHEMA = [
     "data_fetched_at","stale_after","outreach_status","opt_out",
     "sample_site_url","pitch_deck_url","notes","contact_channel","wa_link",
     "region","country","assigned_employee","pain_points","recommended_pitch",
+    # CRM state columns (written back from CRM to sheet)
+    "crm_status","crm_notes","last_contacted_at","next_callback_at",
 ]
 
 @dataclass
@@ -57,6 +59,11 @@ class Lead:
     assigned_employee: str = ""
     pain_points: str = ""
     recommended_pitch: str = ""
+    # ── CRM state (synced back from CRM to sheet) ──
+    crm_status: str = ""
+    crm_notes: str = ""
+    last_contacted_at: str = ""
+    next_callback_at: str = ""
     lead_key: str = ""
 
     def finalize_dates(self, stale_days: int = 30):
