@@ -133,11 +133,11 @@ $l = $selected_lead;
             ?>
             <table class="detail-table">
                 <?php if ($l['sample_site_url']): ?>
-                <tr><td>Sample Site</td><td><a href="<?= e($l['sample_site_url']) ?>" target="_blank">View →</a></td></tr>
-                <?php endif; ?>
-                <?php if ($l['pitch_deck_url']): ?>
-                <tr><td>Pitch Deck</td><td><a href="<?= e($l['pitch_deck_url']) ?>" target="_blank">View →</a></td></tr>
-                <?php endif; ?>
+                                <tr><td>Sample Site</td><td><a href="<?= e($l['sample_site_url']) ?>" target="_blank" class="btn btn-sm btn-primary">🌐 View Sample Site</a></td></tr>
+                            <?php endif; ?>
+                            <?php if ($l['pitch_deck_url']): ?>
+                                <tr><td>Pitch Deck</td><td><a href="<?= e($l['pitch_deck_url']) ?>" target="_blank" class="btn btn-sm btn-primary">📊 View Pitch Deck</a></td></tr>
+                            <?php endif; ?>
             </table>
 
             <!-- Download / View buttons when proposals exist -->
