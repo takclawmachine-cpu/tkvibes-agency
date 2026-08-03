@@ -138,6 +138,15 @@ function init_schema(): void
             CREATE INDEX IF NOT EXISTS idx_leads_employee   ON leads(assigned_employee_id);
             CREATE INDEX IF NOT EXISTS idx_leads_removed    ON leads(removed_at);
             CREATE INDEX IF NOT EXISTS idx_activities_lead  ON lead_activities(lead_key);
+            CREATE TABLE IF NOT EXISTS proposal_generation_jobs (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                lead_key    TEXT    NOT NULL,
+                feedback    TEXT    NOT NULL DEFAULT '',
+                status      TEXT    NOT NULL DEFAULT 'pending',  -- pending|running|completed|failed
+                created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+                updated_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+                FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
+            );
         ");
     } else {
         // MySQL schema
@@ -238,6 +247,15 @@ function init_schema(): void
                 created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 UNIQUE KEY uq_proposal (lead_key, type),
+                FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            CREATE TABLE IF NOT EXISTS proposal_generation_jobs (
+                id          INT AUTO_INCREMENT PRIMARY KEY,
+                lead_key    VARCHAR(255) NOT NULL,
+                feedback    TEXT         NOT NULL DEFAULT '',
+                status      VARCHAR(20)  NOT NULL DEFAULT 'pending',  -- pending|running|completed|failed
+                created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ");

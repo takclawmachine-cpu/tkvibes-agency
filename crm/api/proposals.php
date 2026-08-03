@@ -7,9 +7,17 @@ header('X-Robots-Tag: noindex, nofollow');
  *   Protected by API key. 
  *   Body: lead_key, type (sample_site|pitch_deck), html (raw HTML content)
  * 
- * GET: Download/view a proposal.
- *   ?lead_key=XXX&type=sample_site
- *   Returns the HTML for download or inline display.
+ * GET (action=generate): Create a proposal generation job.
+ *   Params: lead_key, feedback (optional if no proposals exist)
+ * 
+ * GET (action=status): Get generation jobs for a lead.
+ *   Params: lead_key
+ * 
+ * GET (action=feedback): Check if proposals exist and get latest job.
+ *   Params: lead_key
+ * 
+ * GET (no action): Download/view a proposal.
+ *   Params: lead_key, type, mode (view|download)
  */
 
 require __DIR__ . '/../lib/db.php';
@@ -77,8 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$lead_key, $type, $html, $filename]);
 
     // Also update the lead's sample_site_url / pitch_deck_url field
-    // for the GitHub raw URL (set by git_publish) or mark as uploaded
-    // Build the expected GitHub raw URL for future reference
     $slug = preg_replace('/[^a-z0-9\s-]/', '', strtolower(trim($lead_key)));
     $slug = preg_replace('/\s+/', '-', $slug);
     $slug = substr($slug, 0, 60);
@@ -92,61 +98,176 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->execute([$github_url, $lead_key]);
     }
 
+    // Mark any pending/running generation jobs as completed when a proposal is uploaded
+    $pdo->prepare("UPDATE proposal_generation_jobs SET status = 'completed', updated_at = " . ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite' ? "datetime('now')" : "NOW()") . " WHERE lead_key = ? AND status IN ('pending', 'running')")
+        ->execute([$lead_key]);
+
     json_response(['status' => 'ok', 'lead_key' => $lead_key, 'type' => $type]);
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // ── Download / view ────────────────────────────────────────────────
-    $emp = require_auth();  // requires employee login
+    $action = $_GET['action'] ?? '';
 
-    $lead_key = $_GET['lead_key'] ?? '';
-    $type     = $_GET['type'] ?? '';
+    if ($action === 'generate') {
+        // ── Generate proposal job ──────────────────────────────────────
+        $emp = require_auth();
+        $lead_key = $_GET['lead_key'] ?? '';
+        $feedback = $_GET['feedback'] ?? '';
 
-    if (!$lead_key || !$type) {
-        http_response_code(400);
-        echo "Missing lead_key or type";
-        exit;
-    }
+        if (!$lead_key) {
+            json_response(['error' => 'lead_key is required'], 400);
+        }
 
-    // Verify access
-    $lead = get_lead($lead_key);
-    if (!$lead) {
-        http_response_code(404);
-        echo "Lead not found";
-        exit;
-    }
-    if (!lead_accessible_to($emp, $lead)) {
-        http_response_code(403);
-        echo "Access denied";
-        exit;
-    }
+        $lead = get_lead($lead_key);
+        if (!$lead) {
+            json_response(['error' => 'Lead not found'], 404);
+        }
+        if (!lead_accessible_to($emp, $lead)) {
+            json_response(['error' => 'Access denied'], 403);
+        }
 
-    $stmt = $pdo->prepare("SELECT * FROM proposals WHERE lead_key = ? AND type = ?");
-    $stmt->execute([$lead_key, $type]);
-    $proposal = $stmt->fetch();
+        // Check if proposals already exist
+        $has_sample = lead_has_proposal($lead_key, 'sample_site');
+        $has_deck = lead_has_proposal($lead_key, 'pitch_deck');
 
-    if (!$proposal) {
-        http_response_code(404);
-        echo "No proposal found for this lead";
-        exit;
-    }
+        // Check if a pending/running job already exists
+        $stmt = $pdo->prepare("SELECT id FROM proposal_generation_jobs WHERE lead_key = ? AND status IN ('pending', 'running') LIMIT 1");
+        $stmt->execute([$lead_key]);
+        $existing = $stmt->fetch();
 
-    $html = $proposal['html'];
-    $filename = $proposal['file_name'] ?: ($type === 'sample_site' ? "{$lead_key}-website.html" : "{$lead_key}-pitch-deck.html");
+        if ($existing) {
+            json_response(['error' => 'A generation job is already in progress'], 409);
+        }
 
-    // Check if the user wants to download or view
-    $mode = $_GET['mode'] ?? 'view';
+        // If proposals already exist, feedback is required
+        if (($has_sample || $has_deck) && empty($feedback)) {
+            json_response(['error' => 'Feedback is required when re-generating'], 400);
+        }
 
-    if ($mode === 'download') {
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Length: ' . strlen($html));
-        echo $html;
+        // Create the job
+        if ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
+            $stmt = $pdo->prepare("
+                INSERT INTO proposal_generation_jobs (lead_key, feedback, status, created_at, updated_at)
+                VALUES (?, ?, 'pending', datetime('now'), datetime('now'))
+            ");
+        } else {
+            $stmt = $pdo->prepare("
+                INSERT INTO proposal_generation_jobs (lead_key, feedback, status, created_at, updated_at)
+                VALUES (?, ?, 'pending', NOW(), NOW())
+            ");
+        }
+        $stmt->execute([$lead_key, $feedback]);
+        $job_id = $pdo->lastInsertId();
+
+        json_response(['status' => 'ok', 'job_id' => (int)$job_id]);
+
+    } elseif ($action === 'status') {
+        // ── Get job status ────────────────────────────────────────────
+        $emp = require_auth();
+        $lead_key = $_GET['lead_key'] ?? '';
+
+        if (!$lead_key) {
+            json_response(['error' => 'lead_key is required'], 400);
+        }
+
+        $lead = get_lead($lead_key);
+        if (!$lead) {
+            json_response(['error' => 'Lead not found'], 404);
+        }
+        if (!lead_accessible_to($emp, $lead)) {
+            json_response(['error' => 'Access denied'], 403);
+        }
+
+        $stmt = $pdo->prepare("SELECT * FROM proposal_generation_jobs WHERE lead_key = ? ORDER BY created_at DESC");
+        $stmt->execute([$lead_key]);
+        $jobs = $stmt->fetchAll();
+
+        json_response(['status' => 'ok', 'jobs' => $jobs]);
+
+    } elseif ($action === 'feedback') {
+        // ── Check feedback state ──────────────────────────────────────
+        $emp = require_auth();
+        $lead_key = $_GET['lead_key'] ?? '';
+
+        if (!$lead_key) {
+            json_response(['error' => 'lead_key is required'], 400);
+        }
+
+        $lead = get_lead($lead_key);
+        if (!$lead) {
+            json_response(['error' => 'Lead not found'], 404);
+        }
+        if (!lead_accessible_to($emp, $lead)) {
+            json_response(['error' => 'Access denied'], 403);
+        }
+
+        $has_sample = lead_has_proposal($lead_key, 'sample_site');
+        $has_deck = lead_has_proposal($lead_key, 'pitch_deck');
+        $has_proposals = $has_sample || $has_deck;
+
+        $stmt = $pdo->prepare("SELECT * FROM proposal_generation_jobs WHERE lead_key = ? ORDER BY created_at DESC LIMIT 1");
+        $stmt->execute([$lead_key]);
+        $latest_job = $stmt->fetch();
+
+        json_response([
+            'status' => 'ok',
+            'has_proposals' => $has_proposals,
+            'latest_job' => $latest_job ?: null,
+        ]);
+
     } else {
-        // View inline — serve as HTML
-        header('Content-Type: text/html; charset=utf-8');
-        echo $html;
+        // ── Download / view ────────────────────────────────────────────
+        $emp = require_auth();
+
+        $lead_key = $_GET['lead_key'] ?? '';
+        $type     = $_GET['type'] ?? '';
+
+        if (!$lead_key || !$type) {
+            http_response_code(400);
+            echo "Missing lead_key or type";
+            exit;
+        }
+
+        // Verify access
+        $lead = get_lead($lead_key);
+        if (!$lead) {
+            http_response_code(404);
+            echo "Lead not found";
+            exit;
+        }
+        if (!lead_accessible_to($emp, $lead)) {
+            http_response_code(403);
+            echo "Access denied";
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT * FROM proposals WHERE lead_key = ? AND type = ?");
+        $stmt->execute([$lead_key, $type]);
+        $proposal = $stmt->fetch();
+
+        if (!$proposal) {
+            http_response_code(404);
+            echo "No proposal found for this lead";
+            exit;
+        }
+
+        $html = $proposal['html'];
+        $filename = $proposal['file_name'] ?: ($type === 'sample_site' ? "{$lead_key}-website.html" : "{$lead_key}-pitch-deck.html");
+
+        // Check if the user wants to download or view
+        $mode = $_GET['mode'] ?? 'view';
+
+        if ($mode === 'download') {
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Content-Length: ' . strlen($html));
+            echo $html;
+        } else {
+            // View inline — serve as HTML
+            header('Content-Type: text/html; charset=utf-8');
+            echo $html;
+        }
+        exit;
     }
-    exit;
 
 } else {
     http_response_code(405);

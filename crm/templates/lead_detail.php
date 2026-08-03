@@ -108,6 +108,18 @@ $l = $selected_lead;
 
         <div class="detail-section">
             <h3>Proposals</h3>
+            <?php
+            $has_sample = lead_has_proposal($l['lead_key'], 'sample_site');
+            $has_deck = lead_has_proposal($l['lead_key'], 'pitch_deck');
+            $has_proposals = $has_sample || $has_deck;
+
+            // Check for pending/running generation jobs
+            $pdo_local = get_db();
+            $job_stmt = $pdo_local->prepare("SELECT * FROM proposal_generation_jobs WHERE lead_key = ? ORDER BY created_at DESC LIMIT 1");
+            $job_stmt->execute([$l['lead_key']]);
+            $latest_job = $job_stmt->fetch();
+            $has_active_job = $latest_job && in_array($latest_job['status'], ['pending', 'running']);
+            ?>
             <table class="detail-table">
                 <?php if ($l['sample_site_url']): ?>
                 <tr><td>Sample Site</td><td><a href="<?= e($l['sample_site_url']) ?>" target="_blank">View →</a></td></tr>
@@ -116,10 +128,8 @@ $l = $selected_lead;
                 <tr><td>Pitch Deck</td><td><a href="<?= e($l['pitch_deck_url']) ?>" target="_blank">View →</a></td></tr>
                 <?php endif; ?>
             </table>
-            <?php
-            $has_sample = lead_has_proposal($l['lead_key'], 'sample_site');
-            $has_deck = lead_has_proposal($l['lead_key'], 'pitch_deck');
-            ?>
+
+            <!-- Download / View buttons when proposals exist -->
             <?php if ($has_sample || $has_deck): ?>
             <div class="proposal-actions" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
                 <?php if ($has_sample): ?>
@@ -130,12 +140,49 @@ $l = $selected_lead;
                     <a href="api/proposals.php?lead_key=<?= urlencode($l['lead_key']) ?>&type=pitch_deck&mode=view" target="_blank" class="btn btn-sm btn-primary">📊 View Pitch Deck</a>
                     <a href="api/proposals.php?lead_key=<?= urlencode($l['lead_key']) ?>&type=pitch_deck&mode=download" class="btn btn-sm btn-outline">⬇ Download Deck</a>
                 <?php endif; ?>
+                <!-- Re-generate button when proposals exist -->
+                <button class="btn btn-sm btn-outline btn-regenerate-proposal" onclick="openFeedbackModal('<?= e($l['lead_key']) ?>')">🔄 Re-generate</button>
             </div>
-            <?php elseif ($l['sample_site_url'] || $l['pitch_deck_url']): ?>
-                <!-- URLs are external, buttons already shown above -->
-            <?php else: ?>
-                <p class="text-muted" style="margin-top: 0.5rem;">No proposals generated yet. Run the website agent to create sample site + pitch deck.</p>
             <?php endif; ?>
+
+            <!-- Generate / Status button area -->
+            <div class="proposal-status" id="proposal-status-<?= e($l['lead_key']) ?>">
+                <?php if ($has_active_job): ?>
+                    <?php if ($latest_job['status'] === 'pending'): ?>
+                        <span class="badge badge-callback">⏳ Queued</span>
+                    <?php elseif ($latest_job['status'] === 'running'): ?>
+                        <span class="badge badge-callback">🔄 Generating...</span>
+                    <?php endif; ?>
+                <?php elseif (!$has_proposals && !$has_active_job): ?>
+                    <button class="btn btn-sm btn-primary btn-generate-proposal" onclick="generateProposal('<?= e($l['lead_key']) ?>')">⚡ Generate Proposal</button>
+                <?php elseif ($has_proposals && !$has_active_job): ?>
+                    <!-- Re-generate button already shown above, also show status of last completed/failed job -->
+                    <?php if ($latest_job): ?>
+                        <?php if ($latest_job['status'] === 'completed'): ?>
+                            <span class="badge badge-qualified">✅ Last generation completed</span>
+                        <?php elseif ($latest_job['status'] === 'failed'): ?>
+                            <span class="badge badge-notqualified">❌ Last generation failed</span>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
+
+            <!-- Hidden lead key input for feedback modal -->
+            <input type="hidden" id="feedbackLeadKey" value="">
+        </div>
+
+        <!-- Feedback Modal -->
+        <div id="feedbackModal" class="modal" style="display:none">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeFeedbackModal()">&times;</span>
+                <h3>Re-generate Proposal</h3>
+                <p class="text-muted">What is missing or needs improvement on the current website?</p>
+                <textarea id="feedbackText" class="form-control" rows="4" placeholder="Describe what's missing or needs to be improved..."></textarea>
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    <button class="btn btn-primary" onclick="submitRegenerate()">Regenerate</button>
+                    <button class="btn btn-outline" onclick="closeFeedbackModal()">Cancel</button>
+                </div>
+            </div>
         </div>
 
         <div class="detail-section">

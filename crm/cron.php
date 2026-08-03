@@ -8,6 +8,7 @@ header('X-Robots-Tag: noindex, nofollow');
  * 2. Clean up activity logs older than 90 days
  * 3. Sync from Google Sheet (import new leads + update existing lead data)
  * 4. Write back CRM state changes to Google Sheet (crm_status, notes, etc.)
+ * 5. Process pending proposal generation jobs (placeholder — webhook integration TBD)
  */
 
 require __DIR__ . '/lib/db.php';
@@ -153,6 +154,30 @@ if ($client) {
     if ($written_back > 0 || $errors > 0) {
         $report['cron_writeback'] = "$written_back OK, $errors errors";
     }
+}
+
+// ── 5. Process pending proposal generation jobs ─────────────────────────
+// Placeholder: The actual Hermes agent/webhook integration polls this table.
+// For now, just log any pending jobs for observability.
+try {
+    $stmt = $pdo->query("SELECT id, lead_key, feedback, created_at FROM proposal_generation_jobs WHERE status = 'pending' ORDER BY created_at ASC LIMIT 5");
+    $pending_jobs = $stmt->fetchAll();
+    if (!empty($pending_jobs)) {
+        $job_ids = array_column($pending_jobs, 'id');
+        // Mark them as 'running' to prevent re-pickup
+        if (!$dry_run) {
+            $placeholders = implode(',', array_fill(0, count($job_ids), '?'));
+            $pdo->prepare("UPDATE proposal_generation_jobs SET status = 'running', updated_at = " . ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite' ? "datetime('now')" : "NOW()") . " WHERE id IN ($placeholders)")
+                ->execute($job_ids);
+        }
+        $report['proposal_jobs_pending'] = count($pending_jobs) . ' jobs marked as running (awaiting external processing)';
+        foreach ($pending_jobs as $j) {
+            error_log("Proposal generation job #{$j['id']} for lead '{$j['lead_key']}' marked as running (feedback: " . substr($j['feedback'], 0, 80) . ")");
+        }
+    }
+} catch (Throwable $e) {
+    $report['proposal_jobs_error'] = $e->getMessage();
+    error_log("Cron proposal_jobs error: " . $e->getMessage());
 }
 
 // Output report

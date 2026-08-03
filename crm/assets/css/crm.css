@@ -303,6 +303,10 @@ textarea.form-control { resize: vertical; min-height: 60px; }
 /* ── Proposal Actions ────────────────────────────────────────────── */
 .proposal-actions .btn { font-size: 0.8rem; }
 
+/* ── Proposal Generation ─────────────────────────────────────────── */
+.btn-generate-proposal, .btn-regenerate-proposal { font-size: 0.85rem; }
+.proposal-status { margin-top: 0.5rem; }
+
 /* ── Mobile menu toggle (hidden on desktop) ─────────────────────── */
 .mobile-menu-toggle { display: none; }
 

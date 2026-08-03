@@ -25,4 +25,6 @@ return [
     // CRM API key — shared secret that the lead engine uses to push leads
     // Generate a random string and put the same value in config.yaml → crm.api_key
     'api_key' => 'CHANGE_ME_TO_A_RANDOM_API_KEY',
+    // Proposal webhook URL — called by cron when a generation job is ready for processing
+    'proposal_webhook_url' => null,
 ];

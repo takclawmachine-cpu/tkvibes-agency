@@ -298,4 +298,99 @@
         });
     });
 
+    // ── Proposal Generation ─────────────────────────────────
+    window.generateProposal = function(lk) {
+        var btn = document.querySelector('.btn-generate-proposal');
+        if (!btn) return;
+        btn.disabled = true;
+        btn.textContent = '⏳ Starting...';
+        
+        fetch('api/proposals.php?action=generate&lead_key=' + encodeURIComponent(lk))
+        .then(function(r) { return r.json(); })
+        .then(function(result) {
+            if (result.status === 'ok') {
+                btn.textContent = '✅ Queued!';
+                // Poll for status after delay
+                setTimeout(function() { pollProposalStatus(lk); }, 2000);
+            } else {
+                alert('Error: ' + (result.error || 'Unknown'));
+                btn.disabled = false;
+                btn.textContent = '⚡ Generate Proposal';
+            }
+        })
+        .catch(function(err) {
+            alert('Network error: ' + err.message);
+            btn.disabled = false;
+            btn.textContent = '⚡ Generate Proposal';
+        });
+    };
+
+    window.pollProposalStatus = function(lk) {
+        fetch('api/proposals.php?action=status&lead_key=' + encodeURIComponent(lk))
+        .then(function(r) { return r.json(); })
+        .then(function(result) {
+            if (result.status !== 'ok') return;
+            var latest = result.jobs && result.jobs[0];
+            if (!latest) return;
+            
+            var statusEl = document.getElementById('proposal-status-' + lk);
+            if (!statusEl) return;
+            
+            if (latest.status === 'pending') {
+                statusEl.innerHTML = '<span class="badge badge-callback">⏳ Queued</span>';
+                setTimeout(function() { pollProposalStatus(lk); }, 5000);
+            } else if (latest.status === 'running') {
+                statusEl.innerHTML = '<span class="badge badge-callback">🔄 Generating...</span>';
+                setTimeout(function() { pollProposalStatus(lk); }, 5000);
+            } else if (latest.status === 'completed') {
+                statusEl.innerHTML = '<span class="badge badge-qualified">✅ Done</span>';
+                setTimeout(function() { location.reload(); }, 1000);
+            } else if (latest.status === 'failed') {
+                statusEl.innerHTML = '<span class="badge badge-notqualified">❌ Failed</span>';
+            }
+        })
+        .catch(function() {
+            // Retry on error
+            setTimeout(function() { pollProposalStatus(lk); }, 10000);
+        });
+    };
+
+    window.openFeedbackModal = function(lk) {
+        document.getElementById('feedbackLeadKey').value = lk;
+        document.getElementById('feedbackText').value = '';
+        document.getElementById('feedbackModal').style.display = 'flex';
+    };
+
+    window.closeFeedbackModal = function() {
+        document.getElementById('feedbackModal').style.display = 'none';
+    };
+
+    window.submitRegenerate = function() {
+        var lk = document.getElementById('feedbackLeadKey').value;
+        var fb = document.getElementById('feedbackText').value.trim();
+        if (!fb) {
+            alert('Please describe what needs improvement.');
+            return;
+        }
+        
+        var btn = document.querySelector('.btn-regenerate-proposal');
+        if (btn) { btn.disabled = true; btn.textContent = '⏳ Submitting...'; }
+        closeFeedbackModal();
+        
+        fetch('api/proposals.php?action=generate&lead_key=' + encodeURIComponent(lk) + '&feedback=' + encodeURIComponent(fb))
+        .then(function(r) { return r.json(); })
+        .then(function(result) {
+            if (result.status === 'ok') {
+                location.reload();
+            } else {
+                alert('Error: ' + (result.error || 'Unknown'));
+                if (btn) { btn.disabled = false; btn.textContent = '🔄 Re-generate'; }
+            }
+        })
+        .catch(function(err) {
+            alert('Network error: ' + err.message);
+            if (btn) { btn.disabled = false; btn.textContent = '🔄 Re-generate'; }
+        });
+    };
+
 })();
