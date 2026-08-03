@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 
+# ── CRM-aware schema ─────────────────────────────────────────────────────────
+# 35 original fields + wa_link + region/country/assignment + pain points/pitch.
+# Column order is appended so existing sheet rows stay aligned.
 SCHEMA = [
     "lead_key","business_name","category","owner_name","phone_primary",
     "phone_secondary","whatsapp","email","address","city","pincode",
@@ -8,7 +11,8 @@ SCHEMA = [
     "website_quality","rating","review_count","years_in_business","socials",
     "source","source_url","place_id","lead_score","lead_tier",
     "data_fetched_at","stale_after","outreach_status","opt_out",
-    "sample_site_url","pitch_deck_url","notes","contact_channel",
+    "sample_site_url","pitch_deck_url","notes","contact_channel","wa_link",
+    "region","country","assigned_employee","pain_points","recommended_pitch",
 ]
 
 @dataclass
@@ -46,6 +50,13 @@ class Lead:
     pitch_deck_url: str = ""
     notes: str = ""
     contact_channel: str = ""
+    wa_link: str = ""
+    # ── CRM columns ──
+    region: str = ""
+    country: str = ""
+    assigned_employee: str = ""
+    pain_points: str = ""
+    recommended_pitch: str = ""
     lead_key: str = ""
 
     def finalize_dates(self, stale_days: int = 30):

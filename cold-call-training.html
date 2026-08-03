@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TKVibes — Cold Calling Training Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+<style>
+:root {
+  --brand: #6C5CE7;
+  --brand-glow: #A29BFE;
+  --brand-dark: #5A4BD1;
+  --bg: #0A0A0F;
+  --bg-card: #12121A;
+  --bg-card-hover: #1A1A28;
+  --text: #E8E8F0;
+  --text-muted: #8888A0;
+  --border: #2A2A3E;
+  --accent-green: #00E676;
+  --accent-orange: #FFB300;
+  --accent-red: #FF5252;
+  --accent-blue: #40C4FF;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--brand); color: #fff; }
+
+/* ── Navigation ── */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 1.15rem;
+  color: var(--text); text-decoration: none;
+}
+.nav-brand i { color: var(--brand); font-size: 1.3rem; }
+.nav-brand span { background: linear-gradient(135deg, var(--brand), var(--brand-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.nav-links { display: flex; gap: 8px; list-style: none; align-items: center; }
+.nav-links a {
+  color: var(--text-muted); text-decoration: none;
+  font-size: 0.85rem; font-weight: 500;
+  padding: 6px 14px; border-radius: 8px;
+  transition: all .2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--bg-card); }
+.nav-mobile-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+
+/* ── Hero ── */
+.hero {
+  padding: 140px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(108,92,231,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.25);
+  padding: 6px 16px; border-radius: 100px;
+  font-size: 0.8rem; color: var(--brand-glow); font-weight: 500;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.hero h1 span { background: linear-gradient(135deg, var(--brand), var(--brand-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero p {
+  font-size: 1.1rem; color: var(--text-muted);
+  max-width: 640px; margin: 0 auto 32px;
+}
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 10px;
+  font-weight: 600; font-size: 0.9rem;
+  text-decoration: none; transition: all .25s;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--brand); color: #fff;
+  border: none;
+}
+.btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 8px 30px rgba(108,92,231,0.35); }
+.btn-outline {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--brand); color: var(--brand); }
+
+/* ── Container ── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Section ── */
+.section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-child { border-bottom: none; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--brand-glow); margin-bottom: 8px;
+}
+.section-label i { font-size: 0.65rem; }
+.section h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.section h2 .highlight { color: var(--brand-glow); }
+.section > p {
+  color: var(--text-muted);
+  max-width: 680px;
+  margin-bottom: 40px;
+  font-size: 0.95rem;
+}
+.section > p.full-width { max-width: 100%; }
+
+/* ── Cards ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all .25s;
+}
+.card:hover { border-color: rgba(108,92,231,0.3); background: var(--bg-card-hover); }
+.card-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; margin-bottom: 16px;
+}
+.card-icon.purple { background: rgba(108,92,231,0.15); color: var(--brand-glow); }
+.card-icon.green { background: rgba(0,230,118,0.12); color: var(--accent-green); }
+.card-icon.blue { background: rgba(64,196,255,0.12); color: var(--accent-blue); }
+.card-icon.orange { background: rgba(255,179,0,0.12); color: var(--accent-orange); }
+.card-icon.red { background: rgba(255,82,82,0.12); color: var(--accent-red); }
+.card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+.card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; }
+
+/* ── Steps ── */
+.steps { counter-reset: step; display: grid; gap: 24px; }
+.step {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  position: relative;
+  padding-left: 76px;
+  transition: all .25s;
+}
+.step:hover { border-color: rgba(108,92,231,0.3); }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute; left: 24px; top: 28px;
+  width: 36px; height: 36px;
+  background: var(--brand); color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.9rem;
+}
+.step h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; color: var(--brand-glow); }
+.step p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; }
+
+/* ── Script Box ── */
+.script-box {
+  background: rgba(108,92,231,0.06);
+  border: 1px solid rgba(108,92,231,0.2);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin: 16px 0;
+  position: relative;
+}
+.script-box .label {
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--brand-glow); margin-bottom: 12px;
+}
+.script-box .label i { margin-right: 6px; }
+.script-box .role {
+  display: inline-block;
+  font-size: 0.75rem; font-weight: 700;
+  padding: 2px 10px; border-radius: 4px;
+  margin-right: 6px;
+}
+.role.you { background: rgba(108,92,231,0.2); color: var(--brand-glow); }
+.role.client { background: rgba(0,230,118,0.15); color: var(--accent-green); }
+.script-box .line { margin: 6px 0; font-size: 0.9rem; line-height: 1.6; }
+
+/* ── Pricing Table ── */
+.pricing-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+  margin: 24px 0;
+}
+.pricing-table th {
+  background: var(--bg-card);
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--brand-glow);
+}
+.pricing-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.pricing-table tr:last-child td { border-bottom: none; }
+.pricing-table .price-col { font-weight: 600; color: var(--text); text-align: right; white-space: nowrap; }
+.pricing-table .feature-col { width: 100%; }
+
+/* ── Callout ── */
+.callout {
+  background: rgba(108,92,231,0.08);
+  border-left: 3px solid var(--brand);
+  padding: 20px 24px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 20px 0;
+}
+.callout.warn { background: rgba(255,179,0,0.08); border-left-color: var(--accent-orange); }
+.callout.green { background: rgba(0,230,118,0.06); border-left-color: var(--accent-green); }
+.callout.red { background: rgba(255,82,82,0.06); border-left-color: var(--accent-red); }
+.callout h4 { font-size: 0.9rem; margin-bottom: 6px; }
+.callout p, .callout li { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Tag ── */
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.tag.hot { background: rgba(0,230,118,0.12); color: var(--accent-green); }
+.tag.warm { background: rgba(255,179,0,0.12); color: var(--accent-orange); }
+.tag.cold { background: rgba(255,82,82,0.08); color: var(--accent-red); }
+
+/* ── Portfolio Showcase ── */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+.port-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all .25s;
+}
+.port-card:hover { border-color: rgba(108,92,231,0.3); }
+.port-card img {
+  width: 100%; height: 160px; object-fit: cover;
+  display: block;
+}
+.port-card .info { padding: 16px 20px; }
+.port-card .info h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+.port-card .info p { font-size: 0.78rem; color: var(--text-muted); }
+.port-card .info .type { font-size: 0.7rem; color: var(--brand-glow); }
+
+/* ── Objection Table ── */
+.obj-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 20px 0;
+  font-size: 0.88rem;
+}
+.obj-table th {
+  background: var(--bg-card);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent-orange);
+}
+.obj-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.obj-table .obj { color: var(--accent-red); font-weight: 500; width: 35%; }
+.obj-table .resp { color: var(--text); width: 65%; }
+
+/* ── Qualification Checklist ── */
+.checklist { list-style: none; padding: 0; }
+.checklist li {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 0.88rem;
+}
+.checklist li i {
+  margin-top: 3px;
+  color: var(--accent-green);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* ── Info Grid ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.info-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+.info-item label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 4px;
+}
+.info-item .value {
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+/* ── Two Column ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+@media (max-width: 768px) {
+  .two-col { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 16px; }
+  .nav-mobile-toggle { display: block; }
+  .card-grid { grid-template-columns: 1fr; }
+  .portfolio-grid { grid-template-columns: 1fr 1fr; }
+  .hero { padding: 100px 16px 60px; }
+  .section { padding: 60px 0; }
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  border-top: 1px solid var(--border);
+}
+.footer a { color: var(--brand-glow); text-decoration: none; }
+
+/* TOC */
+.toc { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 32px 0; }
+.toc a {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  padding: 14px 18px; border-radius: 10px;
+  text-decoration: none; color: var(--text);
+  font-size: 0.88rem; font-weight: 500;
+  transition: all .2s;
+}
+.toc a:hover { border-color: var(--brand); color: var(--brand-glow); }
+.toc a i { color: var(--brand); font-size: 0.9rem; }
+
+/* Code / keyboard style */
+kbd {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Responsive table wrap */
+.table-wrap { overflow-x: auto; margin: 20px 0; }
+.table-wrap table { min-width: 640px; }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="top-nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand"><i class="fas fa-bolt"></i> TK<span>Vibes</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#overview" class="active">Overview</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#script">Call Script</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#objections">Objections</a></li>
+      <li><a href="#qualification">Qualification</a></li>
+      <li><a href="#handoff">Handoff</a></li>
+    </ul>
+    <button class="nav-mobile-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-badge"><i class="fas fa-phone"></i> Cold Calling Training Manual</div>
+  <h1>Convert Leads Into <span>Clients</span></h1>
+  <p>A complete guide for qualifying leads over the phone — understand TKVibes, pitch with confidence, and pass qualified leads to your CEO for the close.</p>
+  <div class="hero-actions">
+    <a href="#process" class="btn btn-primary"><i class="fas fa-arrow-down"></i> Start Here</a>
+    <a href="#script" class="btn btn-outline"><i class="fas fa-comments"></i> See The Script</a>
+  </div>
+</section>
+
+<!-- ── 1. Company Overview ── -->
+<section class="section" id="overview">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 1</div>
+    <h2>Who Is <span class="highlight">TKVibes</span>?</h2>
+    <p class="full-width">TKVibes is a boutique digital agency based in Delhi. We build premium websites, brand identities, SEO systems, and automation workflows for service businesses — dental clinics, law firms, doctors, salons, interior designers, and more. Our clients are typically small-to-medium local businesses that need a professional online presence to grow.</p>
+
+    <div class="card-grid" style="margin-top: 16px;">
+      <div class="card">
+        <div class="card-icon purple"><i class="fas fa-bullseye"></i></div>
+        <h3>Our Mission</h3>
+        <p>To design websites and brand systems that make growing businesses feel more established, more trusted, and easier to choose.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green"><i class="fas fa-chart-line"></i></div>
+        <h3>Our Positioning</h3>
+        <p>Boutique digital agency for modern service brands. We position ourselves as premium but affordable — delivering quality that rivals big agencies at a fraction of the cost.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon blue"><i class="fas fa-users"></i></div>
+        <h3>Who We Serve</h3>
+        <p>Service businesses with little to no web presence. Dentists, lawyers, clinics, architects, salons, real estate agents, interior designers, chartered accountants, and more across India.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 40px; font-size: 1.1rem;">Key Contact Info</h3>
+    <div class="info-grid" style="margin-top: 12px;">
+      <div class="info-item"><label>Email</label><div class="value">services@tkvibes.in</div></div>
+      <div class="info-item"><label>Phone / WhatsApp</label><div class="value">+91 98182 46938</div></div>
+      <div class="info-item"><label>Website</label><div class="value">tkvibes.com</div></div>
+      <div class="info-item"><label>Location</label><div class="value">Delhi, India (serve nationwide)</div></div>
+      <div class="info-item"><label>Social Proof</label><div class="value">50+ Projects &bull; 98% Satisfaction</div></div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <h4><i class="fas fa-lightbulb"></i> Remember When Pitching</h4>
+      <p>We are Delhi-based but serve clients nationally. Lead's city is separate from ours — address them about <em>their</em> city/local presence. We help them attract customers in their area.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 2. Services & Pricing ── -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 2</div>
+    <h2>What We Offer — <span class="highlight">Services &amp; Pricing</span></h2>
+    <p class="full-width">When you're on a call, you need to know the options inside out so you can recommend the right package on the spot. Here's everything:</p>
+
+    <h3 style="margin-bottom: 16px; color: var(--brand-glow);">🎯 Individual Plans (for solo founders, freelancers, small businesses)</h3>
+    <div class="table-wrap">
+      <table class="pricing-table">
+        <thead>
+          <tr><th>Plan</th><th class="feature-col">What's Included</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Starter</strong></td>
+            <td>Logo (2 concepts) + 3-page static website + Google Business Profile setup + Basic SEO + Business card design + 2 weeks support</td>
+            <td class="price-col">₹9,999</td>
+          </tr>
+          <tr>
+            <td><strong>Growth</strong> <span class="tag hot">Most Popular</span></td>
+            <td>Logo + Brand style guide + 5-page responsive website + Hosting setup + Google Business optimization + On-page SEO + Content writing (2 pages) + 1 month support</td>
+            <td class="price-col">₹14,999</td>
+          </tr>
+          <tr>
+            <td><strong>Pro</strong></td>
+            <td>Full brand identity + 8-page website / E-commerce store + SEO audit + Google or Meta ads setup + Custom API integration + 2 months support</td>
+            <td class="price-col">₹24,999</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin: 32px 0 16px; color: var(--brand-glow);">🏢 Enterprise Plans (for growing organizations)</h3>
+    <div class="table-wrap">
+      <table class="pricing-table">
+        <thead>
+          <tr><th>Plan</th><th class="feature-col">What's Included</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Business</strong></td>
+            <td>Full brand identity + guidelines + 15-page website + Custom admin dashboard + AI automation (n8n) + 3 API integrations + Technical SEO + Ad campaign setup + 1 month ad management + CRM integration + 6 months support + Dedicated PM</td>
+            <td class="price-col">₹69,999</td>
+          </tr>
+          <tr>
+            <td><strong>Enterprise+</strong> <span class="tag warm">Flagship</span></td>
+            <td>Everything in Business + Custom CRM/ERP + Full API ecosystem + Multi-site management + Dedicated dev team + SLA guarantees + 24/7 support + Quarterly strategy consulting + White-label options</td>
+            <td class="price-col"><em>Book Consultation</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin: 32px 0 16px; color: var(--brand-glow);">🧾 Individual Services (a la carte)</h3>
+    <div class="table-wrap">
+      <table class="pricing-table">
+        <thead>
+          <tr><th>Service</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Logo Design</td><td class="price-col">₹1,999</td></tr>
+          <tr><td>Brand Identity Package</td><td class="price-col">₹4,999</td></tr>
+          <tr><td>5-Page Static Website</td><td class="price-col">₹3,999</td></tr>
+          <tr><td>Multi-Page Business Website (up to 10 pages)</td><td class="price-col">₹9,999</td></tr>
+          <tr><td>E-Commerce Store</td><td class="price-col">₹14,999</td></tr>
+          <tr><td>Custom Admin Dashboard</td><td class="price-col">₹19,999</td></tr>
+          <tr><td>AI Automation Workflow (n8n)</td><td class="price-col">₹14,999</td></tr>
+          <tr><td>Custom API Integration</td><td class="price-col">₹7,999</td></tr>
+          <tr><td>Custom CRM Setup</td><td class="price-col">₹24,999</td></tr>
+          <tr><td>Technical SEO Audit</td><td class="price-col">₹2,999</td></tr>
+          <tr><td>Monthly Ad Management</td><td class="price-col">₹3,999/mo</td></tr>
+          <tr><td>Google Business Optimization</td><td class="price-col">₹2,499</td></tr>
+          <tr><td>Content Writing</td><td class="price-col">₹499/page</td></tr>
+          <tr><td>Brochure / Deck Design</td><td class="price-col">₹1,999+</td></tr>
+          <tr><td>Ongoing Monthly Support</td><td class="price-col">₹2,999/mo</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout green" style="margin-top: 20px;">
+      <h4><i class="fas fa-star"></i> Pro Tip for Calls</h4>
+      <p>Most leads will fit the <strong>Starter</strong> or <strong>Growth</strong> plan. For clinics/doctors/lawyers with an existing site that looks bad, pitch <strong>Growth</strong> as "a complete refresh" — brand guide + 5-page site + SEO. For total beginners with zero online presence, lead with <strong>Starter</strong> as "the easiest way to get online."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 3. The Cold Calling Process ── -->
+<section class="section" id="process">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 3</div>
+    <h2>Your <span class="highlight">Process</span> — Step by Step</h2>
+    <p class="full-width">You'll receive a spreadsheet with leads from our lead engine. Each lead has a score: HOT, WARM, or COLD. We prioritize HOT leads first. Here's exactly what you do:</p>
+
+    <div class="steps">
+      <div class="step">
+        <h3>Review the Lead</h3>
+        <p>Open the spreadsheet. Look at the lead's name, business name, city, phone, category, and score. If they have no website (or a weak one) = strong opportunity. If they already have a good website = pitch a redesign or SEO/ads instead.</p>
+      </div>
+      <div class="step">
+        <h3>Research (Quick)</h3>
+        <p>Before calling, Google the business name + city. Check their Google Business Profile. Look at their reviews. Check if they have a website. Spend <strong>30-60 seconds</strong> max. This gives you personalized context for the call.</p>
+      </div>
+      <div class="step">
+        <h3>Make the Call</h3>
+        <p>Call the lead phone number. Introduce yourself from TKVibes. Be warm, professional, and confident. Use the script below as a guide — adapt it naturally. Keep it conversational, not robotic.</p>
+      </div>
+      <div class="step">
+        <h3>Show the Sample Website</h3>
+        <p>If they're interested, offer to send them a sample website link via WhatsApp. We have 5 sample websites in our portfolio. Send the link and ask them to take 2 minutes to view it. Follow up in 10 minutes.</p>
+      </div>
+      <div class="step">
+        <h3>Ask Qualification Questions</h3>
+        <p>After they've seen the sample or during the conversation, ask the qualification questions (see Chapter 6). You need to determine: are they interested? Do they have budget? Are they the decision-maker? What's their timeline?</p>
+      </div>
+      <div class="step">
+        <h3>Qualify or Disqualify</h3>
+        <p>Based on answers, mark the lead as <strong>Qualified</strong> or <strong>Not Interested</strong> in the spreadsheet. A qualified lead = interested, has budget, can make decisions, and has a reasonable timeline (next 1-4 weeks).</p>
+      </div>
+      <div class="step">
+        <h3>Handoff to CEO</h3>
+        <p>Update the spreadsheet with your notes. Tag it for CEO follow-up. The CEO will take over qualified leads and close the deal. Your job is qualification only — not closing.</p>
+      </div>
+    </div>
+
+    <div class="info-grid" style="margin-top: 32px;">
+      <div class="info-item"><label>Lead Tiers</label><div class="value"><span class="tag hot">HOT</span> = Score 70+ — Excellent prospect, call first <span class="tag warm">WARM</span> = Score 45-69 — Good prospect, call second <span class="tag cold">COLD</span> = Score &lt;45 — Low priority</div></div>
+      <div class="info-item"><label>Call Timing</label><div class="value">Best time: 10 AM - 12 PM &bull; 4 PM - 7 PM (business hours). Avoid lunch (1-3 PM) and after 8 PM.</div></div>
+      <div class="info-item"><label>Target Categories</label><div class="value">Dental clinics, doctors, lawyers, architects, salons, beauty clinics, interior designers, CA firms, real estate, pet clinics, physiotherapy, etc.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 4. Full Call Script ── -->
+<section class="section" id="script">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 4</div>
+    <h2>Cold Calling <span class="highlight">Script</span></h2>
+    <p class="full-width">This is a guide — not a word-for-word script. Adapt your tone to the conversation. Be warm, be real, be human. The goal is to qualify, not to close.</p>
+
+    <h3 style="margin-bottom: 16px; color: var(--brand-glow);">📞 PHASE 1: Opening (15 seconds)</h3>
+    <div class="script-box">
+      <div class="label"><i class="fas fa-user"></i> Your Opening</div>
+      <div class="line"><span class="role you">YOU</span> "Hi, is this [business name]? Am I speaking with [owner/manager name]?"</div>
+      <div class="line" style="color: var(--text-muted); font-size: 0.85rem;">— Wait for confirmation, introduce yourself in a friendly tone —</div>
+      <div class="line" style="margin-top: 12px;"><span class="role you">YOU</span> "Hi [name], this is [your name] from TKVibes. We're a web design studio based in Delhi. I came across your business online — [mention something specific: good reviews, great location, etc.] — and I noticed you don't have a strong website presence yet. I thought I'd reach out to see if that's something you've been thinking about?"</div>
+    </div>
+
+    <div class="callout">
+      <h4><i class="fas fa-check-circle"></i> Why This Works</h4>
+      <p>You lead with a <strong>compliment</strong> (noticed their business), then state the <strong>pain point</strong> (no website/weak presence), then ask an <strong>open question</strong>. This feels helpful, not salesy. Never say "I'm calling to sell you..."</p>
+    </div>
+
+    <h3 style="margin: 32px 0 16px; color: var(--brand-glow);">💬 PHASE 2: Conversation Flow</h3>
+
+    <div class="script-box">
+      <div class="label"><i class="fas fa-redo"></i> If They Say "I Already Have a Website"</div>
+      <div class="line"><span class="role you">YOU</span> "That's great! How long ago was it built? Is it bringing you the results you want? Most business owners I talk to say their site feels outdated or doesn't bring in enough enquiries. We specialize in refreshing older sites to make them mobile-friendly, faster, and better at converting visitors into customers."</div>
+      <div class="line" style="margin-top: 12px;"><span class="role you">YOU</span> "Would you be open to a quick look? We can do a free audit and share what improvements could help you get more leads."</div>
+    </div>
+
+    <div class="script-box">
+      <div class="label"><i class="fas fa-redo"></i> If They Say "I Don't Need a Website" or "We Do Fine Without One"</div>
+      <div class="line"><span class="role you">YOU</span> "I completely understand, and I'm sure word of mouth has been working well for you. But here's what I see happening — when people search for [service they offer] in [their city], the first thing they do is Google. If they can't find a professional website, they often go to a competitor who has one. A simple 3-page site can be up in a matter of days and costs less than what most businesses spend on print ads. Would it make sense to at least see what it would look like?"</div>
+    </div>
+
+    <div class="script-box">
+      <div class="label"><i class="fas fa-redo"></i> If They Say "Tell Me More" or Seem Interested</div>
+      <div class="line"><span class="role you">YOU</span> "Great! So here's what we do — we build professional, modern websites for service businesses like yours. We handle everything: the design, the content, getting it online, and making sure it shows up on Google. We have different packages depending on what you need — from a simple 3-page starter site at ₹9,999, all the way to a full 5-page site with SEO and branding at ₹14,999. I'd love to show you an example of something we've done for a similar business. Can I send you a link on WhatsApp so you can take a look?"</div>
+    </div>
+
+    <h3 style="margin: 32px 0 16px; color: var(--brand-glow);">🔑 PHASE 3: Qualification Questions</h3>
+    <div class="script-box">
+      <div class="label"><i class="fas fa-clipboard-check"></i> After They've Seen the Sample or Expressed Interest, Ask:</div>
+      <div class="line"><span class="role you">YOU</span> "Just so I understand your situation better —"</div>
+      <div class="line" style="margin-top: 8px;"><span class="role you">YOU</span> "1. Are you the person who makes the decisions on things like this, or would someone else need to be involved?"</div>
+      <div class="line"><span class="role you">YOU</span> "2. Have you ever had a website before, or would this be your first one?"</div>
+      <div class="line"><span class="role you">YOU</span> "3. Roughly, what kind of timeline were you thinking? Are you looking to get something done this month, or is this more of a future plan?"</div>
+      <div class="line"><span class="role you">YOU</span> "4. Do you have a budget in mind for this? Our packages start at ₹9,999 — does that feel reasonable for what you need?"</div>
+    </div>
+
+    <div class="callout green">
+      <h4><i class="fas fa-star"></i> Listen More Than You Talk</h4>
+      <p>The best qualification happens when you ask questions and let them talk. Their answers tell you everything: budget, timeline, pain level, decision power. If they're not the decision-maker, ask when the decision-maker will be available and call back.</p>
+    </div>
+
+    <h3 style="margin: 32px 0 16px; color: var(--brand-glow);">🎯 PHASE 4: Closing the Call</h3>
+    <div class="script-box">
+      <div class="label"><i class="fas fa-check-double"></i> Qualified Lead — Handoff</div>
+      <div class="line"><span class="role you">YOU</span> "That's perfect. Let me share your details with our team lead who handles new projects. His name is Tarun and he'll reach out to you to discuss next steps in detail and give you a custom proposal. Expect to hear from him within 24 hours. In the meantime, I'll send you a WhatsApp message with our portfolio links. Does that work for you?"</div>
+    </div>
+    <div class="script-box">
+      <div class="label"><i class="fas fa-times-circle"></i> Not Interested / Not Now</div>
+      <div class="line"><span class="role you">YOU</span> "No problem at all, I completely understand. Would it be okay if I check back with you in a couple of months? Sometimes the timing isn't right now, but things change. I'll leave my number with you — [your number] — feel free to reach out anytime."</div>
+      <div class="line" style="margin-top: 8px; color: var(--text-muted);">Then update the spreadsheet: mark as "Follow-up (2 months)" and add your notes.</div>
+    </div>
+
+    <div class="callout warn" style="margin-top: 24px;">
+      <h4><i class="fas fa-exclamation-triangle"></i> DO NOT</h4>
+      <ul style="color: var(--text-muted); font-size: 0.85rem; padding-left: 20px; line-height: 1.8;">
+        <li>Do NOT argue with the lead if they say no. Be polite and move on.</li>
+        <li>Do NOT promise discounts or change prices — only your CEO can do that.</li>
+        <li>Do NOT try to close the deal yourself. Your job is to qualify only.</li>
+        <li>Do NOT make up features or capabilities. If you don't know, say "I'll check with our team and get back to you."</li>
+        <li>Do NOT be pushy. A relaxed, helpful tone closes more leads than a hard sell.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── 5. Portfolio ── -->
+<section class="section" id="portfolio">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 5</div>
+    <h2>Our <span class="highlight">Portfolio</span> — Sample Websites</h2>
+    <p class="full-width">When a lead asks "What do your websites look like?", you can share these links on WhatsApp. These are real projects we've built. Each one is a complete, responsive website that you can use as a reference.</p>
+
+    <div class="portfolio-grid">
+      <div class="port-card">
+        <div style="background: linear-gradient(135deg, #0D47A1, #1565C0); height: 160px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff;"><i class="fas fa-tooth"></i></div>
+        <div class="info">
+          <h4>Mita Dental Clinic</h4>
+          <p class="type"><i class="fas fa-tag"></i> Healthcare / Dental</p>
+          <p style="font-size:0.8rem; margin-top:6px;">Professional clinic website with online booking, services, doctor profiles, and patient testimonials.</p>
+        </div>
+      </div>
+      <div class="port-card">
+        <div style="background: linear-gradient(135deg, #1B5E20, #2E7D32); height: 160px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff;"><i class="fas fa-tooth"></i></div>
+        <div class="info">
+          <h4>Let's Smile Dental</h4>
+          <p class="type"><i class="fas fa-tag"></i> Healthcare / Dental</p>
+          <p style="font-size:0.8rem; margin-top:6px;">Modern, friendly dental practice site with before/after gallery, team bios, and appointment form.</p>
+        </div>
+      </div>
+      <div class="port-card">
+        <div style="background: linear-gradient(135deg, #4A148C, #6A1B9A); height: 160px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff;"><i class="fas fa-utensils"></i></div>
+        <div class="info">
+          <h4>Tasty Bites Cafe</h4>
+          <p class="type"><i class="fas fa-tag"></i> Food &amp; Beverage</p>
+          <p style="font-size:0.8rem; margin-top:6px;">Interactive 3D cafe website with menu display, location map, and online reservation system.</p>
+        </div>
+      </div>
+      <div class="port-card">
+        <div style="background: linear-gradient(135deg, #E65100, #EF6C00); height: 160px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff;"><i class="fas fa-water"></i></div>
+        <div class="info">
+          <h4>Deep Water Tank Cleaning</h4>
+          <p class="type"><i class="fas fa-tag"></i> Service Business</p>
+          <p style="font-size:0.8rem; margin-top:6px;">Lead-generation site for a service company with service area map, pricing, and instant quote form.</p>
+        </div>
+      </div>
+      <div class="port-card">
+        <div style="background: linear-gradient(135deg, #004D40, #00695C); height: 160px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff;"><i class="fas fa-tooth"></i></div>
+        <div class="info">
+          <h4>Multi-Specialty Dental Clinic</h4>
+          <p class="type"><i class="fas fa-tag"></i> Healthcare / Dental</p>
+          <p style="font-size:0.8rem; margin-top:6px;">Comprehensive multi-specialty clinic site with department pages and doctor profiles.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <h4><i class="fas fa-share"></i> How to Share Samples</h4>
+      <p>After the call, send a WhatsApp message: <em>"Hi [name], as promised here's a sample website we built for a dental clinic: [link]. You can also see all our work at tkvibes.com/portfolio. Let me know what you think!"</em></p>
+    </div>
+
+    <h3 style="margin: 32px 0 16px; color: var(--brand-glow);">🌐 Live Pages to Reference</h3>
+    <div class="info-grid">
+      <div class="info-item"><label>Main Website</label><div class="value"><a href="https://tkvibes.com" target="_blank" style="color:var(--brand-glow);text-decoration:none;">tkvibes.com</a></div></div>
+      <div class="info-item"><label>Portfolio Page</label><div class="value"><a href="https://tkvibes.com/portfolio.html" target="_blank" style="color:var(--brand-glow);text-decoration:none;">tkvibes.com/portfolio.html</a></div></div>
+      <div class="info-item"><label>Services Page</label><div class="value"><a href="https://tkvibes.com/services.html" target="_blank" style="color:var(--brand-glow);text-decoration:none;">tkvibes.com/services.html</a></div></div>
+      <div class="info-item"><label>Pricing Page</label><div class="value"><a href="https://tkvibes.com/packages.html" target="_blank" style="color:var(--brand-glow);text-decoration:none;">tkvibes.com/packages.html</a></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 6. Objection Handling ── -->
+<section class="section" id="objections">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 6</div>
+    <h2>Handling <span class="highlight">Objections</span></h2>
+    <p class="full-width">You will hear the same objections again and again. Here's exactly how to respond. Practice these till they feel natural.</p>
+
+    <div class="table-wrap">
+      <table class="obj-table">
+        <thead><tr><th>Objection</th><th>Your Response</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="obj">"I already have a website."</td>
+            <td class="resp">"Great! When was it built? Most older sites don't work well on mobile and lose potential customers. We specialize in redesigning existing sites — making them faster, mobile-friendly, and better at converting visitors into calls or bookings. Would you like a free audit?"</td>
+          </tr>
+          <tr>
+            <td class="obj">"It's too expensive."</td>
+            <td class="resp">"I understand. Our Starter package is just ₹9,999 — that's a complete 3-page website with logo design, Google Business setup, and SEO. Think of it as a one-time investment that brings you customers for years. Most businesses recover that cost from a single new client."</td>
+          </tr>
+          <tr>
+            <td class="obj">"I don't have time right now."</td>
+            <td class="resp">"Totally fair. We handle everything — you just need to share a few details about your business. The whole process takes very little of your time. Could we start with a 5-minute chat to see if it makes sense? If the timing really isn't right, I'll check back in a couple of months."</td>
+          </tr>
+          <tr>
+            <td class="obj">"We rely on word of mouth / walk-ins."</td>
+            <td class="resp">"Word of mouth is the best kind of marketing! But here's what happens — when someone hears about you from a friend, the first thing they do is Google your business. If they find nothing or a bad site, they second-guess their decision. A simple website gives those referrals confidence and helps you capture them."</td>
+          </tr>
+          <tr>
+            <td class="obj">"Send me an email / website link first."</td>
+            <td class="resp">"Of course! Can I send it to your WhatsApp? It's faster and I can follow up with any questions you have. What's your number?" <span style="color:var(--text-muted);">— Get the WhatsApp number, send the portfolio link, and follow up in 10-15 minutes.</span></td>
+          </tr>
+          <tr>
+            <td class="obj">"I need to discuss with my partner."</td>
+            <td class="resp">"Absolutely, that makes sense. When would be a good time to call back when you both can discuss? Is tomorrow at [time] good? I can also send our pricing and portfolio over WhatsApp so you can review it together."</td>
+          </tr>
+          <tr>
+            <td class="obj">"How do I know you're legit?"</td>
+            <td class="resp">"Great question. You can check our work at tkvibes.com — we have 5+ live client websites you can browse. We're also on WhatsApp at +91 98182 46938. We've delivered 50+ projects with 98% satisfaction. I can also share references of businesses we've worked with if you'd like."</td>
+          </tr>
+          <tr>
+            <td class="obj">"Can you do [specific feature]?"</td>
+            <td class="resp">"Most likely yes! We build custom features all the time — booking systems, payment gateways, admin dashboards, API integrations. If you're not sure, I'll note it down and our tech team can confirm. What exactly did you have in mind?"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top: 24px;">
+      <h4><i class="fas fa-heart"></i> Golden Rule of Objections</h4>
+      <p>An objection is NOT a rejection — it's a question hiding behind a statement. "Too expensive" might mean "I don't understand the value yet." "Not interested" might mean "You caught me at a bad time." Don't argue. Explore politely. If they truly aren't interested, thank them and move on. Time wasted on a "no" is time you could spend finding a "yes."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 7. Qualification Criteria ── -->
+<section class="section" id="qualification">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 7</div>
+    <h2>What Makes a Lead <span class="highlight">Qualified</span>?</h2>
+    <p class="full-width">After your call, you need to decide if this lead is worth passing to the CEO. A qualified lead meets ALL of these criteria:</p>
+
+    <div class="two-col">
+      <div>
+        <h3 style="font-size: 1rem; margin-bottom: 16px; color: var(--accent-green);">✅ Qualified Lead Checklist</h3>
+        <ul class="checklist">
+          <li><i class="fas fa-check-circle"></i> <strong>Showed genuine interest</strong> — they listened, asked questions, engaged with the conversation</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Viewed or will view sample work</strong> — they agreed to see our portfolio or have seen it</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Decision maker reached</strong> — you spoke to the owner, manager, or someone with authority to approve spending</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Has budget</strong> — they didn't balk at ₹9,999-₹14,999 range; they indicated they're open to spending</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Reasonable timeline</strong> — they want to start within 1-4 weeks, or at least are open to discussing soon</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Contact info confirmed</strong> — you have their working WhatsApp number and/or email</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Agreed to follow-up</strong> — they're okay with the CEO calling/contacting them</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size: 1rem; margin-bottom: 16px; color: var(--accent-red);">❌ Red Flags (Not Qualified)</h3>
+        <ul class="checklist">
+          <li><i class="fas fa-times-circle" style="color: var(--accent-red);"></i> <strong>Not the decision maker</strong> — and the DM is not available or hard to reach</li>
+          <li><i class="fas fa-times-circle" style="color: var(--accent-red);"></i> <strong>No budget</strong> — "I can't afford anything right now" or "we have zero budget"</li>
+          <li><i class="fas fa-times-circle" style="color: var(--accent-red);"></i> <strong>Not interested</strong> — firm "no" with no opening for follow-up</li>
+          <li><i class="fas fa-times-circle" style="color: var(--accent-red);"></i> <strong>No timeline</strong> — "Maybe next year" or "not anytime soon" with no specific plan</li>
+          <li><i class="fas fa-times-circle" style="color: var(--accent-red);"></i> <strong>Going with someone else</strong> — already hired another agency or developer</li>
+          <li><i class="fas fa-times-circle" style="color: var(--accent-red);"></i> <strong>Rude or hostile</strong> — if they're aggressive or abusive, just end the call politely</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin: 32px 0 16px; color: var(--brand-glow);">📋 What to Record in the Spreadsheet</h3>
+    <div class="table-wrap">
+      <table class="pricing-table">
+        <thead><tr><th>Column</th><th>What to Write</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Status</strong></td><td>Qualified / Follow-up / Not Interested / Wrong Number</td></tr>
+          <tr><td><strong>Call Notes</strong></td><td>Brief summary — e.g. "Spoke to Dr. Sharma. Interested in Growth package. Wants site for his dental clinic. OK for CEO to call tomorrow at 11am. WhatsApp shared sample."</td></tr>
+          <tr><td><strong>Interest Level</strong></td><td>High / Medium / Low</td></tr>
+          <tr><td><strong>Recommended Package</strong></td><td>Starter / Growth / Pro / Enterprise / Custom — based on what you discussed</td></tr>
+          <tr><td><strong>Best Time to Call</strong></td><td>When they said the CEO should call back</td></tr>
+          <tr><td><strong>Phone / WhatsApp</strong></td><td>Confirm the number is correct</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 8. Handoff ── -->
+<section class="section" id="handoff">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Chapter 8</div>
+    <h2>Passing the Baton — <span class="highlight">Handoff to CEO</span></h2>
+    <p class="full-width">Your job ends when the lead is qualified. Here's exactly how the handoff works:</p>
+
+    <div class="steps">
+      <div class="step">
+        <h3>Update the Spreadsheet</h3>
+        <p>Mark the lead as <strong>Qualified</strong>. Add detailed notes about the conversation — what package they were interested in, what they liked/disliked, any specific requirements they mentioned, and the best time for the CEO to call.</p>
+      </div>
+      <div class="step">
+        <h3>Send a Brief to CEO</h3>
+        <p>Send a message to the CEO (Tarun) with the lead's details: name, business, phone, what was discussed, and the recommended next step. E.g.: <em>"Dr. Mehta from Mehta Dental Clinic, Gurgaon. Very interested in Growth package. Saw sample and loved it. Best time to call: 11am tomorrow. His WhatsApp is same number."</em></p>
+      </div>
+      <div class="step">
+        <h3>Send Portfolio to Lead (if not already done)</h3>
+        <p>If you didn't already send the sample during the call, send it now via WhatsApp with a brief note: <em>"Hi [name], here's the sample site I mentioned. Feel free to have a look — our CEO Tarun will follow up with you tomorrow. Thanks for your time!"</em></p>
+      </div>
+      <div class="step">
+        <h3>CEO Closes the Deal</h3>
+        <p>The CEO takes over from here. Your qualification work made it easy for him to go in and close. You get credit for every lead that converts.</p>
+      </div>
+    </div>
+
+    <div class="callout green" style="margin-top: 24px;">
+      <h4><i class="fas fa-trophy"></i> Why Your Role Matters</h4>
+      <p>You are the front line. Every qualified lead you find is a potential ₹10,000-₹70,000+ project for TKVibes. Your warm introduction makes it 10x easier for the CEO to close the deal. A cold lead who never gets called = ₹0. A qualified lead you hand off = a real chance at new business.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Final Tips ── -->
+<section class="section" id="tips" style="border-bottom: none;">
+  <div class="container">
+    <div class="section-label"><i class="fas fa-circle"></i> Quick Reference</div>
+    <h2>🚀 Final <span class="highlight">Tips for Success</span></h2>
+
+    <div class="card-grid" style="margin-top: 16px;">
+      <div class="card">
+        <div class="card-icon green"><i class="fas fa-smile"></i></div>
+        <h3>Be Warm &amp; Human</h3>
+        <p>Nobody wants to talk to a robot. Smile while you talk — it changes your voice tone. Use the person's name. Listen actively. A genuine conversation beats a perfect script every time.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon blue"><i class="fas fa-bolt"></i></div>
+        <h3>Speed Matters</h3>
+        <p>Call HOT leads first. The faster you call after a lead is generated, the more likely they are to remember you. Same-day contact has the highest conversion rate.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon purple"><i class="fas fa-book"></i></div>
+        <h3>Keep Learning</h3>
+        <p>Note down what works and what doesn't. Share feedback with the team. If you find a new objection we haven't covered, log it — we'll add it to the training.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon orange"><i class="fas fa-phone"></i></div>
+        <h3>Volume = Results</h3>
+        <p>Expect 5-10 calls to get 1 good conversation, and 3-5 conversations to get 1 qualified lead. It's a numbers game. Don't get discouraged by rejections — every "no" gets you closer to a "yes."</p>
+      </div>
+      <div class="card">
+        <div class="card-icon red"><i class="fas fa-shield-alt"></i></div>
+        <h3>Stay Compliant</h3>
+        <p>Respect DND (Do Not Disturb) numbers. If someone asks to be removed from your list, note it immediately and never call them again. Keep calls professional and within reasonable hours (10am-7pm).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background: rgba(255,255,255,0.05); color: var(--brand-glow);"><i class="fas fa-gem"></i></div>
+        <h3>Believe in the Product</h3>
+        <p>We build genuinely good websites at fair prices. You're not selling something useless — you're helping real businesses grow. Confidence in what you offer comes through on every call.</p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 48px;">
+      <p style="color: var(--text-muted); margin-bottom: 16px;">Keep this page bookmarked. Review the script before every calling session.</p>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="#script" class="btn btn-primary"><i class="fas fa-comments"></i> Jump to Script</a>
+        <a href="#qualification" class="btn btn-outline"><i class="fas fa-clipboard-check"></i> Qualification Checklist</a>
+        <a href="#objections" class="btn btn-outline"><i class="fas fa-shield"></i> Objection Responses</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <p><strong>TKVibes Digital Agency</strong> &mdash; Delhi, India<br>
+  services@tkvibes.in &bull; +91 98182 46938 &bull; <a href="https://tkvibes.com" target="_blank">tkvibes.com</a></p>
+  <p style="margin-top: 8px; font-size: 0.75rem;">Training Manual v1.0 &mdash; Updated August 2026</p>
+</footer>
+
+</body>
+</html>

@@ -14,20 +14,20 @@ sources:
   justdial: false
 
 targets:
-  # Pan-India targeting. Agency is Delhi-based, so NCR leads first —
-  # local proximity is a real selling point and the easiest close.
+  # Pan-India + Canada targeting.
+  # Agency is Delhi-based, but Canada expansion covers GTA, BC, Alberta.
   # Cost note: leads pulled = cities x categories x max_results_per_query,
   # and every Places call is billable. Trim this list, not the categories,
   # if spend gets high. max_leads_per_run caps what is actually kept.
   cities:
-    # ── Delhi NCR (home turf — highest priority) ──
+    # ── India: Delhi NCR (home turf — highest priority) ──
     - "Delhi"
     - "New Delhi"
     - "Gurgaon"
     - "Noida"
     - "Ghaziabad"
     - "Faridabad"
-    # ── Tier-1 metros ──
+    # ── India: Tier-1 metros ──
     - "Mumbai"
     - "Bengaluru"
     - "Hyderabad"
@@ -35,7 +35,7 @@ targets:
     - "Kolkata"
     - "Pune"
     - "Ahmedabad"
-    # ── Tier-2 (less agency competition, cheaper to win) ──
+    # ── India: Tier-2 (less agency competition, cheaper to win) ──
     - "Jaipur"
     - "Lucknow"
     - "Chandigarh"
@@ -48,6 +48,40 @@ targets:
     - "Visakhapatnam"
     - "Bhubaneswar"
     - "Dehradun"
+    # ── Canada: Ontario GTA ──
+    - "Toronto"
+    - "Mississauga"
+    - "Brampton"
+    - "Markham"
+    - "Vaughan"
+    - "Richmond Hill"
+    - "Oakville"
+    - "Burlington"
+    - "Milton"
+    # ── Canada: Ontario rest ──
+    - "Ottawa"
+    - "Hamilton"
+    - "Kitchener"
+    - "Waterloo"
+    - "London"
+    - "Windsor"
+    # ── Canada: British Columbia ──
+    - "Vancouver"
+    - "Surrey"
+    - "Burnaby"
+    - "Richmond"
+    - "Coquitlam"
+    # ── Canada: Alberta ──
+    - "Calgary"
+    - "Edmonton"
+    # ── Canada: Quebec ──
+    - "Montreal"
+    - "Laval"
+    # ── Canada: other provinces ──
+    - "Winnipeg"
+    - "Saskatoon"
+    - "Regina"
+    - "Halifax"
   categories:
     # High-value professionals & clinics (primary targets)
     - "dental clinic"
@@ -126,3 +160,12 @@ handoff:
   export_json: "data/leads_export.json"
   # Only export leads at or above this tier
   min_tier: "WARM"   # HOT, WARM, or COLD
+
+# ── CRM integration ──
+crm:
+  # Webhook endpoint for pushing leads to the employee CRM dashboard
+  api_url: ""   # e.g. "https://tkvibes.com/crm"
+  api_key: ""   # shared secret — set in CRM admin panel
+  # Fallback employee mapping (used when CRM API is unreachable).
+  # Each entry: {name: "Employee Name", regions: ["Delhi NCR", "Mumbai Metro"]}
+  employees: []

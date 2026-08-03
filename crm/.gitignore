@@ -1,0 +1,6 @@
+# ── CRM ──
+config.local.php
+data/crm.db
+data/
+*.sqlite
+*.sqlite3

@@ -1,0 +1,14 @@
+# Deny access to sensitive files
+<FilesMatch "\.(db|sqlite|sqlite3|local\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Deny directory listing
+Options -Indexes
+
+# Protect config
+<Files "config.local.php">
+    Order Allow,Deny
+    Deny from all
+</Files>

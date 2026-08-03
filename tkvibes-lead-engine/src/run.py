@@ -12,6 +12,10 @@ from .sheets import SheetWriter
 from .models import Lead
 from .handoff.sample_site import build_site_spec
 from .handoff.pitch_deck import build_deck_spec
+from .regions import resolve as resolve_region
+from .pain_points import build_pain_points, recommend_pitch
+from .assign import assign_employees
+from .push_crm import push_leads
 
 TIER_RANK = {"HOT": 0, "WARM": 1, "COLD": 2}
 
@@ -99,6 +103,19 @@ def process_leads(leads: list[Lead], cfg: dict) -> list[Lead]:
     return leads
 
 
+def apply_crm_fields(leads: list[Lead], cfg: dict) -> list[Lead]:
+    """Resolve region/country, generate pain points, pitch, and assign employees."""
+    for l in leads:
+        region, country = resolve_region(l.city)
+        l.region = region
+        l.country = country
+        l.pain_points = build_pain_points(l)
+        l.recommended_pitch = recommend_pitch(l)
+
+    assign_employees(leads, cfg)
+    return leads
+
+
 def find_emails(leads: list[Lead], ef: dict) -> list[Lead]:
     """Crawl lead websites to populate the email field (Places API has none)."""
     from .email_finder import enrich_email
@@ -181,6 +198,8 @@ def main():
     parser.add_argument("--categories", default=None,
                         help="comma-separated subset of categories")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--no-crm-push", action="store_true",
+                        help="Skip pushing leads to CRM after run")
     args = parser.parse_args()
 
     load_dotenv()
@@ -217,11 +236,17 @@ def main():
     leads = leads[:max_leads]
     print(f"   capped to {len(leads)} leads for this run")
 
+    # ── CRM enrichment ───────────────────────────────────────────────────────
+    leads = apply_crm_fields(leads, cfg)
+    print(f"   CRM fields applied: region/country, pain points, pitch, employee assignment")
+
     export_path = export_for_handoff(leads, cfg)
     print(f"   handoff JSON -> {export_path} ({len(leads)} leads)")
 
+    # ── Sheet write ──────────────────────────────────────────────────────────
     if args.dry_run:
         print("   (dry-run - skipping Google Sheets write)")
+        master_added = 0
         added = 0
     else:
         sa_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
@@ -231,13 +256,24 @@ def main():
             added = 0
         else:
             writer = SheetWriter(sa_path, sheet_id, cfg["sheets"]["worksheet_name"])
-            # One fresh worksheet per job, named by date-time stamp.
+
+            # 1. Upsert to master "Leads" tab (with CRM fields)
+            master_added = writer.upsert(leads)
+            print(f"   Master tab: {master_added} new leads upserted")
+
+            # 2. One fresh worksheet per job, named by date-time stamp
             from datetime import datetime as _dt
             job_sheet = _dt.now().strftime("%Y-%m-%d %H-%M-%S")
             added = writer.write_job(leads, job_sheet)
-            print(f"   Google Sheets: wrote {added} leads to new tab '{job_sheet}'")
+            print(f"   Job tab '{job_sheet}': wrote {added} leads")
 
-    print(f"\nDone - {len(leads)} leads processed | {added} new sheet rows | {hot} HOT")
+    # ── CRM push ─────────────────────────────────────────────────────────────
+    if not args.no_crm_push and not args.dry_run:
+        crm_cfg = cfg.get("crm", {}) or {}
+        result = push_leads(leads, crm_cfg.get("api_url", ""), crm_cfg.get("api_key", ""))
+        print(f"   CRM push: {result.get('status', 'unknown')}")
+
+    print(f"\nDone - {len(leads)} leads processed | {master_added} new sheet rows | {hot} HOT")
     print(f"   Handoff JSON: {export_path}")
 
 
