@@ -434,7 +434,7 @@ foreach ($regions_data as $r) {
                                 <?php endforeach; ?>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline" onclick="editEmployee(<?= $e['id'] ?>, '<?= e(addslashes($e['name'])) ?>', '<?= e($e['email']) ?>', '<?= e($e['role']) ?>', <?= $e['active'] ? 'true' : 'false' ?>, <?= e(json_encode(array_map(fn($r) => $r['region'] . '|' . $r['country'], $e['regions']))) ?>)"">Edit</button>
+                                <button class="btn btn-sm btn-outline" onclick="editEmployee(<?= (int)$e['id'] ?>, '<?= e(addslashes($e['name'])) ?>', '<?= e($e['email']) ?>', '<?= e($e['role']) ?>', <?= $e['active'] ? 'true' : 'false' ?>, <?= htmlspecialchars(json_encode(array_map(fn($r) => $r['region'] . '|' . $r['country'], $e['regions'])), ENT_QUOTES, 'UTF-8') ?>)">
                                 <button type="button" class="btn btn-sm btn-outline" onclick="resetPassword(<?= $e['id'] ?>, '<?= e(addslashes($e['name'])) ?>')">Reset PW</button>
                                 <?php if ((int)$e['id'] !== $emp['id']): ?>
                                     <form method="post" style="display:inline" onsubmit="return confirm('Delete this employee?')">

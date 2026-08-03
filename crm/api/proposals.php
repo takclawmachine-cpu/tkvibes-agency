@@ -213,9 +213,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             json_response(['error' => 'Access denied'], 403);
         }
 
-        $stmt = $pdo->prepare("SELECT * FROM proposal_generation_jobs WHERE lead_key = ? ORDER BY created_at DESC");
-        $stmt->execute([$lead_key]);
-        $jobs = $stmt->fetchAll();
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM proposal_generation_jobs WHERE lead_key = ? ORDER BY created_at DESC");
+            $stmt->execute([$lead_key]);
+            $jobs = $stmt->fetchAll();
+        } catch (PDOException $e) {
+            $jobs = [];
+        }
 
         json_response(['status' => 'ok', 'jobs' => $jobs]);
 

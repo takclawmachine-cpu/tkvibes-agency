@@ -68,7 +68,7 @@ $l = $selected_lead;
         <!-- Right column: CRM info -->
         <div class="detail-section">
             <h3>Pain Points</h3>
-            <div class="pain-points-box edit-cell" data-field="pain_points">
+            <div class="pain-points-box edit-cell" data-field="pain_points" data-raw="<?= e($l['pain_points']) ?>">
                 <?php if ($l['pain_points']): ?>
                     <?php foreach (explode(' | ', $l['pain_points']) as $pp): ?>
                         <div class="pain-point">⚠️ <?= e($pp) ?></div>
@@ -81,7 +81,7 @@ $l = $selected_lead;
 
         <div class="detail-section">
             <h3>Recommended Pitch</h3>
-            <div class="pitch-box edit-cell" data-field="recommended_pitch">
+            <div class="pitch-box edit-cell" data-field="recommended_pitch" data-raw="<?= e($l['recommended_pitch']) ?>">
                 <?php if ($l['recommended_pitch']): ?>
                     <?php foreach (explode(' | ', $l['recommended_pitch']) as $i => $part): ?>
                         <p class="pitch-line"><?= $i === 0 ? '🎯' : '📌' ?> <?= e($part) ?></p>

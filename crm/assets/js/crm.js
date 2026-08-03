@@ -116,7 +116,8 @@
         var field = cell.getAttribute('data-field');
         if (!field) return;
 
-        var currentText = cell.textContent.trim();
+        // Use data-raw if available (contains the raw DB value)
+        var currentText = cell.dataset.raw || cell.textContent.trim();
         if (currentText === '—' || currentText === 'none') currentText = '';
 
         var input;
