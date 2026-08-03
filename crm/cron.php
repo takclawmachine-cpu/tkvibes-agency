@@ -1,7 +1,8 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
- * TKVibes CRM — Cron jobs
- * Run via Hostinger cron or terminal: php cron.php [--dry-run]
+ * TKVibes CRM — Cron Jobs
+ * Scheduled tasks: Google Sheets sync, lead reassignment.
  * 
  * 1. Archive NOT_QUALIFIED leads older than 24h (soft-remove from dashboards)
  * 2. Clean up activity logs older than 90 days
