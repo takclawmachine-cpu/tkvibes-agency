@@ -109,16 +109,27 @@ $l = $selected_lead;
         <div class="detail-section">
             <h3>Proposals</h3>
             <?php
-            $has_sample = lead_has_proposal($l['lead_key'], 'sample_site');
-            $has_deck = lead_has_proposal($l['lead_key'], 'pitch_deck');
-            $has_proposals = $has_sample || $has_deck;
+            $has_sample = false;
+            $has_deck = false;
+            $has_proposals = false;
+            try {
+                $has_sample = lead_has_proposal($l['lead_key'], 'sample_site');
+                $has_deck = lead_has_proposal($l['lead_key'], 'pitch_deck');
+                $has_proposals = $has_sample || $has_deck;
+            } catch (Throwable $e) { /* proposals table may not exist yet */ }
 
             // Check for pending/running generation jobs
-            $pdo_local = get_db();
-            $job_stmt = $pdo_local->prepare("SELECT * FROM proposal_generation_jobs WHERE lead_key = ? ORDER BY created_at DESC LIMIT 1");
-            $job_stmt->execute([$l['lead_key']]);
-            $latest_job = $job_stmt->fetch();
-            $has_active_job = $latest_job && in_array($latest_job['status'], ['pending', 'running']);
+            $has_active_job = false;
+            $latest_job = null;
+            try {
+                $pdo_local = get_db();
+                $job_stmt = $pdo_local->prepare("SELECT * FROM proposal_generation_jobs WHERE lead_key = ? ORDER BY created_at DESC LIMIT 1");
+                $job_stmt->execute([$l['lead_key']]);
+                $latest_job = $job_stmt->fetch();
+                $has_active_job = $latest_job && in_array($latest_job['status'], ['pending', 'running']);
+            } catch (Throwable $e) {
+                // proposal_generation_jobs table may not exist yet — silently continue
+            }
             ?>
             <table class="detail-table">
                 <?php if ($l['sample_site_url']): ?>
