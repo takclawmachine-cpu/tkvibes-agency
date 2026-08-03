@@ -5,7 +5,7 @@ A PHP-based CRM for TKVibes Agency employees. Integrates with the lead engine (G
 ## Architecture
 
 ```
-crm/                     # → tkvibes.com/crm/
+crm/                     # → tkvibes.in/crm/
 ├── index.php            # Login
 ├── dashboard.php        # Employee dashboard (lead list + detail + actions)
 ├── admin.php            # Admin dashboard (overview, manage employees, all leads)
@@ -37,11 +37,11 @@ crm/                     # → tkvibes.com/crm/
 
 ### 1. Deploy to Hostinger
 
-The `crm/` folder is part of the tkvibes-agency repo. Push to `main` → GitHub Actions deploys to Hostinger `public_html/`. The CRM will be at `https://tkvibes.com/crm/`.
+The `crm/` folder is part of the tkvibes-agency repo. Push to `main` → GitHub Actions deploys to Hostinger `public_html/`. The CRM will be at `https://tkvibes.in/crm/`.
 
 ### 2. Run Setup Wizard
 
-Visit `https://tkvibes.com/crm/install.php` and follow the steps:
+Visit `https://tkvibes.in/crm/install.php` and follow the steps:
 
 1. **Database**: Choose SQLite (zero-config, recommended) or MySQL
 2. **Security**: Auto-generated secret key + API key
@@ -53,7 +53,7 @@ In `config.yaml` of the lead engine, set:
 
 ```yaml
 crm:
-  api_url: "https://tkvibes.com/crm"
+  api_url: "https://tkvibes.in/crm"
   api_key: "<the-api-key-from-install>"
 ```
 

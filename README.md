@@ -1,6 +1,6 @@
 # TKVibes Agency
 
-Public marketing website for **[TKVibes Digital Agency](https://tkvibes.com)** — premium websites, brand identity, SEO, paid ads, and automation for modern service brands.
+Public marketing website for **[TKVibes Digital Agency](https://tkvibes.in)** — premium websites, brand identity, SEO, paid ads, and automation for modern service brands.
 
 Built as **plain HTML, CSS, and JavaScript** with no build step. Deployed to **Hostinger shared hosting** via GitHub Actions (FTPS).
 
@@ -105,7 +105,7 @@ Details: [`memory/deployment.md`](memory/deployment.md)
 |-|-|
 | **Email** | services@tkvibes.in |
 | **Phone / WhatsApp** | +91 98182 46938 |
-| **Site** | [tkvibes.com](https://tkvibes.com) |
+| **Site** | [tkvibes.in](https://tkvibes.in) |
 
 ## Memory bank
 

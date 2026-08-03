@@ -74,7 +74,7 @@ if ($config_exists) {
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="form-control" required autofocus
-                       placeholder="you@tkvibes.com">
+                       placeholder="you@tkvibes.in">
             </div>
             <div class="form-group">
                 <label for="password">Password</label>

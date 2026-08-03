@@ -3,7 +3,7 @@
 
 project:
   name: TKVibes Agency
-  domain: tkvibes.com
+  domain: tkvibes.in
   repo: https://github.com/takclawmachine-cpu/tkvibes-agency.git
   default_branch: main
   status: active

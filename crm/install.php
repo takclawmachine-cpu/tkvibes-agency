@@ -196,7 +196,7 @@ PHP;
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" name="email" class="form-control" required placeholder="admin@tkvibes.com">
+                    <input type="email" name="email" class="form-control" required placeholder="admin@tkvibes.in">
                 </div>
                 <div class="form-group">
                     <label>Password</label>
@@ -213,7 +213,7 @@ PHP;
             <p class="text-muted mt-1">Important next steps:</p>
             <ul class="text-muted">
                 <li>Copy your <strong>CRM API Key</strong> from config.local.php into <code>config.yaml → crm.api_key</code></li>
-                <li>Set <code>crm.api_url</code> in config.yaml to your CRM URL (e.g. https://tkvibes.com/crm)</li>
+                <li>Set <code>crm.api_url</code> in config.yaml to your CRM URL (e.g. https://tkvibes.in/crm)</li>
                 <li>Add employees via the Admin Dashboard</li>
                 <li>Assign regions to each employee</li>
             </ul>

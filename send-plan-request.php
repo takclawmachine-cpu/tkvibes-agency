@@ -57,7 +57,7 @@ if (!empty($data['notes'])) {
 
 $body = implode("\r\n", $lines);
 
-$headers = "From: TKVibes Website <no-reply@tkvibes.com>\r\n";
+$headers = "From: TKVibes Website <no-reply@tkvibes.in>\r\n";
 $headers .= "Reply-To: " . $data['email'] . "\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion();
 

@@ -1,6 +1,6 @@
 # TKVibes Agency — Agent guide
 
-Public static site at **tkvibes.com**. Read the memory bank before making non-trivial changes.
+Public static site at **tkvibes.in**. Read the memory bank before making non-trivial changes.
 
 ## Start here
 

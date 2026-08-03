@@ -164,7 +164,7 @@ handoff:
 # ── CRM integration ──
 crm:
   # Webhook endpoint for pushing leads to the employee CRM dashboard
-  api_url: ""   # e.g. "https://tkvibes.com/crm"
+  api_url: ""   # e.g. "https://tkvibes.in/crm"
   api_key: ""   # shared secret — set in CRM admin panel
   # Fallback employee mapping (used when CRM API is unreachable).
   # Each entry: {name: "Employee Name", regions: ["Delhi NCR", "Mumbai Metro"]}

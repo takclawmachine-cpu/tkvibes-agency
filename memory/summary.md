@@ -2,7 +2,7 @@
 
 **What:** Public marketing site for TKVibes Digital Agency (websites, brand, SEO, ads, automation).
 
-**Live site:** [tkvibes.com](https://tkvibes.com)
+**Live site:** [tkvibes.in](https://tkvibes.in)
 
 **Repo:** `https://github.com/takclawmachine-cpu/tkvibes-agency.git` (branch `main`)
 
