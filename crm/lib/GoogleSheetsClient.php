@@ -1,6 +1,7 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
- * Lightweight Google Sheets client for PHP (zero dependencies).
+ * TKVibes CRM — Google Sheets Sync Client
  * Uses JWT-based service account authentication via cURL.
  * No composer required.
  * 

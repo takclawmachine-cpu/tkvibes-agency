@@ -1,4 +1,5 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
  * TKVibes CRM — Sync API endpoint
  * Called by the lead engine (Python) after each discovery run.

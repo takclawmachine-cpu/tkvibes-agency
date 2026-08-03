@@ -1,4 +1,5 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
  * TKVibes CRM — Helper functions
  */

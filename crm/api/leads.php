@@ -1,6 +1,7 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
- * TKVibes CRM — API endpoints
+ * TKVibes CRM — Leads API
  * Handles: tag, note, call log, sync
  */
 require __DIR__ . '/../lib/db.php';

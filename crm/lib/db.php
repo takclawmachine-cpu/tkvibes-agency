@@ -1,4 +1,5 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
  * TKVibes CRM — Database bootstrap
  * PDO connection + schema auto-creation.

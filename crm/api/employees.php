@@ -1,6 +1,7 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
- * TKVibes CRM — Employee mapping API
+ * TKVibes CRM — Employees API
  * Returns employee region and country coverage for the lead engine.
  * Protected by shared API key.
  */

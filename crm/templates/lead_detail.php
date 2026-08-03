@@ -1,4 +1,5 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
  * Lead Detail Template
  * Included by dashboard.php. Variables: $selected_lead, $activities, $emp

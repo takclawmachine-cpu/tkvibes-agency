@@ -1,4 +1,5 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
  * TKVibes CRM — Authentication
  * Session-based auth with password_hash.

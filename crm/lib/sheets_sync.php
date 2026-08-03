@@ -1,6 +1,7 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
- * TKVibes CRM — Google Sheets sync helper
+ * TKVibes CRM — Sheets Sync Cron
  * Provides a single function to get a configured GoogleSheetsClient instance,
  * plus write-back helpers for lead updates.
  */

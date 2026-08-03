@@ -1,4 +1,5 @@
 <?php
+header('X-Robots-Tag: noindex, nofollow');
 /**
  * TKVibes CRM — Install Wizard
  * Handles first-run setup: DB creation, employee creation, config writing.
