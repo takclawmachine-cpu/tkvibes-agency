@@ -198,6 +198,23 @@ function get_lead_activities(string $lead_key): array
     return $stmt->fetchAll();
 }
 
+function lead_has_proposal(string $lead_key, string $type): bool
+{
+    $pdo = get_db();
+    $stmt = $pdo->prepare("SELECT 1 FROM proposals WHERE lead_key = ? AND type = ?");
+    $stmt->execute([$lead_key, $type]);
+    return (bool)$stmt->fetch();
+}
+
+function get_proposal(string $lead_key, string $type): ?array
+{
+    $pdo = get_db();
+    $stmt = $pdo->prepare("SELECT * FROM proposals WHERE lead_key = ? AND type = ?");
+    $stmt->execute([$lead_key, $type]);
+    $r = $stmt->fetch();
+    return $r ?: null;
+}
+
 function lead_accessible_to(array $emp, array $lead): bool
 {
     if ($emp['role'] === 'admin') return true;

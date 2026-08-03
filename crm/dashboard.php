@@ -52,6 +52,7 @@ foreach ($leads as $l) {
             🎯 Cold Call Training
         </a>
         <a href="logout.php" class="btn btn-sm btn-outline">Logout</a>
+        <button class="btn btn-sm btn-outline mobile-menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('show')" title="Toggle filters">☰</button>
     </div>
 </nav>
 

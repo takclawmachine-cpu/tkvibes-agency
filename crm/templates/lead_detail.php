@@ -117,6 +117,26 @@ $l = $selected_lead;
                 <tr><td>Pitch Deck</td><td><a href="<?= e($l['pitch_deck_url']) ?>" target="_blank">View →</a></td></tr>
                 <?php endif; ?>
             </table>
+            <?php
+            $has_sample = lead_has_proposal($l['lead_key'], 'sample_site');
+            $has_deck = lead_has_proposal($l['lead_key'], 'pitch_deck');
+            ?>
+            <?php if ($has_sample || $has_deck): ?>
+            <div class="proposal-actions" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <?php if ($has_sample): ?>
+                    <a href="api/proposals.php?lead_key=<?= urlencode($l['lead_key']) ?>&type=sample_site&mode=view" target="_blank" class="btn btn-sm btn-primary">🌐 View Sample Site</a>
+                    <a href="api/proposals.php?lead_key=<?= urlencode($l['lead_key']) ?>&type=sample_site&mode=download" class="btn btn-sm btn-outline">⬇ Download Sample</a>
+                <?php endif; ?>
+                <?php if ($has_deck): ?>
+                    <a href="api/proposals.php?lead_key=<?= urlencode($l['lead_key']) ?>&type=pitch_deck&mode=view" target="_blank" class="btn btn-sm btn-primary">📊 View Pitch Deck</a>
+                    <a href="api/proposals.php?lead_key=<?= urlencode($l['lead_key']) ?>&type=pitch_deck&mode=download" class="btn btn-sm btn-outline">⬇ Download Deck</a>
+                <?php endif; ?>
+            </div>
+            <?php elseif ($l['sample_site_url'] || $l['pitch_deck_url']): ?>
+                <!-- URLs are external, buttons already shown above -->
+            <?php else: ?>
+                <p class="text-muted" style="margin-top: 0.5rem;">No proposals generated yet. Run the website agent to create sample site + pitch deck.</p>
+            <?php endif; ?>
         </div>
 
         <div class="detail-section">

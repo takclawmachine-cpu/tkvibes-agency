@@ -113,6 +113,16 @@ function init_schema(): void
                 description TEXT    NOT NULL DEFAULT '',
                 created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
             );
+            CREATE TABLE IF NOT EXISTS proposals (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                lead_key    TEXT    NOT NULL REFERENCES leads(lead_key) ON DELETE CASCADE,
+                type        TEXT    NOT NULL,  -- sample_site | pitch_deck
+                html        TEXT    NOT NULL,
+                file_name   TEXT    NOT NULL DEFAULT '',
+                created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+                updated_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+                UNIQUE(lead_key, type)
+            );
             CREATE INDEX IF NOT EXISTS idx_leads_region     ON leads(region);
             CREATE INDEX IF NOT EXISTS idx_leads_crm_status ON leads(crm_status);
             CREATE INDEX IF NOT EXISTS idx_leads_employee   ON leads(assigned_employee_id);
@@ -209,6 +219,17 @@ function init_schema(): void
             CREATE INDEX idx_leads_employee   ON leads(assigned_employee_id);
             CREATE INDEX idx_leads_removed    ON leads(removed_at);
             CREATE INDEX idx_activities_lead  ON lead_activities(lead_key);
+            CREATE TABLE IF NOT EXISTS proposals (
+                id          INT AUTO_INCREMENT PRIMARY KEY,
+                lead_key    VARCHAR(255) NOT NULL,
+                type        VARCHAR(50)  NOT NULL,  -- sample_site | pitch_deck
+                html        LONGTEXT     NOT NULL,
+                file_name   VARCHAR(255) NOT NULL DEFAULT '',
+                created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY uq_proposal (lead_key, type),
+                FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ");
     }
 }
