@@ -31,9 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db_name = $_POST['db_name'] ?? 'tkvibes_crm';
         $db_user = $_POST['db_user'] ?? '';
         $db_pass = $_POST['db_pass'] ?? '';
-        $secret  = $_POST['secret'] ?? bin2hex(random_bytes(16));
-        $api_key = $_POST['api_key'] ?? bin2hex(random_bytes(16));
+        $secret  = $_POST['secret'] ?? '';
+        $api_key = $_POST['api_key'] ?? '';
         $sheet_id = $_POST['sheet_id'] ?? '';
+        if (!$secret) $secret = bin2hex(random_bytes(16));
+        if (!$api_key) $api_key = bin2hex(random_bytes(16));
 
         if ($db_type === 'sqlite') {
             $dsn = 'sqlite:' . __DIR__ . '/data/crm.db';
@@ -115,6 +117,17 @@ PHP;
         <div class="alert alert-error"><?= e($error) ?></div>
     <?php endif; ?>
 
+    <?php
+    // Capture PHP errors during install and show them inline
+    $last_error = error_get_last();
+    if ($last_error && strpos($last_error['file'] ?? '', 'install.php') !== false):
+    ?>
+        <div class="alert alert-error">
+            PHP: <?= e($last_error['message']) ?><br>
+            <small><?= e($last_error['file']) ?>:<?= $last_error['line'] ?></small>
+        </div>
+    <?php endif; ?>
+
     <?php if ($step === 'welcome'): ?>
         <div class="install-card">
             <p>This wizard will:</p>
@@ -131,15 +144,27 @@ PHP;
         </div>
 
     <?php elseif ($step === 'config'): ?>
+        <?php
+        // Generate keys once, before HTML output — with fallback
+        try {
+            $auto_secret = bin2hex(random_bytes(16));
+            $auto_api_key = bin2hex(random_bytes(16));
+        } catch (Exception $e) {
+            $auto_secret = md5(uniqid(mt_rand(), true));
+            $auto_api_key = md5(uniqid(mt_rand(), true) . microtime());
+        }
+        ?>
         <div class="install-card">
             <h2>Database Configuration</h2>
             <form method="post">
                 <input type="hidden" name="step" value="config">
+                <input type="hidden" name="secret" value="<?= e($auto_secret) ?>">
+                <input type="hidden" name="api_key" value="<?= e($auto_api_key) ?>">
 
                 <div class="form-group">
                     <label>Database Type</label>
                     <select name="db_type" class="form-control" onchange="toggleDbFields(this.value)">
-                        <option value="sqlite">SQLite (recommended — zero-config)</option>
+                        <option value="sqlite" selected>SQLite (recommended — zero-config)</option>
                         <option value="mysql">MySQL (requires database setup)</option>
                     </select>
                 </div>
@@ -164,24 +189,21 @@ PHP;
                 </div>
 
                 <div class="form-group">
-                    <label>Secret Key (auto-generated)</label>
-                    <input type="text" name="secret" class="form-control" value="<?= e(bin2hex(random_bytes(16))) ?>">
-                    <small class="text-muted">Used for session encryption. Auto-generated.</small>
-                </div>
-
-                <div class="form-group">
-                    <label>CRM API Key (auto-generated)</label>
-                    <input type="text" name="api_key" class="form-control" value="<?= e(bin2hex(random_bytes(16))) ?>">
-                    <small class="text-muted">Shared secret with the lead engine. Put this in config.yaml → crm.api_key</small>
+                    <label>CRM API Key</label>
+                    <div style="display:flex;gap:0.5rem;align-items:center">
+                        <input type="text" class="form-control" value="<?= e($auto_api_key) ?>" readonly style="font-family:monospace;font-size:0.8rem;background:var(--bg-primary)" onclick="this.select()">
+                        <span class="text-muted" style="flex-shrink:0;font-size:0.75rem">📋 click to copy</span>
+                    </div>
+                    <small class="text-muted">Put this in config.yaml → crm.api_key</small>
                 </div>
 
                 <div class="form-group">
                     <label>Google Sheet ID (optional)</label>
-                    <input type="text" name="sheet_id" class="form-control" placeholder="1cZ7w4HlN5aGaSAY...">
-                    <small class="text-muted">For "Import from Sheet" feature. Also set google_service_account in config.</small>
+                    <input type="text" name="sheet_id" class="form-control" placeholder="1cZ7w4HlN...">
+                    <small class="text-muted">For "Import from Sheet" feature. Leave blank if unsure.</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Continue</button>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top:0.75rem">Continue →</button>
             </form>
         </div>
 
