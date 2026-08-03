@@ -13,12 +13,12 @@ $pdo = get_db();
 
 // Allow API key-based updates for specific fields (sample_site_url, pitch_deck_url)
 // Must check BEFORE require_auth() since API clients have no session.
-$raw_body = body_json();
+$body = body_json();
 $api_key_mode = false;
 if (is_file(__DIR__ . '/../config.local.php')) {
     $cfg = require __DIR__ . '/../config.local.php';
-    $is_api_key = ($raw_body['key'] ?? '') === ($cfg['api_key'] ?? '');
-    if ($is_api_key && in_array($raw_body['field'] ?? '', ['sample_site_url', 'pitch_deck_url'], true)) {
+    $is_api_key = ($body['key'] ?? '') === ($cfg['api_key'] ?? '');
+    if ($is_api_key && in_array($body['field'] ?? '', ['sample_site_url', 'pitch_deck_url'], true)) {
         $api_key_mode = true;
         $emp = ['id' => 0, 'name' => 'System', 'role' => 'admin'];
     }
@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_response(['error' => 'Method not allowed'], 405);
 }
 
-$action   = $_POST['action'] ?? '';
-$lead_key = $_POST['lead_key'] ?? '';
+$action   = $body['action'] ?? $_POST['action'] ?? '';
+$lead_key = $body['lead_key'] ?? $_POST['lead_key'] ?? '';
 
 if (!$lead_key) {
     json_response(['error' => 'lead_key is required'], 400);
@@ -51,7 +51,6 @@ switch ($action) {
 
     case 'update':
         // Accept JSON body for field updates
-        $body = body_json();
         $field = $body['field'] ?? $_POST['field'] ?? '';
         $value  = $body['value'] ?? $_POST['value'] ?? '';
 
