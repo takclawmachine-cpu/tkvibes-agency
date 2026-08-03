@@ -8,8 +8,23 @@ require __DIR__ . '/../lib/auth.php';
 require __DIR__ . '/../lib/functions.php';
 require_once __DIR__ . '/../lib/sheets_sync.php';
 
-$emp = require_auth();
 $pdo = get_db();
+
+// Allow API key-based updates for specific fields (sample_site_url, pitch_deck_url)
+// Must check BEFORE require_auth() since API clients have no session.
+$raw_body = body_json();
+$api_key_mode = false;
+if (is_file(__DIR__ . '/../config.local.php')) {
+    $cfg = require __DIR__ . '/../config.local.php';
+    $is_api_key = ($raw_body['key'] ?? '') === ($cfg['api_key'] ?? '');
+    if ($is_api_key && in_array($raw_body['field'] ?? '', ['sample_site_url', 'pitch_deck_url'], true)) {
+        $api_key_mode = true;
+        $emp = ['id' => 0, 'name' => 'System', 'role' => 'admin'];
+    }
+}
+if (!$api_key_mode) {
+    $emp = require_auth();
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_response(['error' => 'Method not allowed'], 405);
@@ -27,7 +42,7 @@ $lead = get_lead($lead_key);
 if (!$lead) {
     json_response(['error' => 'Lead not found'], 404);
 }
-if (!lead_accessible_to($emp, $lead)) {
+if (!$api_key_mode && !lead_accessible_to($emp, $lead)) {
     json_response(['error' => 'Access denied to this lead'], 403);
 }
 
@@ -50,6 +65,7 @@ switch ($action) {
             'website_url', 'website_quality', 'rating', 'review_count', 'years_in_business',
             'socials', 'pain_points', 'recommended_pitch', 'notes', 'contact_channel',
             'opening_hours', 'has_website', 'source', 'source_url',
+            'sample_site_url', 'pitch_deck_url',
         ];
         if (!in_array($field, $editable, true)) {
             json_response(['error' => 'Field not editable: ' . $field], 400);

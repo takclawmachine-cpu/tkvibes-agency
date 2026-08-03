@@ -75,6 +75,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $stmt->execute([$lead_key, $type, $html, $filename]);
 
+    // Also update the lead's sample_site_url / pitch_deck_url field
+    // for the GitHub raw URL (set by git_publish) or mark as uploaded
+    // Build the expected GitHub raw URL for future reference
+    $slug = preg_replace('/[^a-z0-9\s-]/', '', strtolower(trim($lead_key)));
+    $slug = preg_replace('/\s+/', '-', $slug);
+    $slug = substr($slug, 0, 60);
+    if ($type === 'sample_site') {
+        $github_url = "https://raw.githubusercontent.com/takclawmachine-cpu/tkvibes-agency/main/Sample%20Webpages%20and%20pitch%20deck/sample%20website/{$slug}.html";
+        $pdo->prepare("UPDATE leads SET sample_site_url = ?, updated_at = datetime('now') WHERE lead_key = ? AND (sample_site_url IS NULL OR sample_site_url = '')")
+            ->execute([$github_url, $lead_key]);
+    } elseif ($type === 'pitch_deck') {
+        $github_url = "https://raw.githubusercontent.com/takclawmachine-cpu/tkvibes-agency/main/Sample%20Webpages%20and%20pitch%20deck/pitch%20deck/{$slug}.html";
+        $pdo->prepare("UPDATE leads SET pitch_deck_url = ?, updated_at = datetime('now') WHERE lead_key = ? AND (pitch_deck_url IS NULL OR pitch_deck_url = '')")
+            ->execute([$github_url, $lead_key]);
+    }
+
     json_response(['status' => 'ok', 'lead_key' => $lead_key, 'type' => $type]);
 
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
