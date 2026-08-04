@@ -234,9 +234,18 @@ def main():
     load_dotenv()
     cfg = load_config(args.config)
 
+    # Configure structured logging with CRM error forwarding
+    from .log_config import configure_logging
+    crm_cfg = cfg.get("crm", {}) or {}
+    configure_logging(
+        level="INFO",
+        crm_url=crm_cfg.get("api_url", ""),
+        crm_key=crm_cfg.get("api_key", ""),
+    )
+
     if args.cities:
         want = [c.strip().lower() for c in args.cities.split(",") if c.strip()]
-        cfg["targets"]["cities"] = [c for c in cfg["targets"]["cities"]
+    cfg["targets"]["cities"] = [c for c in cfg["targets"]["cities"]
                                     if c.lower() in want] or want
     if args.categories:
         want = [c.strip().lower() for c in args.categories.split(",") if c.strip()]

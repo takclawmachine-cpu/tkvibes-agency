@@ -328,6 +328,7 @@ foreach ($regions_data as $r) {
     <a href="?tab=overview" class="tab <?= $tab === 'overview' ? 'active' : '' ?>">📊 Overview</a>
     <a href="?tab=employees" class="tab <?= $tab === 'employees' ? 'active' : '' ?>">👥 Employees</a>
     <a href="?tab=leads" class="tab <?= $tab === 'leads' ? 'active' : '' ?>">📋 All Leads</a>
+    <a href="?tab=logs" class="tab <?= $tab === 'logs' ? 'active' : '' ?>">📜 System Logs</a>
 </div>
 
 <div class="admin-content">
@@ -600,6 +601,82 @@ foreach ($regions_data as $r) {
                     <?php endfor; ?>
                 </div>
             <?php endif; ?>
+        </div>
+    <?php elseif ($tab === 'logs'): ?>
+        <div class="admin-logs">
+            <h2>📜 System Logs</h2>
+            <div class="admin-filters">
+                <form method="get" class="filter-form">
+                    <input type="hidden" name="tab" value="logs">
+                    <select name="level" class="form-control" onchange="this.form.submit()">
+                        <option value="">All Levels</option>
+                        <option value="error" <?= ($_GET['level'] ?? '') === 'error' ? 'selected' : '' ?>>⚠️ Error</option>
+                        <option value="warning" <?= ($_GET['level'] ?? '') === 'warning' ? 'selected' : '' ?>>⚠️ Warning</option>
+                        <option value="info" <?= ($_GET['level'] ?? '') === 'info' ? 'selected' : '' ?>>ℹ️ Info</option>
+                        <option value="critical" <?= ($_GET['level'] ?? '') === 'critical' ? 'selected' : '' ?>>🔴 Critical</option>
+                    </select>
+                    <input type="text" name="source" class="form-control" placeholder="Filter by source..." value="<?= e($_GET['source'] ?? '') ?>">
+                    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                    <a href="?tab=logs" class="btn btn-sm btn-outline">Clear</a>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Level</th>
+                            <th>Source</th>
+                            <th>Message</th>
+                            <th>Context</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        try {
+                            $log_limit = min(100, max(10, (int)($_GET['limit'] ?? 50)));
+                            $log_where = [];
+                            $log_params = [];
+                            if (in_array($_GET['level'] ?? '', ['info','warning','error','critical'], true)) {
+                                $log_where[] = "level = ?";
+                                $log_params[] = $_GET['level'];
+                            }
+                            if (!empty($_GET['source'])) {
+                                $log_where[] = "source LIKE ?";
+                                $log_params[] = '%' . $_GET['source'] . '%';
+                            }
+                            $log_sql = "SELECT * FROM system_logs";
+                            if ($log_where) $log_sql .= " WHERE " . implode(" AND ", $log_where);
+                            $log_sql .= " ORDER BY created_at DESC LIMIT " . (int)$log_limit;
+                            $log_stmt = $pdo->prepare($log_sql);
+                            $log_stmt->execute($log_params);
+                            $logs = $log_stmt->fetchAll();
+                        } catch (Throwable $e) {
+                            $logs = [];
+                            echo '<tr><td colspan="5" class="text-muted">Log table not available: ' . e($e->getMessage()) . '</td></tr>';
+                        }
+                        foreach ($logs as $log):
+                            $level_class = match ($log['level']) {
+                                'critical' => 'badge-notqualified',
+                                'error'    => 'badge-notqualified',
+                                'warning'  => 'badge-callback',
+                                default    => 'badge-qualified',
+                            };
+                        ?>
+                        <tr>
+                            <td class="text-muted" style="white-space:nowrap"><?= fmt_datetime($log['created_at']) ?></td>
+                            <td><span class="badge <?= $level_class ?>"><?= e($log['level']) ?></span></td>
+                            <td><?= e($log['source']) ?></td>
+                            <td><?= e(truncate($log['message'], 150)) ?></td>
+                            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;font-size:0.8rem;color:#666"><?= e(truncate($log['context'] ?? '', 100)) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if (empty($logs)): ?>
+                            <tr><td colspan="5" class="text-muted">No log entries found.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     <?php endif; ?>
 </div>

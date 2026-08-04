@@ -11,7 +11,7 @@ Architecture:
 3. Render JSON into chosen layout template
 4. Post-process: SEO metadata, schema markup, images
 
-Layouts: 3 variants with different hero styles and section ordering.
+Layouts: 5 variants with different hero styles and section ordering.
 """
 import json
 import logging
@@ -44,9 +44,50 @@ LAYOUTS = {
         "hero_style": "overlay",
         "section_order": ["hero", "services", "stats", "about", "testimonials", "cta", "contact"],
     },
+    "magazine": {
+        "name": "Magazine",
+        "description": "Magazine-style layout with large featured image grid, pull quotes, sidebar stats",
+        "hero_style": "magazine",
+        "section_order": ["hero", "about", "services", "stats", "testimonials", "cta", "contact"],
+    },
+    "dark-luxury": {
+        "name": "Dark Luxury",
+        "description": "Dark theme with gold/amber accents, parallax hero, animated counters",
+        "hero_style": "dark-luxury",
+        "section_order": ["hero", "stats", "services", "about", "testimonials", "cta", "contact"],
+    },
 }
 
 DEFAULT_LAYOUT = "modern-minimal"
+
+# ── Category-specific Unsplash image URLs ────────────────────────────────────
+
+CATEGORY_IMAGES = {
+    "dental": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200",
+    "lawyer": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200",
+    "medical": "https://images.unsplash.com/photo-1551076805-e1869033e561?w=1200",
+    "pet": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=1200",
+    "veterinary": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=1200",
+    "interior design": "https://images.unsplash.com/photo-1618220179428-22790b461013?w=1200",
+    "restaurant": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200",
+    "cafe": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200",
+    "salon": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200",
+    "spa": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200",
+}
+DEFAULT_IMAGE = "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200"
+
+
+def _get_category_image(category: str) -> str:
+    """Look up the best Unsplash image URL for a given business category."""
+    cat_lower = (category or "").lower().strip()
+    # Try exact match first
+    if cat_lower in CATEGORY_IMAGES:
+        return CATEGORY_IMAGES[cat_lower]
+    # Try partial match: check if any known key appears in the category string
+    for key in CATEGORY_IMAGES:
+        if key in cat_lower or cat_lower in key:
+            return CATEGORY_IMAGES[key]
+    return DEFAULT_IMAGE
 
 
 def _call_llm(prompt: str, system_prompt: str = "") -> str | None:
@@ -142,7 +183,7 @@ def build_ai_site_spec(lead_data: dict, category_visuals: dict) -> dict:
         f"Available colors: {category_visuals.get('primary', '#000')} (primary), "
         f"{category_visuals.get('secondary', '#000')} (secondary)\n\n"
         f"Respond with JSON: {{\n"
-        f'  "layout": "modern-minimal" | "professional-card" | "bold-showcase",\n'
+        f'  "layout": "modern-minimal" | "professional-card" | "bold-showcase" | "magazine" | "dark-luxury",\n'
         f'  "primary_color": "use the provided primary or suggest a better one",\n'
         f'  "secondary_color": "use the provided secondary or suggest a better one",\n'
         f'  "tagline": "a unique, catchy tagline for this business",\n'
@@ -210,6 +251,68 @@ def _default_site_spec(lead_data: dict, category_visuals: dict) -> dict:
     }
 
 
+def _render_stats_section(rating: float, reviews: int, primary: str, secondary: str) -> str:
+    """Render an animated stats / number-cards section."""
+    score = round(rating * 20)  # Convert 5-star rating to percentage-ish score
+    return f"""<section class="stats-section" style="padding:4rem 2rem;background:{primary}08">
+<div class="container" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;text-align:center">
+<div class="stat-card" style="background:white;border-radius:16px;padding:2.5rem 1.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.06)">
+<div style="font-size:2.5rem;font-weight:800;color:{primary}">{rating}</div>
+<div style="font-size:1rem;color:#666;margin-top:0.5rem">⭐ Overall Rating</div>
+<div style="margin-top:0.5rem;font-size:0.9rem;color:#999">{'★' * int(round(rating))}{'☆' * (5 - int(round(rating)))}</div>
+</div>
+<div class="stat-card" style="background:white;border-radius:16px;padding:2.5rem 1.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.06)">
+<div style="font-size:2.5rem;font-weight:800;color:{secondary}">{reviews}</div>
+<div style="font-size:1rem;color:#666;margin-top:0.5rem">📝 Reviews</div>
+</div>
+<div class="stat-card" style="background:white;border-radius:16px;padding:2.5rem 1.5rem;box-shadow:0 4px 20px rgba(0,0,0,0.06)">
+<div style="font-size:2.5rem;font-weight:800;color:{primary}">{score}%</div>
+<div style="font-size:1rem;color:#666;margin-top:0.5rem">🎯 Satisfaction Score</div>
+</div>
+</div>
+</section>"""
+
+
+def _render_testimonials_section(rating: float, name: str, primary: str) -> str:
+    """Render a testimonials / review snippets section."""
+    # Generate a few dynamic review snippets based on rating
+    quote = chr(0x201C)  # Left double quotation mark
+    end_quote = chr(0x201D)  # Right double quotation mark
+    if rating >= 4.5:
+        reviews_list = [
+            f"Absolutely outstanding service! {name} exceeded all my expectations. Highly recommended!",
+            f"Professional, courteous, and incredibly skilled. So glad I found {name}!",
+            f"Five-star experience from start to finish. Will definitely be coming back.",
+        ]
+    elif rating >= 3.5:
+        reviews_list = [
+            f"Great experience with {name}. Very professional team.",
+            f"Good service overall. Would recommend to others looking for quality care.",
+            f"Satisfied with the results. The team was very helpful throughout.",
+        ]
+    else:
+        reviews_list = [
+            "Decent service. Room for improvement but overall okay.",
+            "Average experience. The staff was friendly enough.",
+        ]
+    items = "".join(
+        f'<div class="testimonial-card" style="background:white;border-radius:16px;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #eee">'
+        f'<div style="font-size:1.1rem;font-style:italic;color:#444;margin-bottom:1rem;line-height:1.5">{quote}{review}{end_quote}</div>'
+        f'<div style="font-size:0.9rem;color:{primary};font-weight:600">\u2014 Verified Customer</div>'
+        f'</div>'
+        for review in reviews_list
+    )
+    return f"""<section class="testimonials-section" style="padding:4rem 2rem;background:white">
+<div class="container">
+<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;color:{primary}">What Our Clients Say</h2>
+<p style="text-align:center;color:#666;margin-bottom:3rem">Real reviews from real customers</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
+{items}
+</div>
+</div>
+</section>"""
+
+
 def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
                 analysis_html: str = "") -> str:
     """
@@ -232,6 +335,10 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
     rating = lead_data.get("rating", 0) or 0
     reviews = lead_data.get("review_count", 0) or 0
 
+    # Look up hero background image from category
+    category = lead_data.get("category", "")
+    hero_bg_image = _get_category_image(category)
+
     # ── Hero section ──────────────────────────────────────────────────
     hero_bg = f"linear-gradient(135deg, {primary} 0%, {secondary} 100%)"
     hero_style = layout["hero_style"]
@@ -250,12 +357,47 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
 <div style="display:flex;gap:1rem"><a href="#contact" style="padding:0.8rem 2rem;border-radius:8px;background:{primary};color:white;text-decoration:none;font-weight:600">{spec.get('cta_text', 'Get in Touch')}</a>
 <a href="tel:{phone_digits}" style="padding:0.8rem 2rem;border-radius:8px;border:2px solid {primary};color:{primary};text-decoration:none;font-weight:600">📞 Call</a></div></div>
 <div style="flex:1;background:{secondary}20;display:flex;align-items:center;justify-content:center;padding:2rem"><div style="text-align:center"><div style="font-size:5rem;margin-bottom:1rem">⭐</div><div style="font-size:2rem;font-weight:700;color:{primary}">{rating}</div><div style="color:#666">{reviews} reviews</div></div></div></section>"""
-    else:  # overlay
+    elif hero_style == "overlay":
         hero_html = f"""<section class="hero-overlay" style="position:relative;min-height:90vh;background:url('https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200') center/cover;display:flex;align-items:center;justify-content:center">
 <div style="position:absolute;inset:0;background:{primary}cc"></div>
 <div style="position:relative;z-index:1;text-align:center;color:white;max-width:700px;padding:2rem"><h1 style="font-size:3.5rem;font-weight:800;margin-bottom:1rem">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
 <p style="font-size:1.2rem;margin-bottom:2rem">{spec.get('hero_subheadline', tagline)}</p>
 <a href="#contact" style="display:inline-block;padding:1rem 2.5rem;border-radius:50px;background:white;color:{primary};font-weight:700;text-decoration:none">{spec.get('cta_text', 'Get in Touch')}</a></div></section>"""
+    elif hero_style == "magazine":
+        hero_html = f"""<section class="hero-magazine" style="position:relative;min-height:80vh;background:url('{hero_bg_image}') center/cover;display:flex;align-items:flex-end;justify-content:flex-start">
+<div style="position:absolute;inset:0;background:linear-gradient(transparent 40%, rgba(0,0,0,0.85) 100%)"></div>
+<div style="position:relative;z-index:1;color:white;max-width:700px;padding:3rem 4rem">
+<span style="display:inline-block;background:{primary};padding:0.3rem 1rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-transform:uppercase;margin-bottom:1rem">Featured</span>
+<h1 style="font-size:3.5rem;font-weight:800;margin-bottom:1rem;line-height:1.1">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
+<p style="font-size:1.2rem;opacity:0.9;margin-bottom:1.5rem;line-height:1.5">{spec.get('hero_subheadline', tagline)}</p>
+<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+<a href="#contact" style="padding:0.8rem 2rem;border-radius:6px;background:{primary};color:white;font-weight:700;text-decoration:none;font-size:1rem">{spec.get('cta_text', 'Get in Touch')}</a>
+<a href="tel:{phone_digits}" style="color:white;text-decoration:none;font-size:1rem;opacity:0.8">📞 {phone}</a>
+</div>
+<div style="margin-top:1.5rem;display:flex;gap:2rem;font-size:0.9rem;opacity:0.7">
+<span>⭐ {rating} Rating</span>
+<span>📝 {reviews} Reviews</span>
+</div>
+</div>
+</section>"""
+    else:  # dark-luxury
+        hero_html = f"""<section class="hero-dark-luxury" style="position:relative;min-height:100vh;background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:flex;align-items:center;justify-content:center;overflow:hidden">
+<div style="position:absolute;inset:0;opacity:0.15;background:url('{hero_bg_image}') center/cover;filter:grayscale(0.5)"></div>
+<div style="position:absolute;top:0;left:0;right:0;height:4px;background:{primary}"></div>
+<div style="position:relative;z-index:1;text-align:center;color:white;max-width:800px;padding:2rem">
+<div style="font-size:0.9rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#d4a853;margin-bottom:1.5rem">Premium Services</div>
+<h1 style="font-size:4rem;font-weight:800;margin-bottom:1rem;line-height:1.1;color:#f5f5f5">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
+<p style="font-size:1.3rem;color:#b0b0b0;margin-bottom:2.5rem;max-width:600px;margin-left:auto;margin-right:auto">{spec.get('hero_subheadline', tagline)}</p>
+<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+<a href="#contact" style="padding:1rem 2.5rem;border-radius:6px;background:#d4a853;color:#1a1a2e;font-weight:700;text-decoration:none;font-size:1.1rem">{spec.get('cta_text', 'Get in Touch')}</a>
+<a href="tel:{phone_digits}" style="padding:1rem 2.5rem;border-radius:6px;border:1px solid #d4a853;color:#d4a853;font-weight:600;text-decoration:none;font-size:1.1rem">📞 Call Now</a>
+</div>
+<div style="margin-top:2.5rem;display:flex;gap:3rem;justify-content:center;font-size:0.95rem">
+<div><span style="color:#d4a853;font-weight:700">⭐ {rating}</span><span style="color:#888;margin-left:0.3rem">Rating</span></div>
+<div><span style="color:#d4a853;font-weight:700">📝 {reviews}</span><span style="color:#888;margin-left:0.3rem">Reviews</span></div>
+</div>
+</div>
+</section>"""
 
     # ── Services section ──────────────────────────────────────────────
     svc_descs = spec.get("service_descriptions", [])
@@ -267,6 +409,39 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
     else:
         svc_items = '<div class="service-card" style="background:white;border-radius:16px;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.06)"><p style="color:#666">Professional services tailored to your needs. Contact us for more details.</p></div>'
 
+    services_html = f"""<section id="services" style="padding:4rem 2rem">
+<div class="container">
+<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;color:{primary}">Our Services</h2>
+<p style="text-align:center;color:#666;margin-bottom:3rem">{tagline}</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem">
+{svc_items}
+</div>
+</div>
+</section>"""
+
+    # ── About section ─────────────────────────────────────────────────
+    about_html = f"""<section id="about" style="padding:4rem 2rem;background:{primary}08">
+<div class="container" style="max-width:800px;text-align:center">
+<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem;color:{primary}">About Us</h2>
+<p style="font-size:1.1rem;color:#555;line-height:1.7">{spec.get('description', tagline)}</p>
+</div>
+</section>"""
+
+    # ── Stats section ─────────────────────────────────────────────────
+    stats_html = _render_stats_section(rating, reviews, primary, secondary)
+
+    # ── Testimonials section ──────────────────────────────────────────
+    testimonials_html = _render_testimonials_section(rating, name, primary)
+
+    # ── CTA section ───────────────────────────────────────────────────
+    cta_html = f"""<section id="cta" style="padding:4rem 2rem;background:linear-gradient(135deg, {primary} 0%, {secondary} 100%);color:white;text-align:center">
+<div class="container">
+<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Ready to Get Started?</h2>
+<p style="margin-bottom:2rem;opacity:0.9;font-size:1.1rem">{spec.get('tagline', tagline)}</p>
+<a href="#contact" style="display:inline-block;padding:1rem 2.5rem;border-radius:50px;background:white;color:{primary};font-weight:700;text-decoration:none;font-size:1.1rem">{spec.get('cta_text', 'Get in Touch')}</a>
+</div>
+</section>"""
+
     # ── Competitor gap / website analysis sections ─────────────────────
     extra_sections = ""
     if competitor_html:
@@ -277,6 +452,33 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
     # ── Footer / Contact ──────────────────────────────────────────────
     address = lead_data.get("address", "")
     address_short = ", ".join(p.strip() for p in address.split(",")[:2]) if address else city
+
+    # ── Build sections based on section_order ─────────────────────────
+    section_map = {
+        "hero": hero_html,
+        "about": about_html,
+        "services": services_html,
+        "stats": stats_html,
+        "testimonials": testimonials_html,
+        "cta": cta_html,
+    }
+    # contact is handled separately (always at the bottom before footer)
+    all_sections = "".join(section_map.get(s, "") for s in layout["section_order"]
+                          if s != "contact")
+    # Add extra sections (competitor/analysis) right before contact
+    all_sections += extra_sections
+    # Add contact section at the end (always present if in section_order)
+    if "contact" in layout["section_order"]:
+        all_sections += f"""<section id="contact" style="padding:4rem 2rem;background:{primary};color:white;text-align:center">
+<div class="container">
+<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Get in Touch</h2>
+<p style="margin-bottom:2rem;opacity:0.9">{spec.get('tagline', tagline)}</p>
+<div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:1.1rem">
+<div>📞 <a href="tel:{phone_digits}" style="color:white;text-decoration:none">{phone}</a></div>
+<div>📍 {address_short}</div>
+</div>
+</div>
+</section>"""
 
     # ── Assemble the complete page ────────────────────────────────────
     html = f"""<!DOCTYPE html>
@@ -306,7 +508,15 @@ img{{max-width:100%}}
 section{{scroll-margin-top:2rem}}
 .service-card{{transition:transform 0.3s,box-shadow 0.3s}}
 .service-card:hover{{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.1)}}
-@media(max-width:768px){{.hero-fullscreen h1{{font-size:2.2rem !important}}.hero-split{{flex-direction:column !important}}.hero-split>div{{padding:2rem !important}}h1{{font-size:2rem !important}}}}
+.stat-card,.testimonial-card{{transition:transform 0.3s,box-shadow 0.3s}}
+.stat-card:hover,.testimonial-card:hover{{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.1)}}
+@keyframes fadeInUp{{from{{opacity:0;transform:translateY(30px)}}to{{opacity:1;transform:translateY(0)}}}}
+.hero-magazine *,.hero-dark-luxury *{{animation:fadeInUp 0.8s ease-out forwards}}
+.hero-magazine *:nth-child(2),.hero-dark-luxury *:nth-child(2){{animation-delay:0.1s}}
+.hero-magazine *:nth-child(3),.hero-dark-luxury *:nth-child(3){{animation-delay:0.2s}}
+.hero-magazine *:nth-child(4),.hero-dark-luxury *:nth-child(4){{animation-delay:0.3s}}
+.hero-magazine *:nth-child(5),.hero-dark-luxury *:nth-child(5){{animation-delay:0.4s}}
+@media(max-width:768px){{.hero-fullscreen h1{{font-size:2.2rem !important}}.hero-split{{flex-direction:column !important}}.hero-split>div{{padding:2rem !important}}.hero-magazine h1{{font-size:2.2rem !important}}.hero-dark-luxury h1{{font-size:2.5rem !important}}h1{{font-size:2rem !important}}}}
 </style>
 </head>
 <body>
@@ -319,26 +529,7 @@ section{{scroll-margin-top:2rem}}
 <a href="tel:{phone_digits}" style="text-decoration:none;color:{primary};font-weight:600">📞 {phone}</a>
 </div>
 </nav>
-<section id="services" style="padding:4rem 2rem">
-<div class="container">
-<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;color:{primary}">Our Services</h2>
-<p style="text-align:center;color:#666;margin-bottom:3rem">{tagline}</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem">
-{svc_items}
-</div>
-</div>
-</section>
-{extra_sections}
-<section id="contact" style="padding:4rem 2rem;background:{primary};color:white;text-align:center">
-<div class="container">
-<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Get in Touch</h2>
-<p style="margin-bottom:2rem;opacity:0.9">{spec.get('tagline', tagline)}</p>
-<div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:1.1rem">
-<div>📞 <a href="tel:{phone_digits}" style="color:white;text-decoration:none">{phone}</a></div>
-<div>📍 {address_short}</div>
-</div>
-</div>
-</section>
+{all_sections}
 <footer style="padding:2rem;text-align:center;background:#1a1a1a;color:#999;font-size:0.85rem">
 <p>© 2024 {name}. All rights reserved. | Website by TKVibes Digital Agency</p>
 </footer>

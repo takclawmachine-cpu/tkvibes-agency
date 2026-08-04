@@ -230,6 +230,28 @@ function lead_accessible_to(array $emp, array $lead): bool
     return false;
 }
 
+/**
+ * Log a system-level event (workflow error, cron result, API failure).
+ * Writes to system_logs table.
+ */
+function log_system(string $level, string $source, string $message, array $context = []): void
+{
+    try {
+        $pdo = get_db();
+        $ctx = json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $stmt = $pdo->prepare(
+            "INSERT INTO system_logs (level, source, message, context, created_at)
+             VALUES (?, ?, ?, ?, " . (
+                $pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite'
+                ? "datetime('now')" : "NOW()"
+             ) . ")"
+        );
+        $stmt->execute([$level, $source, $message, $ctx]);
+    } catch (Throwable $e) {
+        error_log("log_system failed: " . $e->getMessage());
+    }
+}
+
 function csv_escape($v): string
 {
     $v = (string)$v;

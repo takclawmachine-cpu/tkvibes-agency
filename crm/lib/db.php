@@ -147,6 +147,16 @@ function init_schema(): void
             CREATE INDEX IF NOT EXISTS idx_leads_assigned    ON leads(assigned_employee);
             CREATE INDEX IF NOT EXISTS idx_activities_date   ON lead_activities(created_at);
             CREATE INDEX IF NOT EXISTS idx_proposal_jobs_status ON proposal_generation_jobs(status);
+            CREATE TABLE IF NOT EXISTS system_logs (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                level       TEXT    NOT NULL DEFAULT 'info',  -- info|warning|error|critical
+                source      TEXT    NOT NULL DEFAULT '',
+                message     TEXT    NOT NULL DEFAULT '',
+                context     TEXT    NOT NULL DEFAULT '',  -- JSON blob
+                created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+            );
+            CREATE INDEX IF NOT EXISTS idx_system_logs_level ON system_logs(level);
+            CREATE INDEX IF NOT EXISTS idx_system_logs_created ON system_logs(created_at);
             CREATE TABLE IF NOT EXISTS proposal_generation_jobs (
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 lead_key    TEXT    NOT NULL,
@@ -256,6 +266,16 @@ function init_schema(): void
             CREATE INDEX idx_leads_assigned    ON leads(assigned_employee);
             CREATE INDEX idx_activities_date   ON lead_activities(created_at);
             CREATE INDEX idx_proposal_jobs_status ON proposal_generation_jobs(status);
+            CREATE TABLE IF NOT EXISTS system_logs (
+                id          INT AUTO_INCREMENT PRIMARY KEY,
+                level       VARCHAR(20)  NOT NULL DEFAULT 'info',
+                source      VARCHAR(255) NOT NULL DEFAULT '',
+                message     TEXT         NOT NULL,
+                context     TEXT         NOT NULL,
+                created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            CREATE INDEX idx_system_logs_level  ON system_logs(level);
+            CREATE INDEX idx_system_logs_created ON system_logs(created_at);
             CREATE TABLE IF NOT EXISTS proposals (
                 id          INT AUTO_INCREMENT PRIMARY KEY,
                 lead_key    VARCHAR(255) NOT NULL,
