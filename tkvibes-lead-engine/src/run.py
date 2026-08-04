@@ -3,7 +3,10 @@ import json
 import argparse
 from dotenv import load_dotenv
 
+from .log_config import get_logger
 from .config import load_config
+
+logger = get_logger(__name__)
 from .connectors.google_places import GooglePlacesConnector
 from .enrich import enrich
 from .score import score_lead
@@ -43,30 +46,27 @@ def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
     if cfg["sources"]["google_places"]:
         api_key = os.environ.get("GOOGLE_MAPS_API_KEY", "")
         if not api_key:
-            print("  GOOGLE_MAPS_API_KEY not set - skipping Google Places")
+            logger.warning("GOOGLE_MAPS_API_KEY not set - skipping Google Places")
         else:
             gp = GooglePlacesConnector(api_key)
             for country in sorted(country_cities):  # deterministic order
                 country_pool: list[Lead] = []
-                print(f"\n  ── [{country}] ──")
-                # Categories-outer: try every category with at least one city
-                # before moving on, so the per-country cap doesn't starve
-                # later categories
+                logger.info("── [%s] ──", country)
                 for cat in cfg["targets"]["categories"]:
                     if enough(country_pool):
                         break
                     for city in country_cities[country]:
                         if enough(country_pool):
                             break
-                        print(f"  [google_places] {city} / {cat}")
+                        logger.info("[google_places] %s / %s", city, cat)
                         try:
                             country_pool += gp.discover(
                                 city, cat, cfg["targets"]["max_results_per_query"]
                             )
                         except Exception as e:
-                            print(f"    error: {e}")
+                            logger.error("[google_places] error: %s", e)
                 all_leads += country_pool
-                print(f"  [{country}] {len(country_pool)} raw leads")
+                logger.info("[%s] %d raw leads", country, len(country_pool))
 
     if cfg["sources"].get("indiamart"):
         from .connectors.indiamart import IndiaMartConnector
@@ -77,11 +77,11 @@ def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
             for cat in cfg["targets"]["categories"]:
                 if enough():
                     break
-                print(f"  [indiamart] {city} / {cat}")
+                logger.info("[indiamart] %s / %s", city, cat)
                 try:
                     all_leads += im.discover(city, cat)
                 except Exception as e:
-                    print(f"    error: {e}")
+                    logger.error("[indiamart] error: %s", e)
 
     if cfg["sources"].get("justdial"):
         from .connectors.justdial import JustDialConnector
@@ -92,11 +92,11 @@ def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
             for cat in cfg["targets"]["categories"]:
                 if enough():
                     break
-                print(f"  [justdial] {city} / {cat}")
+                logger.info("[justdial] %s / %s", city, cat)
                 try:
                     all_leads += jd.discover(city, cat)
                 except Exception as e:
-                    print(f"    error: {e}")
+                    logger.error("[justdial] error: %s", e)
 
     return all_leads
 
@@ -153,27 +153,27 @@ def find_emails(leads: list[Lead], ef: dict) -> list[Lead]:
     delay = ef.get("per_site_delay_seconds", 0.8)
     targets = [l for l in leads
                if l.lead_tier in tier_set and l.website_url and not l.email]
-    print(f"  [email_finder] crawling {len(targets)} sites for contact emails")
+    logger.info("[email_finder] crawling %d sites for contact emails", len(targets))
     found = 0
     for i, l in enumerate(targets, 1):
         enrich_email(l, delay=delay)
         if l.email:
             found += 1
-            print(f"    [{i}/{len(targets)}] {l.business_name}: {l.email}")
+            logger.info("[%d/%d] %s: %s", i, len(targets), l.business_name, l.email)
     no_site = sum(1 for l in leads if l.lead_tier in tier_set and not l.website_url)
-    print(f"  [email_finder] {found}/{len(targets)} emails found "
-          f"({no_site} leads have no website at all)")
+    logger.info("[email_finder] %d/%d emails found (%d leads have no website at all)",
+                found, len(targets), no_site)
 
     if ef.get("search_fallback"):
         from .email_search import enrich_email_via_search
         sd = ef.get("search_delay_seconds", 3.0)
         rest = [l for l in leads if l.lead_tier in tier_set and not l.email]
-        print(f"  [email_finder] web-search fallback on {len(rest)} leads")
+        logger.info("[email_finder] web-search fallback on %d leads", len(rest))
         for l in rest:
             enrich_email_via_search(l, delay=sd)
             if l.email:
                 found += 1
-                print(f"    (search) {l.business_name}: {l.email}")
+                logger.info("(search) %s: %s", l.business_name, l.email)
 
     # Tell downstream agents which channel is actually usable
     for l in leads:
@@ -183,7 +183,7 @@ def find_emails(leads: list[Lead], ef: dict) -> list[Lead]:
                              else "none")
 
     emailable = sum(1 for l in leads if l.email)
-    print(f"  [email_finder] {emailable}/{len(leads)} leads are email-reachable")
+    logger.info("[email_finder] %d/%d leads are email-reachable", emailable, len(leads))
     return leads
 
 
@@ -273,35 +273,48 @@ def main():
     export_path = export_for_handoff(leads, cfg)
     print(f"   handoff JSON -> {export_path} ({len(leads)} leads)")
 
-    # ── Sheet write ──────────────────────────────────────────────────────────
+    # ── CRM push (before sheet write — fail fast) ────────────────────────────
+    crm_ok = True
+    if not args.no_crm_push and not args.dry_run:
+        crm_cfg = cfg.get("crm", {}) or {}
+        crm_result = push_leads(leads, crm_cfg.get("api_url", ""), crm_cfg.get("api_key", ""))
+        status = crm_result.get("status", "unknown")
+        if status == "error":
+            print(f"   ⚠️  CRM push returned error: {crm_result.get('reason', 'unknown')}")
+            crm_ok = False
+        else:
+            added = crm_result.get("added", 0)
+            updated = crm_result.get("updated", 0)
+            print(f"   CRM push: {status} ({added} added, {updated} updated)")
+
+    # ── Sheet write (only if CRM push succeeded or not configured) ────────────
     if args.dry_run:
         print("   (dry-run - skipping Google Sheets write)")
         master_added = 0
         added = 0
     else:
-        sa_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
-        sheet_id = os.environ.get("GOOGLE_SHEETS_ID", "")
-        if not sa_path or not sheet_id:
-            print("   GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SHEETS_ID not set - skipping sheet write")
+        if not crm_ok:
+            print("   ⚠️  Skipping sheet write because CRM push failed")
+            master_added = 0
             added = 0
         else:
-            writer = SheetWriter(sa_path, sheet_id, cfg["sheets"]["worksheet_name"])
+            sa_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
+            sheet_id = os.environ.get("GOOGLE_SHEETS_ID", "")
+            if not sa_path or not sheet_id:
+                print("   GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SHEETS_ID not set - skipping sheet write")
+                added = 0
+            else:
+                writer = SheetWriter(sa_path, sheet_id, cfg["sheets"]["worksheet_name"])
 
-            # 1. Upsert to master "Leads" tab (with CRM fields)
-            master_added = writer.upsert(leads)
-            print(f"   Master tab: {master_added} new leads upserted")
+                # 1. Upsert to master "Leads" tab (with CRM fields)
+                master_added = writer.upsert(leads)
+                print(f"   Master tab: {master_added} new leads upserted")
 
-            # 2. One fresh worksheet per job, named by date-time stamp
-            from datetime import datetime as _dt
-            job_sheet = _dt.now().strftime("%Y-%m-%d %H-%M-%S")
-            added = writer.write_job(leads, job_sheet)
-            print(f"   Job tab '{job_sheet}': wrote {added} leads")
-
-    # ── CRM push ─────────────────────────────────────────────────────────────
-    if not args.no_crm_push and not args.dry_run:
-        crm_cfg = cfg.get("crm", {}) or {}
-        result = push_leads(leads, crm_cfg.get("api_url", ""), crm_cfg.get("api_key", ""))
-        print(f"   CRM push: {result.get('status', 'unknown')}")
+                # 2. One fresh worksheet per job, named by date-time stamp
+                from datetime import datetime as _dt
+                job_sheet = _dt.now().strftime("%Y-%m-%d %H-%M-%S")
+                added = writer.write_job(leads, job_sheet)
+                print(f"   Job tab '{job_sheet}': wrote {added} leads")
 
     print(f"\nDone - {len(leads)} leads processed | {master_added} new sheet rows | {hot} HOT")
     print(f"   Handoff JSON: {export_path}")

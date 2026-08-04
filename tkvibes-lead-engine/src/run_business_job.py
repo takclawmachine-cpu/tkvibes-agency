@@ -28,7 +28,10 @@ import subprocess
 
 from dotenv import load_dotenv
 
+from .log_config import get_logger
 from .config import load_config
+
+logger = get_logger(__name__)
 
 REPO_DIR = os.path.expanduser("~/Desktop/tkvibes-agency")
 VENV_PYTHON = os.path.join(REPO_DIR, "tkvibes-lead-engine", ".venv", "Scripts", "python.exe")
@@ -41,7 +44,7 @@ def run_script(module: str, args: list[str] | None = None) -> int:
     cmd = [VENV_PYTHON, "-m", f"src.{module}"]
     if args:
         cmd += args
-    print(f"\n{'='*70}\n▶ {module}: {' '.join(args or [])}\n{'='*70}")
+    logger.info("▶ %s: %s", module, " ".join(args or []))
     result = subprocess.run(cmd, cwd=os.path.join(REPO_DIR, "tkvibes-lead-engine"))
     return result.returncode
 

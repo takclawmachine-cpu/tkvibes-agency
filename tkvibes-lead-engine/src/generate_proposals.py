@@ -19,7 +19,10 @@ import re
 import sys
 
 from .config import load_config
+from .log_config import get_logger
 from .models import Lead
+
+logger = get_logger(__name__)
 from .visuals import (
     get_visual_config, sanitize_phone, format_phone_display,
     build_hours_html, build_services_html, get_why_items, DEFAULT_CONFIG
@@ -54,7 +57,7 @@ def _load_templates() -> tuple[str, str]:
     pitch_path = TEMPLATE_PITCH
 
     if not os.path.isfile(sample_path):
-        print(f"ERROR: Sample template not found at {sample_path}")
+        logger.error("Sample template not found at %s", sample_path)
         sys.exit(1)
 
     with open(sample_path, "r", encoding="utf-8") as f:
@@ -442,18 +445,18 @@ def generate_for_lead(lead: Lead, config: dict, sample_template: str,
         try:
             competitors = search_competitors(lead, api_key)
             if competitors:
-                print(f"    [research] Found {len(competitors)} nearby competitors for {lead.business_name}")
+                logger.info("[research] Found %d nearby competitors for %s", len(competitors), lead.business_name)
         except Exception as e:
-            print(f"    [research] Competitor search failed: {e}")
+            logger.error("[research] Competitor search failed for %s: %s", lead.business_name, e)
 
     # For weak website leads: analyze website
     if lead.has_website and lead.website_url and lead.website_quality in ("weak", "social_only", "directory_microsite"):
         try:
             analysis = analyze_website(lead)
             if analysis and analysis.get("issues"):
-                print(f"    [audit] Found {len(analysis['issues'])} website issues for {lead.business_name}")
+                logger.info("[audit] Found %d website issues for %s", len(analysis["issues"]), lead.business_name)
         except Exception as e:
-            print(f"    [audit] Website analysis failed: {e}")
+            logger.error("[audit] Website analysis failed for %s: %s", lead.business_name, e)
 
     # ── Generation phase ──────────────────────────────────────────────────
     os.makedirs(out_dir, exist_ok=True)
@@ -471,7 +474,7 @@ def generate_for_lead(lead: Lead, config: dict, sample_template: str,
     size_site = len(sample_html)
     size_deck = len(deck_html)
 
-    print(f"    ✅ {slug}: sample site ({size_site:,} chars) + pitch deck ({size_deck:,} chars)")
+    logger.info("✅ %s: sample site (%s chars) + pitch deck (%s chars)", slug, f"{size_site:,}", f"{size_deck:,}")
 
     return {
         "status": "generated",
@@ -505,8 +508,8 @@ def main():
     # Load leads
     export_path = cfg["handoff"]["export_json"]
     if not os.path.isfile(export_path):
-        print(f"ERROR: No leads export at {export_path}")
-        print("Run the lead engine first: python -m src.run --max-leads 20")
+        logger.error("No leads export at %s", export_path)
+        logger.info("Run the lead engine first: python -m src.run --max-leads 20")
         sys.exit(1)
 
     with open(export_path, encoding="utf-8") as f:
