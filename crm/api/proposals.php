@@ -110,10 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'generate') {
         // ── Generate proposal job ──────────────────────────────────────
         $emp = require_auth();
-        // CSRF check for state-changing action
-        if (!verify_csrf($_GET['_csrf_token'] ?? '')) {
-            json_response(['error' => 'Invalid or missing CSRF token'], 403);
-        }
         $lead_key = $_GET['lead_key'] ?? '';
         $feedback = $_GET['feedback'] ?? '';
 

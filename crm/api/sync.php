@@ -157,6 +157,15 @@ foreach ($leads as $l) {
             $updated++;
         } else {
             $added++;
+            // Auto-create proposal generation job for new leads
+            try {
+                $pdo->prepare("INSERT OR IGNORE INTO proposal_generation_jobs (lead_key, feedback, status, created_at, updated_at)
+                    VALUES (?, '', 'pending', datetime('now'), datetime('now'))")
+                    ->execute([$l['lead_key']]);
+            } catch (PDOException $e) {
+                // Table may not exist yet — that's OK
+                error_log("CRM sync: could not create generation job for {$l['lead_key']}: " . $e->getMessage());
+            }
         }
     } catch (PDOException $e) {
         // Log error but continue

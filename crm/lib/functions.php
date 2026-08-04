@@ -252,6 +252,17 @@ function lead_accessible_to(array $emp, array $lead): bool
 }
 
 /**
+ * Generate a slug from a business name matching the Python slugify() used by the lead engine.
+ */
+function slugify(string $name): string
+{
+    $s = preg_replace('/[^a-z0-9\s]/', '', strtolower(trim($name)));
+    $s = preg_replace('/\s+/', '-', $s);
+    $s = preg_replace('/-{2,}/', '-', $s);
+    return substr($s, 0, 60);
+}
+
+/**
  * Log a system-level event (workflow error, cron result, API failure).
  * Writes to system_logs table.
  */

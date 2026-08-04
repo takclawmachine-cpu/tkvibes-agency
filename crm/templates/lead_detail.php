@@ -107,36 +107,43 @@ $l = $selected_lead;
         </div>
 
         <div class="detail-section">
-            <h3>Proposals</h3>
+            <h3>📄 Proposals & Downloads</h3>
             <?php
             $site_url = $l['sample_site_url'] ?? '';
             $deck_url = $l['pitch_deck_url'] ?? '';
             $has_proposals = !empty($site_url) || !empty($deck_url);
+
+            // Also check local /proposals/ files
+            $slug = slugify($l['business_name'] ?? '');
+            $local_site = '/proposals/sample-website/' . $slug . '.html';
+            $local_deck = '/proposals/pitch-deck/' . $slug . '.html';
+            $doc_root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(dirname(__DIR__));
+            $local_site_exists = $has_proposals || file_exists($doc_root . $local_site);
+            $local_deck_exists = $has_proposals || file_exists($doc_root . $local_deck);
             ?>
             <table class="detail-table">
-                <?php if ($site_url): ?>
-                <tr><td>Sample Website</td>
+                <?php if ($local_site_exists): ?>
+                <tr><td>🌐 Sample Website</td>
                     <td>
-                        <a href="<?= e($site_url) ?>" target="_blank" class="btn btn-sm btn-primary">🌐 View</a>
-                        <a href="<?= e($site_url) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
+                        <a href="<?= e($site_url ?: $local_site) ?>" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="<?= e($site_url ?: $local_site) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
                     </td>
                 </tr>
                 <?php endif; ?>
-                <?php if ($deck_url): ?>
-                <tr><td>Pitch Deck</td>
+                <?php if ($local_deck_exists): ?>
+                <tr><td>📊 Pitch Deck</td>
                     <td>
-                        <a href="<?= e($deck_url) ?>" target="_blank" class="btn btn-sm btn-primary">📊 View</a>
-                        <a href="<?= e($deck_url) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
+                        <a href="<?= e($deck_url ?: $local_deck) ?>" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="<?= e($deck_url ?: $local_deck) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
                     </td>
                 </tr>
                 <?php endif; ?>
             </table>
 
-            <?php if (!$has_proposals): ?>
+            <?php if (!$local_site_exists && !$local_deck_exists): ?>
                 <div class="proposal-status" style="margin-top:0.75rem">
-                    <p class="text-muted">No proposals generated yet.</p>
-                    <button class="btn btn-sm btn-primary btn-generate-proposal" onclick="generateProposal('<?= e($l['lead_key']) ?>')">⚡ Generate Proposal</button>
-                    <div id="proposal-status-<?= e($l['lead_key']) ?>" style="margin-top:0.5rem"></div>
+                    <p class="text-muted">⏳ Proposals not generated yet.</p>
+                    <p class="text-muted" style="font-size:0.8rem">Run the lead engine for this lead, or contact admin.</p>
                 </div>
             <?php endif; ?>
         </div>

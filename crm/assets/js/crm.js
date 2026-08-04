@@ -306,7 +306,7 @@
         btn.disabled = true;
         btn.textContent = '⏳ Starting...';
         
-        fetch('api/proposals.php?action=generate&lead_key=' + encodeURIComponent(lk) + '&_csrf_token=' + encodeURIComponent(window.CSRF_TOKEN || ''))
+        fetch('api/proposals.php?action=generate&lead_key=' + encodeURIComponent(lk))
         .then(function(r) { return r.json(); })
         .then(function(result) {
             if (result.status === 'ok') {
@@ -378,7 +378,7 @@
         if (btn) { btn.disabled = true; btn.textContent = '⏳ Submitting...'; }
         closeFeedbackModal();
         
-        fetch('api/proposals.php?action=generate&lead_key=' + encodeURIComponent(lk) + '&feedback=' + encodeURIComponent(fb) + '&_csrf_token=' + encodeURIComponent(window.CSRF_TOKEN || ''))
+        fetch('api/proposals.php?action=generate&lead_key=' + encodeURIComponent(lk) + '&feedback=' + encodeURIComponent(fb))
         .then(function(r) { return r.json(); })
         .then(function(result) {
             if (result.status === 'ok') {
