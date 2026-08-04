@@ -157,8 +157,27 @@ if ($client) {
 }
 
 // ── 5. Process pending proposal generation jobs ─────────────────────────
-// Placeholder: The actual Hermes agent/webhook integration polls this table.
-// For now, just log any pending jobs for observability.
+// First: recover orphaned 'running' jobs that have no heartbeat (>10 min stale)
+try {
+    $recovered = 0;
+    $stmt = $pdo->query("SELECT id, lead_key FROM proposal_generation_jobs WHERE status = 'running' AND updated_at < datetime('now', '-10 minutes')");
+    while ($job = $stmt->fetch()) {
+        if (!$dry_run) {
+            $pdo->prepare("UPDATE proposal_generation_jobs SET status = 'pending', updated_at = datetime('now') WHERE id = ?")
+                ->execute([$job['id']]);
+            error_log("Cron: recovered orphaned job #{$job['id']} for lead '{$job['lead_key']}' (stale 'running' >10min)");
+        }
+        $recovered++;
+    }
+    if ($recovered > 0) {
+        $report['proposal_jobs_recovered'] = "$recovered orphaned jobs recovered";
+    }
+} catch (Throwable $e) {
+    $report['proposal_jobs_recovery_error'] = $e->getMessage();
+    error_log("Cron proposal_jobs recovery error: " . $e->getMessage());
+}
+
+// Then: process pending jobs
 try {
     $stmt = $pdo->query("SELECT id, lead_key, feedback, created_at FROM proposal_generation_jobs WHERE status = 'pending' ORDER BY created_at ASC LIMIT 5");
     $pending_jobs = $stmt->fetchAll();

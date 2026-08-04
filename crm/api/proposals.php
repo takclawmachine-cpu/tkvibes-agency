@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             json_response(['error' => 'Invalid API key'], 403);
         }
         try {
-            $stmt = $pdo->query("SELECT * FROM proposal_generation_jobs WHERE status IN ('pending', 'running') ORDER BY created_at ASC LIMIT 10");
+            $stmt = $pdo->query("SELECT * FROM proposal_generation_jobs WHERE status IN ('pending', 'running') AND (status != 'running' OR updated_at < datetime('now', '-10 minutes')) ORDER BY created_at ASC LIMIT 10");
             $jobs = $stmt->fetchAll();
         } catch (PDOException $e) {
             $jobs = [];
