@@ -49,10 +49,13 @@ def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
             for country in sorted(country_cities):  # deterministic order
                 country_pool: list[Lead] = []
                 print(f"\n  ── [{country}] ──")
-                for city in country_cities[country]:
+                # Categories-outer: try every category with at least one city
+                # before moving on, so the per-country cap doesn't starve
+                # later categories
+                for cat in cfg["targets"]["categories"]:
                     if enough(country_pool):
                         break
-                    for cat in cfg["targets"]["categories"]:
+                    for city in country_cities[country]:
                         if enough(country_pool):
                             break
                         print(f"  [google_places] {city} / {cat}")
@@ -242,9 +245,10 @@ def main():
 
     max_leads = args.max_leads or cfg["run"]["max_leads_per_run"]
 
-    # Per-country discovery target — splits leads evenly across countries
+    # Per-country discovery target — collect 3x so all categories get sampled,
+    # then cap at max_leads in process_leads
     employees = len(cfg.get("crm", {}).get("country_assignments", {}) or {})
-    per_country = (max_leads // employees) if employees else max_leads
+    per_country = max_leads * 3
 
     nq = len(cfg["targets"]["cities"]) * len(cfg["targets"]["categories"])
     print(f"TKVibes Lead Engine - target: {max_leads} leads this job")
