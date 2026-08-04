@@ -296,8 +296,19 @@ def main():
         site_html = make_static_site(lead)
         deck_html = make_static_deck(lead)
 
-        site_ok = upload_file(site_remote, site_html)
-        deck_ok = upload_file(deck_remote, deck_html)
+        # Save locally
+        sw_dir = os.path.join(REPO_ROOT, "Sample Webpages and pitch deck", "sample website")
+        pd_dir = os.path.join(REPO_ROOT, "Sample Webpages and pitch deck", "pitch deck")
+        os.makedirs(sw_dir, exist_ok=True)
+        os.makedirs(pd_dir, exist_ok=True)
+        with open(os.path.join(sw_dir, f"{slug}.html"), "w", encoding="utf-8") as f:
+            f.write(site_html)
+        with open(os.path.join(pd_dir, f"{slug}.html"), "w", encoding="utf-8") as f:
+            f.write(deck_html)
+
+        # Upload using u2.php (which writes to /proposals/)
+        site_ok = upload_file(f"../proposals/{site_remote}", site_html)
+        deck_ok = upload_file(f"../proposals/{deck_remote}", deck_html)
         if site_ok and deck_ok:
             ok += 1
             print(f"  ✅ {name[:30]}: site={len(site_html)}b deck={len(deck_html)}b")
