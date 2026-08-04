@@ -124,7 +124,7 @@ body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;overflow:hi
 
 <script>
 let currentSlide=0;const slides=document.querySelectorAll('.slide');const dots=document.getElementById('dots');const progress=document.getElementById('progress');
-slides.forEach((_,i){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>{currentSlide=i;updateSlide()};dots.appendChild(d)});
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>{currentSlide=i;updateSlide()};dots.appendChild(d)});
 function updateSlide(){slides.forEach((s,i)=>{s.classList.toggle('active',i===currentSlide);if(i===currentSlide){const items=s.querySelectorAll('.anim-fade-up:not(.visible)');items.forEach((el,idx)=>{setTimeout(()=>el.classList.add('visible'),idx*80)})}});dots.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===currentSlide));progress.style.width=((currentSlide+1)/slides.length*100)+'%'}
 function changeSlide(dir){const next=currentSlide+dir;if(next>=0&&next<slides.length){slides[currentSlide].querySelectorAll('.anim-fade-up').forEach(el=>el.classList.remove('visible'));currentSlide=next;updateSlide()}}
 document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1)});
