@@ -138,6 +138,15 @@ function init_schema(): void
             CREATE INDEX IF NOT EXISTS idx_leads_employee   ON leads(assigned_employee_id);
             CREATE INDEX IF NOT EXISTS idx_leads_removed    ON leads(removed_at);
             CREATE INDEX IF NOT EXISTS idx_activities_lead  ON lead_activities(lead_key);
+            -- Performance indexes for frequently filtered/searched columns
+            CREATE INDEX IF NOT EXISTS idx_leads_city        ON leads(city);
+            CREATE INDEX IF NOT EXISTS idx_leads_country     ON leads(country);
+            CREATE INDEX IF NOT EXISTS idx_leads_tier        ON leads(lead_tier);
+            CREATE INDEX IF NOT EXISTS idx_leads_phone       ON leads(phone_primary);
+            CREATE INDEX IF NOT EXISTS idx_leads_category    ON leads(category);
+            CREATE INDEX IF NOT EXISTS idx_leads_assigned    ON leads(assigned_employee);
+            CREATE INDEX IF NOT EXISTS idx_activities_date   ON lead_activities(created_at);
+            CREATE INDEX IF NOT EXISTS idx_proposal_jobs_status ON proposal_generation_jobs(status);
             CREATE TABLE IF NOT EXISTS proposal_generation_jobs (
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 lead_key    TEXT    NOT NULL,
@@ -238,6 +247,15 @@ function init_schema(): void
             CREATE INDEX idx_leads_employee   ON leads(assigned_employee_id);
             CREATE INDEX idx_leads_removed    ON leads(removed_at);
             CREATE INDEX idx_activities_lead  ON lead_activities(lead_key);
+            -- Performance indexes for frequently filtered/searched columns
+            CREATE INDEX idx_leads_city        ON leads(city);
+            CREATE INDEX idx_leads_country     ON leads(country);
+            CREATE INDEX idx_leads_tier        ON leads(lead_tier);
+            CREATE INDEX idx_leads_phone       ON leads(phone_primary(20));
+            CREATE INDEX idx_leads_category    ON leads(category);
+            CREATE INDEX idx_leads_assigned    ON leads(assigned_employee);
+            CREATE INDEX idx_activities_date   ON lead_activities(created_at);
+            CREATE INDEX idx_proposal_jobs_status ON proposal_generation_jobs(status);
             CREATE TABLE IF NOT EXISTS proposals (
                 id          INT AUTO_INCREMENT PRIMARY KEY,
                 lead_key    VARCHAR(255) NOT NULL,
