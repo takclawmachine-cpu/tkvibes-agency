@@ -534,18 +534,18 @@ def main():
         leads = leads[:args.limit]
 
     if not leads:
-        print("No leads to process")
+        logger.warning("No leads to process")
         return
 
     print(f"Generating proposals for {len(leads)} leads...")
     results = []
     for i, lead in enumerate(leads, 1):
-        print(f"  [{i}/{len(leads)}] {lead.business_name} ({lead.lead_tier})")
+        logger.info("[%d/%d] %s (%s)", i, len(leads), lead.business_name, lead.lead_tier)
         try:
             result = generate_for_lead(lead, cfg, sample_template, force=args.force)
             results.append(result)
         except Exception as e:
-            print(f"    ❌ Error: {e}")
+            logger.error("Error for %s (%s): %s", lead.business_name, lead.lead_key, e)
             results.append({"status": "error", "lead_key": lead.lead_key, "error": str(e)})
 
     generated = sum(1 for r in results if r.get("status") == "generated")

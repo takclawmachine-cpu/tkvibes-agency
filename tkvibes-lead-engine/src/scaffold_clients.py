@@ -18,10 +18,13 @@ import os
 import re
 
 from .config import load_config
+from .log_config import get_logger
 from .models import Lead
 from .handoff.sample_site import build_site_spec
 from .handoff.pitch_deck import build_deck_spec
 from .outreach.phone import clean_name, classify_number
+
+logger = get_logger(__name__)
 
 CLIENTS_DIR = os.path.expanduser("~/Desktop/clients")
 
@@ -190,7 +193,7 @@ def main():
     print(f"scaffolding {len(leads)} client folders under {CLIENTS_DIR}")
     for l in leads:
         d, existed = scaffold(l, force=args.force)
-        print(f"  {'~' if existed else '+'} {os.path.basename(d)}")
+        logger.info("  %s %s", "~" if existed else "+", os.path.basename(d))
     print("\nNext: run the website/deck agents against each <slug>-prompt.md")
 
 

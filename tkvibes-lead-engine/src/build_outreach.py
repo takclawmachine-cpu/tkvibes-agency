@@ -12,8 +12,11 @@ import json
 import os
 
 from .config import load_config
+from .log_config import get_logger
 from .models import Lead
 from .outreach.phone import build_queue, export_queue
+
+logger = get_logger(__name__)
 
 # Personal, human tone — written as Taarush (owner) manually messaging each lead.
 # Hook + short story, references the sample website + pitch deck he'll share.

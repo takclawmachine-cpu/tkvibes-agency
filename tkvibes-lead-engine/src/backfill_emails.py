@@ -11,8 +11,11 @@ import os
 from dotenv import load_dotenv
 
 from .config import load_config
+from .log_config import get_logger
 from .email_finder import find_emails_for_site
 from .models import SCHEMA
+
+logger = get_logger(__name__)
 
 
 def backfill_json(path: str, delay: float) -> dict:
@@ -23,7 +26,7 @@ def backfill_json(path: str, delay: float) -> dict:
 
     found = 0
     targets = [d for d in data if not d.get("email") and d.get("website_url")]
-    print(f"[json] {len(targets)} leads with a website and no email")
+    logger.info("[json] %d leads with a website and no email", len(targets))
     for i, d in enumerate(targets, 1):
         emails = find_emails_for_site(d["website_url"], delay=delay)
         if emails:
@@ -32,9 +35,9 @@ def backfill_json(path: str, delay: float) -> dict:
                 d["notes"] = (d.get("notes", "") +
                               f" | alt_emails: {', '.join(emails[1:4])}").strip(" |")
             found += 1
-            print(f"  [{i}/{len(targets)}] {d['business_name']}: {emails[0]}")
+            logger.info("[%d/%d] %s: %s", i, len(targets), d["business_name"], emails[0])
         else:
-            print(f"  [{i}/{len(targets)}] {d['business_name']}: -")
+            logger.info("[%d/%d] %s: -", i, len(targets), d["business_name"])
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False, default=str)
@@ -76,9 +79,9 @@ def backfill_sheet(sa_path: str, sheet_id: str, worksheet: str, delay: float) ->
                 note = (cell(n_col) + f" | alt_emails: {', '.join(emails[1:4])}").strip(" |")
                 updates.append({"range": gspread.utils.rowcol_to_a1(idx, n_col),
                                 "values": [[note]]})
-            print(f"  row {idx} {name}: {emails[0]}")
+            logger.info("row %d %s: %s", idx, name, emails[0])
         else:
-            print(f"  row {idx} {name}: -")
+            logger.info("row %d %s: -", idx, name)
 
     if updates:
         ws.batch_update(updates, value_input_option="RAW")
