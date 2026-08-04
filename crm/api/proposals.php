@@ -223,6 +223,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         json_response(['status' => 'ok', 'jobs' => $jobs]);
 
+    } elseif ($action === 'api_pending') {
+        // ── API: list pending jobs (API key auth) ──────────────────────
+        $cfg = require __DIR__ . '/../config.local.php';
+        $key = $_GET['key'] ?? '';
+        if (!$key || $key !== $cfg['api_key']) {
+            json_response(['error' => 'Invalid API key'], 403);
+        }
+        try {
+            $stmt = $pdo->query("SELECT * FROM proposal_generation_jobs WHERE status IN ('pending', 'running') ORDER BY created_at ASC LIMIT 10");
+            $jobs = $stmt->fetchAll();
+        } catch (PDOException $e) {
+            $jobs = [];
+        }
+        json_response(['status' => 'ok', 'jobs' => $jobs]);
+
+    } elseif ($action === 'api_complete') {
+        // ── API: mark a job as completed (API key auth) ────────────────
+        $cfg = require __DIR__ . '/../config.local.php';
+        $key = $_GET['key'] ?? '';
+        if (!$key || $key !== $cfg['api_key']) {
+            json_response(['error' => 'Invalid API key'], 403);
+        }
+        $job_id = (int)($_GET['job_id'] ?? 0);
+        $status = $_GET['status'] ?? 'completed';
+        if (!$job_id) {
+            json_response(['error' => 'job_id is required'], 400);
+        }
+        $pdo->prepare("UPDATE proposal_generation_jobs SET status = ?, updated_at = datetime('now') WHERE id = ?")
+            ->execute([$status, $job_id]);
+        json_response(['status' => 'ok']);
+
+    } elseif ($action === 'api_feedback') {
+        // ── API: get feedback for a job (API key auth) ─────────────────
+        $cfg = require __DIR__ . '/../config.local.php';
+        $key = $_GET['key'] ?? '';
+        if (!$key || $key !== $cfg['api_key']) {
+            json_response(['error' => 'Invalid API key'], 403);
+        }
+        $job_id = (int)($_GET['job_id'] ?? 0);
+        if (!$job_id) {
+            json_response(['error' => 'job_id is required'], 400);
+        }
+        $stmt = $pdo->prepare("SELECT * FROM proposal_generation_jobs WHERE id = ?");
+        $stmt->execute([$job_id]);
+        $job = $stmt->fetch();
+        json_response(['status' => 'ok', 'job' => $job ?: null]);
+
     } elseif ($action === 'feedback') {
         // ── Check feedback state ──────────────────────────────────────
         $emp = require_auth();
