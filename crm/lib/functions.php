@@ -253,6 +253,15 @@ function flash_get(): array
     return $f;
 }
 
+/**
+ * Render a hidden CSRF token input field.
+ * Call this inside any <form> that needs CSRF protection.
+ */
+function csrf_field(): void
+{
+    echo '<input type="hidden" name="_csrf_token" value="' . csrf_token() . '">';
+}
+
 function fmt_datetime(?string $dt): string
 {
     if (!$dt) return '—';

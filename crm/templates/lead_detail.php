@@ -171,18 +171,21 @@ $l = $selected_lead;
         <form method="post" action="api/leads.php" class="inline-form">
             <input type="hidden" name="action" value="tag">
             <input type="hidden" name="lead_key" value="<?= e($l['lead_key']) ?>">
+            <?php csrf_field(); ?>
             <input type="hidden" name="status" value="qualified">
             <button type="submit" class="btn btn-qualified" onclick="return confirm('Mark as Qualified?')">✅ Qualified</button>
         </form>
         <form method="post" action="api/leads.php" class="inline-form">
             <input type="hidden" name="action" value="tag">
             <input type="hidden" name="lead_key" value="<?= e($l['lead_key']) ?>">
+            <?php csrf_field(); ?>
             <input type="hidden" name="status" value="callback">
             <button type="submit" class="btn btn-callback">📅 Callback Pending</button>
         </form>
         <form method="post" action="api/leads.php" class="inline-form">
             <input type="hidden" name="action" value="tag">
             <input type="hidden" name="lead_key" value="<?= e($l['lead_key']) ?>">
+            <?php csrf_field(); ?>
             <input type="hidden" name="status" value="not_qualified">
             <button type="submit" class="btn btn-notqualified" onclick="return confirm('Mark as Not Qualified? This will archive the lead in 24h.')">❌ Not Qualified</button>
         </form>
@@ -194,6 +197,7 @@ $l = $selected_lead;
         <form method="post" action="api/leads.php" class="note-form" onsubmit="submitNote(event)">
             <input type="hidden" name="action" value="note">
             <input type="hidden" name="lead_key" value="<?= e($l['lead_key']) ?>">
+            <?php csrf_field(); ?>
             <textarea name="note" class="form-control" rows="3" placeholder="Enter call notes, conversation summary, next steps..." required></textarea>
             <button type="submit" class="btn btn-primary">Save Note</button>
         </form>

@@ -158,6 +158,9 @@ foreach ($leads as $l) {
     </main>
 </div>
 
+<script>
+var CSRF_TOKEN = '<?= csrf_token() ?>';
+</script>
 <script src="assets/js/crm.js?v=1"></script>
 </body>
 </html>
