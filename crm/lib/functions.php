@@ -9,10 +9,31 @@ function e(?string $s): string
     return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * Send a standardized JSON response.
+ * 
+ * Success: {'status': 'ok', ...data}
+ * Error:   {'status': 'error', 'code': '...', 'message': '...'}
+ * 
+ * @param array $data    Response data. If it contains 'error', auto-wraps in error format.
+ * @param int   $code    HTTP status code (default 200).
+ */
 function json_response($data, int $code = 200): void
 {
     http_response_code($code);
     header('Content-Type: application/json; charset=utf-8');
+    
+    // Auto-wrap error responses if 'error' key exists
+    if (isset($data['error'])) {
+        $data = [
+            'status'  => 'error',
+            'code'    => (string)($data['code'] ?? ''),
+            'message' => $data['error'],
+        ];
+    } elseif (!isset($data['status'])) {
+        $data['status'] = 'ok';
+    }
+    
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
 }

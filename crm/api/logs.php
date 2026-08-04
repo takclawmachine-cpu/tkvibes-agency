@@ -11,6 +11,7 @@ header('X-Robots-Tag: noindex, nofollow');
 require __DIR__ . '/../lib/db.php';
 require __DIR__ . '/../lib/auth.php';
 require __DIR__ . '/../lib/functions.php';
+require_once __DIR__ . '/../lib/constants.php';
 
 $pdo = get_db();
 
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = $body['message'] ?? '';
     $context = $body['context'] ?? [];
     
-    if (!in_array($level, ['info', 'warning', 'error', 'critical'], true)) {
+    if (!in_array($level, LOG_LEVELS, true)) {
         $level = 'info';
     }
     

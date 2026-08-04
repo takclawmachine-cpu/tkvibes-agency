@@ -11,6 +11,7 @@ header('X-Robots-Tag: noindex, nofollow');
 require __DIR__ . '/../lib/db.php';
 require __DIR__ . '/../lib/auth.php';
 require __DIR__ . '/../lib/functions.php';
+require_once __DIR__ . '/../lib/constants.php';
 require_once __DIR__ . '/../lib/sheets_sync.php';
 
 $pdo = get_db();
@@ -84,16 +85,8 @@ switch ($action) {
             json_response(['error' => 'Invalid field name'], 400);
         }
 
-        // Whitelist editable fields
-        $editable = [
-            'business_name', 'category', 'owner_name', 'phone_primary', 'phone_secondary',
-            'whatsapp', 'email', 'address', 'city', 'pincode', 'region', 'country',
-            'website_url', 'website_quality', 'rating', 'review_count', 'years_in_business',
-            'socials', 'pain_points', 'recommended_pitch', 'notes', 'contact_channel',
-            'opening_hours', 'has_website', 'source', 'source_url',
-            'sample_site_url', 'pitch_deck_url',
-        ];
-        if (!in_array($field, $editable, true)) {
+        // Whitelist editable fields (from centralized constants)
+        if (!in_array($field, EDITABLE_FIELDS, true)) {
             json_response(['error' => 'Field not editable: ' . $field], 400);
         }
 

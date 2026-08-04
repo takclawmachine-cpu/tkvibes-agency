@@ -7,6 +7,7 @@ header('X-Robots-Tag: noindex, nofollow');
 require __DIR__ . '/lib/db.php';
 require __DIR__ . '/lib/auth.php';
 require __DIR__ . '/lib/functions.php';
+require_once __DIR__ . '/lib/constants.php';
 
 $emp = require_admin();
 $pdo = get_db();
@@ -161,15 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $imported = 0;
                 $updated = 0;
-                // Map sheet column names to DB column names
-                $allowed_fields = [
-                    'business_name', 'category', 'owner_name', 'phone_primary', 'phone_secondary',
-                    'whatsapp', 'email', 'address', 'city', 'pincode', 'region', 'country',
-                    'website_url', 'website_quality', 'rating', 'review_count', 'years_in_business',
-                    'socials', 'pain_points', 'recommended_pitch', 'notes', 'contact_channel',
-                    'opening_hours', 'has_website', 'source', 'source_url', 'lead_score', 'lead_tier',
-                    'assigned_employee', 'outreach_status', 'wa_link',
-                ];
+                // Map sheet column names to DB column names (from centralized constants)
+                $allowed_fields = SHEET_IMPORT_FIELDS;
                 foreach ($rows as $row) {
                     if (empty($row)) continue;
                     $data = array_combine($header, array_pad($row, count($header), ''));
