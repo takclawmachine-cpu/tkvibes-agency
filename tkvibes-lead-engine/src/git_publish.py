@@ -41,6 +41,25 @@ def slugify(name: str) -> str:
     return re.sub(r"-{2,}", "-", s)[:60] or "client"
 
 
+def _build_slug_to_key_map() -> dict[str, str]:
+    """Build a map of slug → lead_key from leads_export.json for fallback lookups."""
+    export_path = os.path.join(PROPOSALS_DIR, "..", "data", "leads_export.json")
+    if not os.path.isfile(export_path):
+        return {}
+    try:
+        with open(export_path, encoding="utf-8") as f:
+            leads_data = json.load(f)
+    except (json.JSONDecodeError, Exception):
+        return {}
+    slug_map = {}
+    for ld in leads_data:
+        name = ld.get("business_name", "") or ""
+        key = ld.get("lead_key", "") or ""
+        if key:
+            slug_map[slugify(name)] = key
+    return slug_map
+
+
 def _run_git(args: list[str], workdir: str = REPO_DIR) -> str:
     """Run a git command and return stdout."""
     result = subprocess.run(
@@ -62,23 +81,27 @@ def publish(lead_key: str = None, dry_run: bool = False) -> list[dict]:
     # Load generation results to know what was generated
     results_path = os.path.join(PROPOSALS_DIR, "_generation_results.json")
     if not os.path.isfile(results_path):
-        # Scan the proposals directory directly
-        results = []
-        for entry in os.listdir(PROPOSALS_DIR):
-            slug_dir = os.path.join(PROPOSALS_DIR, entry)
-            if not os.path.isdir(slug_dir) or entry.startswith("."):
-                continue
-            index = os.path.join(slug_dir, "index.html")
-            deck = os.path.join(slug_dir, "pitch-deck.html")
-            has_site = os.path.isfile(index)
-            has_deck = os.path.isfile(deck)
-            if has_site or has_deck:
-                results.append({
-                    "slug": entry,
-                    "index": index if has_site else None,
-                    "deck": deck if has_deck else None,
-                    "lead_key": "",
-                })
+            # Scan the proposals directory directly with slug→key fallback
+            slug_to_key = _build_slug_to_key_map()
+            results = []
+            for entry in os.listdir(PROPOSALS_DIR):
+                slug_dir = os.path.join(PROPOSALS_DIR, entry)
+                if not os.path.isdir(slug_dir) or entry.startswith("."):
+                    continue
+                index = os.path.join(slug_dir, "index.html")
+                deck = os.path.join(slug_dir, "pitch-deck.html")
+                has_site = os.path.isfile(index)
+                has_deck = os.path.isfile(deck)
+                if has_site or has_deck:
+                    lk = slug_to_key.get(entry, "")
+                    if not lk:
+                        print(f"  ⚠️  No lead_key match for slug '{entry}' — CRM URL push will be skipped")
+                    results.append({
+                        "slug": entry,
+                        "index": index if has_site else None,
+                        "deck": deck if has_deck else None,
+                        "lead_key": lk,
+                    })
     else:
         with open(results_path, encoding="utf-8") as f:
             results = json.load(f)
@@ -187,38 +210,40 @@ def _push_urls_to_crm(published: list[dict]):
         return
 
     for p in published:
-        lead_key = p.get("lead_key", "")
-        if not lead_key:
-            continue
+            lead_key = p.get("lead_key", "")
+            if not lead_key:
+                name = p.get("business_name") or p.get("slug", "?")
+                print(f"  ⚠️  Skipping CRM URL push for '{name}' (no lead_key)")
+                continue
 
-        # Build a lead record with URL fields — sync.php handles upsert
-        lead = {"lead_key": lead_key}
-        updated_fields = []
-        if p.get("sample_site_url"):
-            lead["sample_site_url"] = p["sample_site_url"]
-            updated_fields.append("sample_site_url")
-        if p.get("pitch_deck_url"):
-            lead["pitch_deck_url"] = p["pitch_deck_url"]
-            updated_fields.append("pitch_deck_url")
+            # Build a lead record with URL fields — sync.php handles upsert
+            lead = {"lead_key": lead_key}
+            updated_fields = []
+            if p.get("sample_site_url"):
+                lead["sample_site_url"] = p["sample_site_url"]
+                updated_fields.append("sample_site_url")
+            if p.get("pitch_deck_url"):
+                lead["pitch_deck_url"] = p["pitch_deck_url"]
+                updated_fields.append("pitch_deck_url")
 
-        if not updated_fields:
-            continue
+            if not updated_fields:
+                continue
 
-        try:
-            payload = json.dumps({
-                "key": api_key,
-                "leads": [lead],
-            }).encode("utf-8")
-            req = Request(f"{api_url}/api/sync.php", data=payload, method="POST")
-            req.add_header("Content-Type", "application/json")
-            with urlopen(req, timeout=15) as resp:
-                result = json.loads(resp.read().decode())
-            if result.get("status") == "ok":
-                print(f"  \u2705 CRM: synced {', '.join(updated_fields)} for {lead_key}")
-            else:
-                print(f"  \u26a0\ufe0f  CRM: sync returned {result.get('status', '?')} for {lead_key}")
-        except Exception as e:
-            print(f"  \u26a0\ufe0f  CRM: failed to update URLs for {lead_key}: {e}")
+            try:
+                payload = json.dumps({
+                    "key": api_key,
+                    "leads": [lead],
+                }).encode("utf-8")
+                req = Request(f"{api_url}/api/sync.php", data=payload, method="POST")
+                req.add_header("Content-Type", "application/json")
+                with urlopen(req, timeout=15) as resp:
+                    result = json.loads(resp.read().decode())
+                if result.get("status") == "ok":
+                    print(f"  ✅ CRM: synced {', '.join(updated_fields)} for {lead_key}")
+                else:
+                    print(f"  ⚠️  CRM: sync returned {result.get('status', '?')} for {lead_key}")
+            except Exception as e:
+                print(f"  ⚠️  CRM: failed to update URLs for {lead_key}: {e}")
 
 
 def main():
