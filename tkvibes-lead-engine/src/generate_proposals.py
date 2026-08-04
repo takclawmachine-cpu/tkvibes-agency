@@ -33,6 +33,7 @@ from .competitor_research import (
 from .gtmetrix_check import (
     analyze_website, format_website_analysis_html, format_website_analysis_site_section
 )
+from .ai_site_generator import build_ai_site_spec, render_site
 
 PROPOSALS_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "proposals")
 
@@ -461,8 +462,30 @@ def generate_for_lead(lead: Lead, config: dict, sample_template: str,
     # ── Generation phase ──────────────────────────────────────────────────
     os.makedirs(out_dir, exist_ok=True)
 
-    # Generate sample site
-    sample_html = render_sample_site(lead, sample_template, competitors, analysis)
+    # Try AI-powered generation first; fall back to template on failure
+    ai_sample_html = None
+    try:
+        from .visuals import get_visual_config
+        lead_dict = lead.to_dict()
+        visuals = get_visual_config(lead.category)
+        ai_spec = build_ai_site_spec(lead_dict, visuals)
+        # Build competitor/analysis HTML for AI generator
+        comp_html = ""
+        if competitors:
+            comp_html = format_competitor_html(competitors, lead)
+        anl_html = ""
+        if analysis:
+            anl_html = format_website_analysis_html(analysis, lead)
+        ai_sample_html = render_site(lead_dict, ai_spec, comp_html, anl_html)
+        logger.info("[ai] Generated sample site for %s (layout: %s)", lead.business_name, ai_spec.get("layout"))
+    except Exception as e:
+        logger.warning("[ai] AI generation failed for %s, using template: %s", lead.business_name, e)
+
+    if ai_sample_html:
+        sample_html = ai_sample_html
+    else:
+        # Fallback to template-based generation
+        sample_html = render_sample_site(lead, sample_template, competitors, analysis)
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(sample_html)
 
