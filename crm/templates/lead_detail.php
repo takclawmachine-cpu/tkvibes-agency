@@ -113,37 +113,57 @@ $l = $selected_lead;
             $deck_url = $l['pitch_deck_url'] ?? '';
             $has_proposals = !empty($site_url) || !empty($deck_url);
 
-            // Also check local /proposals/ files
+            // Compute local file slug from business name
             $slug = slugify($l['business_name'] ?? '');
             $local_site = '/proposals/sample-website/' . $slug . '.html';
             $local_deck = '/proposals/pitch-deck/' . $slug . '.html';
-            $doc_root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(dirname(__DIR__));
-            $local_site_exists = $has_proposals || file_exists($doc_root . $local_site);
-            $local_deck_exists = $has_proposals || file_exists($doc_root . $local_deck);
+
+            // If no CRM URL but slugged file exists on server, use that
+            if (!$site_url) {
+                $doc_root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(dirname(__DIR__));
+                $local_site_exists = false;
+                if ($slug) {
+                    $local_site_exists = file_exists($doc_root . $local_site);
+                }
+                if ($local_site_exists) {
+                    $site_url = $local_site;
+                }
+            }
+            if (!$deck_url) {
+                $doc_root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(dirname(__DIR__));
+                $local_deck_exists = false;
+                if ($slug) {
+                    $local_deck_exists = file_exists($doc_root . $local_deck);
+                }
+                if ($local_deck_exists) {
+                    $deck_url = $local_deck;
+                }
+            }
+
+            $has_proposals = !empty($site_url) || !empty($deck_url);
             ?>
             <table class="detail-table">
-                <?php if ($local_site_exists): ?>
+                <?php if ($site_url): ?>
                 <tr><td>🌐 Sample Website</td>
                     <td>
-                        <a href="<?= e($site_url ?: $local_site) ?>" target="_blank" class="btn btn-sm btn-primary">View</a>
-                        <a href="<?= e($site_url ?: $local_site) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
+                        <a href="<?= e($site_url) ?>" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="<?= e($site_url) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
                     </td>
                 </tr>
                 <?php endif; ?>
-                <?php if ($local_deck_exists): ?>
+                <?php if ($deck_url): ?>
                 <tr><td>📊 Pitch Deck</td>
                     <td>
-                        <a href="<?= e($deck_url ?: $local_deck) ?>" target="_blank" class="btn btn-sm btn-primary">View</a>
-                        <a href="<?= e($deck_url ?: $local_deck) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
+                        <a href="<?= e($deck_url) ?>" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="<?= e($deck_url) ?>" download class="btn btn-sm btn-outline">⬇ Download</a>
                     </td>
                 </tr>
                 <?php endif; ?>
             </table>
 
-            <?php if (!$local_site_exists && !$local_deck_exists): ?>
+            <?php if (!$has_proposals): ?>
                 <div class="proposal-status" style="margin-top:0.75rem">
-                    <p class="text-muted">⏳ Proposals not generated yet.</p>
-                    <p class="text-muted" style="font-size:0.8rem">Run the lead engine for this lead, or contact admin.</p>
+                    <p class="text-muted">⏳ Proposals not generated yet. Run the lead engine to generate.</p>
                 </div>
             <?php endif; ?>
         </div>
