@@ -245,7 +245,7 @@ def main():
 
     if args.cities:
         want = [c.strip().lower() for c in args.cities.split(",") if c.strip()]
-    cfg["targets"]["cities"] = [c for c in cfg["targets"]["cities"]
+        cfg["targets"]["cities"] = [c for c in cfg["targets"]["cities"]
                                     if c.lower() in want] or want
     if args.categories:
         want = [c.strip().lower() for c in args.categories.split(",") if c.strip()]

@@ -102,6 +102,11 @@ foreach ($leads as $l) {
     $l['rating'] = $l['rating'] ?? null;
     $l['review_count'] = $l['review_count'] ?? null;
 
+    // Check if lead exists BEFORE upsert (rowCount is unreliable on SQLite for ON CONFLICT)
+    $check = $pdo->prepare("SELECT lead_key FROM leads WHERE lead_key = ?");
+    $check->execute([$l['lead_key']]);
+    $exists = $check->fetch();
+
     // Map fields to params
     $params = [
         ':lead_key'          => $l['lead_key'],
@@ -148,10 +153,10 @@ foreach ($leads as $l) {
 
     try {
         $stmt->execute($params);
-        if ($stmt->rowCount() === 1) {
-            $added++;
-        } else {
+        if ($exists) {
             $updated++;
+        } else {
+            $added++;
         }
     } catch (PDOException $e) {
         // Log error but continue
