@@ -124,24 +124,8 @@ COUNTRY_CODES = {
 
 
 def _filter_phone_country(leads: list[Lead]) -> list[Lead]:
-    """Remove leads whose phone country code doesn't match their resolved country.
-
-    E.g., a 'Toronto' lead with +91 phone = Indian number listed on a
-    Canadian business profile. Can't be called on a Canadian line.
-    """
-    kept = []
-    rejected = 0
-    for l in leads:
-        expected = COUNTRY_CODES.get(l.country)
-        phone = (l.phone_primary or "").strip()
-        if expected and phone.startswith("+") and not phone.startswith(expected):
-            rejected += 1
-            print(f"    ☒ {l.business_name} ({l.city}) — phone {phone} doesn't match country {l.country}")
-            continue
-        kept.append(l)
-    if rejected:
-        print(f"  [phone_validation] rejected {rejected} leads with mismatched country code")
-    return kept
+    """Pass through all leads — no phone/country rejection."""
+    return leads
 
 
 def apply_crm_fields(leads: list[Lead], cfg: dict) -> list[Lead]:
