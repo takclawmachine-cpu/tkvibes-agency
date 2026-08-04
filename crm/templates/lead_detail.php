@@ -135,7 +135,8 @@ $l = $selected_lead;
             <?php if (!$has_proposals): ?>
                 <div class="proposal-status" style="margin-top:0.75rem">
                     <p class="text-muted">No proposals generated yet.</p>
-                    <p class="text-muted" style="font-size:0.85rem">Run the business job to generate proposals for this lead.</p>
+                    <button class="btn btn-sm btn-primary btn-generate-proposal" onclick="generateProposal('<?= e($l['lead_key']) ?>')">⚡ Generate Proposal</button>
+                    <div id="proposal-status-<?= e($l['lead_key']) ?>" style="margin-top:0.5rem"></div>
                 </div>
             <?php endif; ?>
         </div>
