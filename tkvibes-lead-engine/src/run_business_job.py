@@ -84,7 +84,7 @@ class PhaseTracker:
             json.dump(self.status, f, indent=2, default=str)
 
     def mark_started(self, phase: str):
-        self.status[phase] = {"status": "running", "started_at": __import__("datetime").datetime.utcnow().isoformat() + "Z"}
+        self.status[phase] = {"status": "running", "started_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat()}
         self._save_status()
         logger.info("Phase '%s' STARTED", phase)
 
@@ -92,7 +92,7 @@ class PhaseTracker:
         self.status[phase] = {
             "status": "completed",
             "started_at": self.status.get(phase, {}).get("started_at", ""),
-            "completed_at": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+            "completed_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
             "details": details or {},
         }
         self._save_status()
@@ -102,7 +102,7 @@ class PhaseTracker:
         self.status[phase] = {
             "status": "failed",
             "error": error,
-            "completed_at": __import__("datetime").datetime.utcnow().isoformat() + "Z",
+            "completed_at": __import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
         }
         self._save_status()
         logger.error("Phase '%s' FAILED: %s", phase, error)
@@ -180,7 +180,6 @@ def main():
     # Phase tracker for resumability
     status_file = os.path.join(LEAD_ENGINE_DIR, ".pipeline_status.json")
     tracker = PhaseTracker(trace_id, status_file)
-    logger.clear()
     logger.info("Business job started", extra={
         "event": "business_job_start",
         "trace_id": trace_id,
