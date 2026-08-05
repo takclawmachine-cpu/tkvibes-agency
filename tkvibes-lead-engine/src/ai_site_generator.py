@@ -201,13 +201,13 @@ def build_ai_site_spec(lead_data: dict, category_visuals: dict) -> dict:
 
     response = _call_llm(user_prompt, system_prompt)
     if not response:
-        logger.info("AI generation failed, using default spec")
-        return _default_site_spec(lead_data, category_visuals)
+        logger.info("AI generation unavailable, returning None (caller will use default with category-based layout)")
+        return None
 
     spec = _extract_json(response)
     if not spec:
-        logger.warning("Could not parse AI response as JSON, using defaults")
-        return _default_site_spec(lead_data, category_visuals)
+        logger.warning("Could not parse AI response as JSON, returning None for category-based fallback")
+        return None
 
     # Validate and fill defaults for missing fields
     if spec.get("layout") not in LAYOUTS:
