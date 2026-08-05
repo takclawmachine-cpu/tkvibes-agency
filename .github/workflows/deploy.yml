@@ -3,11 +3,6 @@ name: Deploy to Hostinger
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - "crm/**"
-      - "tkvibes-lead-engine/**"
-      - "deploy_crm.py"
-      - ".github/**"
   workflow_dispatch:
 
 concurrency:
@@ -57,11 +52,13 @@ jobs:
               --exclude-glob=AGENTS.md
               --exclude-glob=memory/**
               --exclude-glob=.gitignore
-              --exclude-glob=crm/**
               --exclude-glob=tkvibes-lead-engine/**
               --exclude-glob=operations-dashboard/**
               --exclude-glob=local-llm/**
               --exclude-glob=deliverables/**
+              --exclude-glob=*.pyc
+              --exclude-glob=__pycache__/**
+              --exclude-glob=.venv/**
               ./ /public_html/;
             bye;
           "
