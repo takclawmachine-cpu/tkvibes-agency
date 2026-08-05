@@ -69,29 +69,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         json_response(['error' => 'Lead not found: ' . $lead_key], 404);
     }
 
+    // Migration safety: ensure trace_id column exists on proposals table
+    $has_proposals_trace_id = false;
+    try {
+        $pdo->query("SELECT trace_id FROM proposals LIMIT 1");
+        $has_proposals_trace_id = true;
+    } catch (PDOException $e) {
+        try {
+            $pdo->exec($driver === 'sqlite' ? "ALTER TABLE proposals ADD COLUMN trace_id TEXT DEFAULT ''" : "ALTER TABLE proposals ADD COLUMN trace_id VARCHAR(64) DEFAULT ''");
+            $has_proposals_trace_id = true;
+        } catch (PDOException $e2) {}
+    }
+
     // Upsert proposal — driver-compatible
     if ($driver === 'sqlite') {
+        $insert_fields = "lead_key, type, html, file_name" . ($has_proposals_trace_id ? ", trace_id" : "") . ", created_at, updated_at";
+        $insert_values = "?, ?, ?, ?" . ($has_proposals_trace_id ? ", ?" : "") . ", $now_expr, $now_expr";
         $stmt = $pdo->prepare("
-            INSERT INTO proposals (lead_key, type, html, file_name, trace_id, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, $now_expr, $now_expr)
+            INSERT INTO proposals ($insert_fields)
+            VALUES ($insert_values)
             ON CONFLICT(lead_key, type) DO UPDATE SET
                 html = excluded.html,
-                file_name = excluded.file_name,
-                trace_id = excluded.trace_id,
+                file_name = excluded.file_name" . ($has_proposals_trace_id ? ",
+                trace_id = excluded.trace_id" : "") . ",
                 updated_at = $now_expr
         ");
     } else {
+        $insert_fields = "lead_key, type, html, file_name" . ($has_proposals_trace_id ? ", trace_id" : "") . ", created_at, updated_at";
+        $insert_values = "?, ?, ?, ?" . ($has_proposals_trace_id ? ", ?" : "") . ", $now_expr, $now_expr";
         $stmt = $pdo->prepare("
-            INSERT INTO proposals (lead_key, type, html, file_name, trace_id, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, $now_expr, $now_expr)
+            INSERT INTO proposals ($insert_fields)
+            VALUES ($insert_values)
             ON DUPLICATE KEY UPDATE
                 html = VALUES(html),
-                file_name = VALUES(file_name),
-                trace_id = VALUES(trace_id),
+                file_name = VALUES(file_name)" . ($has_proposals_trace_id ? ",
+                trace_id = VALUES(trace_id)" : "") . ",
                 updated_at = $now_expr
         ");
     }
-    $stmt->execute([$lead_key, $type, $html, $filename, $trace_id ?: uniqid('prop_')]);
+
+    $exec_params = [$lead_key, $type, $html, $filename];
+    if ($has_proposals_trace_id) {
+        $exec_params[] = $trace_id ?: uniqid('prop_');
+    }
+    $stmt->execute($exec_params);
 
     // Also update the lead's sample_site_url / pitch_deck_url field
     // Use GitHub repo from config (not hardcoded)
