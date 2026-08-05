@@ -11,7 +11,6 @@
 | Channel | Value |
 |---------|--------|
 | Email | services@tkvibes.in |
-| Phone | +91 98182 46938 |
 | WhatsApp | https://wa.me/919818246938 |
 | Location copy | India, serving clients worldwide |
 

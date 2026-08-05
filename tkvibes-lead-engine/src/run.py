@@ -1,9 +1,27 @@
+"""TKVibes Lead Engine — Main Discovery Pipeline Orchestrator.
+
+Runs:
+1. Discovery via Google Places API
+2. Enrichment (phone normalization, website classification)
+3. Scoring (points-based tiering)
+4. Deduplication + DNC filtering
+5. CRM field application (region, pain points, pitch, employee assignment)
+6. Export to JSON for downstream agents
+7. Push to CRM database (transactional)
+
+Usage:
+    python -m src.run --max-leads 40
+    python -m src.run --cities Delhi --categories "dental clinic"
+    python -m src.run --dry-run
+"""
 import os
 import json
+import uuid
 import argparse
+
 from dotenv import load_dotenv
 
-from .log_config import get_logger
+from .log_config import get_logger, configure_logging, set_trace_id, get_trace_id
 from .config import load_config
 
 logger = get_logger(__name__)
@@ -126,11 +144,6 @@ COUNTRY_CODES = {
 }
 
 
-def _filter_phone_country(leads: list[Lead]) -> list[Lead]:
-    """Pass through all leads — no phone/country rejection."""
-    return leads
-
-
 def apply_crm_fields(leads: list[Lead], cfg: dict) -> list[Lead]:
     """Resolve region/country, generate pain points, pitch, and assign employees."""
     for l in leads:
@@ -140,7 +153,6 @@ def apply_crm_fields(leads: list[Lead], cfg: dict) -> list[Lead]:
         l.pain_points = build_pain_points(l)
         l.recommended_pitch = recommend_pitch(l)
 
-    leads = _filter_phone_country(leads)
     assign_employees(leads, cfg)
     return leads
 
@@ -188,7 +200,7 @@ def find_emails(leads: list[Lead], ef: dict) -> list[Lead]:
 
 
 def export_for_handoff(leads: list[Lead], cfg: dict) -> str:
-    """Write a JSON file that the downstream email agent reads."""
+    """Write a JSON file that the downstream email/proposal agent reads."""
     export_path = cfg["handoff"]["export_json"]
     min_tier = cfg["handoff"]["min_tier"]
     tier_set = _tier_set(min_tier)
@@ -207,6 +219,7 @@ def export_for_handoff(leads: list[Lead], cfg: dict) -> str:
     os.makedirs(os.path.dirname(export_path), exist_ok=True)
     with open(export_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False, default=str)
+    logger.info("Handoff JSON written: %s (%d leads)", export_path, len(payload))
     return export_path
 
 
@@ -214,7 +227,7 @@ def _tier_set(min_tier: str) -> set:
     # HOT=0, WARM=1, COLD=2 — "min_tier" means include that tier and BETTER
     order = ["HOT", "WARM", "COLD"]
     idx = order.index(min_tier) if min_tier in order else 0
-    return set(order[:idx+1])
+    return set(order[:idx + 1])
 
 
 def main():
@@ -234,14 +247,21 @@ def main():
     load_dotenv()
     cfg = load_config(args.config)
 
-    # Configure structured logging with CRM error forwarding
-    from .log_config import configure_logging
+    # Configure structured logging with CRM error forwarding + trace_id
+    trace_id = set_trace_id()
     crm_cfg = cfg.get("crm", {}) or {}
     configure_logging(
         level="INFO",
         crm_url=crm_cfg.get("api_url", ""),
         crm_key=crm_cfg.get("api_key", ""),
     )
+    logger.info("Lead engine started", extra={
+        "event": "pipeline_start",
+        "trace_id": trace_id,
+        "max_leads": args.max_leads or cfg["run"]["max_leads_per_run"],
+        "cities": len(cfg["targets"]["cities"]),
+        "categories": len(cfg["targets"]["categories"]),
+    })
 
     if args.cities:
         want = [c.strip().lower() for c in args.cities.split(",") if c.strip()]
@@ -260,73 +280,68 @@ def main():
     per_country = max_leads * 3
 
     nq = len(cfg["targets"]["cities"]) * len(cfg["targets"]["categories"])
-    print(f"TKVibes Lead Engine - target: {max_leads} leads this job")
-    print(f"   {len(cfg['targets']['cities'])} cities x "
-          f"{len(cfg['targets']['categories'])} categories = up to {nq} Places queries")
-    raw = discover_all(cfg, per_country_target=per_country)
-    print(f"   discovered {len(raw)} raw leads")
+    logger.info("Config: %d cities x %d categories = up to %d Places queries",
+                len(cfg["targets"]["cities"]), len(cfg["targets"]["categories"]), nq)
 
+    # ── Phase 1: Discovery ───────────────────────────────────────────────
+    raw = discover_all(cfg, per_country_target=per_country)
+    logger.info("Discovery complete: %d raw leads (trace_id=%s)", len(raw), trace_id)
+
+    # ── Phase 2: Process ─────────────────────────────────────────────────
     leads = process_leads(raw, cfg)
     hot = sum(1 for l in leads if l.lead_tier == "HOT")
     warm = sum(1 for l in leads if l.lead_tier == "WARM")
     cold = sum(1 for l in leads if l.lead_tier == "COLD")
-    print(f"   after dedupe/score: {len(leads)} unique - {hot} HOT / {warm} WARM / {cold} COLD")
+    logger.info("Processing complete: %d unique leads - %d HOT / %d WARM / %d COLD",
+                len(leads), hot, warm, cold)
 
     leads = leads[:max_leads]
-    print(f"   capped to {len(leads)} leads for this run")
+    logger.info("Capped to %d leads for this run", len(leads))
 
-    # ── CRM enrichment ───────────────────────────────────────────────────────
+    # ── Phase 3: CRM Enrichment ──────────────────────────────────────────
     leads = apply_crm_fields(leads, cfg)
-    print(f"   CRM fields applied: region/country, pain points, pitch, employee assignment")
+    logger.info("CRM fields applied: region/country, pain points, pitch, employee assignment")
 
+    # ── Phase 4: Export ──────────────────────────────────────────────────
     export_path = export_for_handoff(leads, cfg)
-    print(f"   handoff JSON -> {export_path} ({len(leads)} leads)")
 
-    # ── CRM push (before sheet write — fail fast) ────────────────────────────
+    # ── Phase 5: CRM Push (before sheet write — fail fast) ───────────────
     crm_ok = True
     if not args.no_crm_push and not args.dry_run:
-        crm_cfg = cfg.get("crm", {}) or {}
         crm_result = push_leads(leads, crm_cfg.get("api_url", ""), crm_cfg.get("api_key", ""))
         status = crm_result.get("status", "unknown")
         if status == "error":
-            print(f"   ⚠️  CRM push returned error: {crm_result.get('reason', 'unknown')}")
+            logger.error("CRM push returned error: %s", crm_result.get("reason", "unknown"))
             crm_ok = False
         else:
             added = crm_result.get("added", 0)
             updated = crm_result.get("updated", 0)
-            print(f"   CRM push: {status} ({added} added, {updated} updated)")
+            logger.info("CRM push: %s (%d added, %d updated) trace_id=%s",
+                        status, added, updated, trace_id)
 
-    # ── Sheet write (only if CRM push succeeded or not configured) ────────────
+    # ── Phase 6: Sheet Write (only if CRM push succeeded) ────────────────
     if args.dry_run:
-        print("   (dry-run - skipping Google Sheets write)")
-        master_added = 0
-        added = 0
+        logger.info("Dry-run mode — skipping Google Sheets write")
     else:
         if not crm_ok:
-            print("   ⚠️  Skipping sheet write because CRM push failed")
-            master_added = 0
-            added = 0
+            logger.warning("Skipping sheet write because CRM push failed")
         else:
             sa_path = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")
             sheet_id = os.environ.get("GOOGLE_SHEETS_ID", "")
             if not sa_path or not sheet_id:
-                print("   GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SHEETS_ID not set - skipping sheet write")
-                added = 0
+                logger.info("GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SHEETS_ID not set — skipping sheet write")
             else:
                 writer = SheetWriter(sa_path, sheet_id, cfg["sheets"]["worksheet_name"])
-
-                # 1. Upsert to master "Leads" tab (with CRM fields)
                 master_added = writer.upsert(leads)
-                print(f"   Master tab: {master_added} new leads upserted")
+                logger.info("Master tab: %d new leads upserted", master_added)
 
-                # 2. One fresh worksheet per job, named by date-time stamp
                 from datetime import datetime as _dt
                 job_sheet = _dt.now().strftime("%Y-%m-%d %H-%M-%S")
                 added = writer.write_job(leads, job_sheet)
-                print(f"   Job tab '{job_sheet}': wrote {added} leads")
+                logger.info("Job tab '%s': wrote %d leads", job_sheet, added)
 
-    print(f"\nDone - {len(leads)} leads processed | {master_added} new sheet rows | {hot} HOT")
-    print(f"   Handoff JSON: {export_path}")
+    logger.info("Pipeline complete | %d leads processed | %d HOT | trace_id=%s",
+                len(leads), hot, trace_id)
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@
 - Font: Manrope (sans) + IBM Plex Mono (mono)
 - Icons: Font Awesome 6.5.1 CDN
 - Form: FormSubmit → `services@tkvibes.in`
-- Contact: `+91 98182 46938` · WhatsApp: `wa.me/919818246938`
+- WhatsApp: `wa.me/919818246938`
 - Theme: Light default, `localStorage` key `tkvibes-theme`, inline head script prevents flash
 
 ## CSS/JS

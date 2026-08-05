@@ -670,10 +670,14 @@ def main():
         logger.warning("No leads to process")
         return
 
-    print(f"Generating proposals for {len(leads)} leads...")
+    logger.info("Generating proposals for %d leads...", len(leads))
     results = []
     for i, lead in enumerate(leads, 1):
-        logger.info("[%d/%d] %s (%s)", i, len(leads), lead.business_name, lead.lead_tier)
+        # Ensure lead_key is populated — fallback to slug-based key
+        if not lead.lead_key:
+            from .dedupe import lead_key as compute_lead_key
+            lead.lead_key = compute_lead_key(lead)
+        logger.info("[%d/%d] %s (%s) — %s", i, len(leads), lead.business_name, lead.lead_tier, lead.lead_key)
         try:
             result = generate_for_lead(lead, cfg, sample_template, force=args.force)
             results.append(result)

@@ -1,16 +1,52 @@
 <?php
-header('X-Robots-Tag: noindex, nofollow');
 /**
  * TKVibes CRM — Authentication & CSRF Protection
  * Session-based auth with password_hash and token-based CSRF.
+ * 
+ * Security improvements:
+ * - Session cookie flags: Secure, HttpOnly, SameSite=Strict
+ * - Session timeout: 30 min idle timeout
+ * - Session fixation prevention: regenerate on login
+ * - Session activity tracking for idle timeout
  */
+header('X-Robots-Tag: noindex, nofollow');
 
 function start_session(): void
 {
     if (session_status() === PHP_SESSION_NONE) {
         $cfg = require __DIR__ . '/../config.local.php';
+        
+        // Set secure cookie parameters BEFORE session_start
+        $secure = isset($cfg['force_https']) ? (bool)$cfg['force_https'] : true;
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        
         session_name('TKCRM');
+        
+        // Configure session timeout
+        ini_set('session.gc_maxlifetime', 1800); // 30 minutes
+        ini_set('session.cookie_lifetime', 0);
+        
         session_start();
+        
+        // Check for idle timeout
+        if (isset($_SESSION['last_activity']) && time() - $_SESSION['last_activity'] > 1800) {
+            session_unset();
+            session_destroy();
+            // Redirect to login with timeout flag
+            if (!headers_sent()) {
+                header('Location: index.php?timeout=1');
+                exit;
+            }
+        }
+        
+        // Update last activity
+        $_SESSION['last_activity'] = time();
     }
 }
 
@@ -26,15 +62,37 @@ function login(string $email, string $password): array|false
         $_SESSION['employee_name'] = $emp['name'];
         $_SESSION['employee_role'] = $emp['role'];
         $_SESSION['employee_email'] = $emp['email'];
+        $_SESSION['login_time'] = time();
+        $_SESSION['last_activity'] = time();
         // Regenerate session ID on login to prevent session fixation
         session_regenerate_id(true);
+        
+        log_system('info', 'auth', 'Login successful', [
+            'employee_id' => (int)$emp['id'],
+            'email' => $emp['email'],
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+        ]);
+        
         return $emp;
     }
+    
+    log_system('warning', 'auth', 'Login failed', [
+        'email' => $email,
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+        'user_agent' => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255),
+    ]);
+    
     return false;
 }
 
 function logout(): void
 {
+    if (isset($_SESSION['employee_id'])) {
+        log_system('info', 'auth', 'Logout', [
+            'employee_id' => $_SESSION['employee_id'],
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+        ]);
+    }
     $_SESSION = [];
     if (ini_get("session.use_cookies")) {
         $params = session_get_cookie_params();
@@ -50,7 +108,8 @@ function require_auth(): array
 {
     start_session();
     if (empty($_SESSION['employee_id'])) {
-        header('Location: index.php?r=' . urlencode($_SERVER['REQUEST_URI']));
+        $redirect = urlencode($_SERVER['REQUEST_URI']);
+        header("Location: index.php?r=$redirect");
         exit;
     }
     return [

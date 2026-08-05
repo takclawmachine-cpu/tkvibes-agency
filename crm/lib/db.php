@@ -162,10 +162,24 @@ function init_schema(): void
                 lead_key    TEXT    NOT NULL,
                 feedback    TEXT    NOT NULL DEFAULT '',
                 status      TEXT    NOT NULL DEFAULT 'pending',  -- pending|running|completed|failed
+                trace_id    TEXT    NOT NULL DEFAULT '',
                 created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
                 updated_at  TEXT    NOT NULL DEFAULT (datetime('now')),
                 FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
             );
+            CREATE INDEX IF NOT EXISTS idx_proposal_jobs_trace ON proposal_generation_jobs(trace_id);
+            CREATE TABLE IF NOT EXISTS sync_log (
+                id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+                idempotency_key    TEXT    NOT NULL,
+                trace_id           TEXT    NOT NULL DEFAULT '',
+                status             TEXT    NOT NULL DEFAULT 'processing',
+                error_message      TEXT,
+                processed_at       TEXT,
+                created_at         TEXT    NOT NULL DEFAULT (datetime('now')),
+                UNIQUE(idempotency_key)
+            );
+            CREATE INDEX IF NOT EXISTS idx_sync_log_trace ON sync_log(trace_id);
+            CREATE INDEX IF NOT EXISTS idx_sync_log_key ON sync_log(idempotency_key);
         ");
     } else {
         // MySQL schema
@@ -292,10 +306,24 @@ function init_schema(): void
                 lead_key    VARCHAR(255) NOT NULL,
                 feedback    TEXT         NOT NULL DEFAULT '',
                 status      VARCHAR(20)  NOT NULL DEFAULT 'pending',  -- pending|running|completed|failed
+                trace_id    VARCHAR(64)  NOT NULL DEFAULT '',
                 created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (lead_key) REFERENCES leads(lead_key) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            CREATE INDEX idx_proposal_jobs_trace ON proposal_generation_jobs(trace_id);
+            CREATE TABLE IF NOT EXISTS sync_log (
+                id                 INT AUTO_INCREMENT PRIMARY KEY,
+                idempotency_key    VARCHAR(255) NOT NULL,
+                trace_id           VARCHAR(64)  NOT NULL DEFAULT '',
+                status             VARCHAR(20)  NOT NULL DEFAULT 'processing',
+                error_message      TEXT,
+                processed_at       DATETIME,
+                created_at         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE KEY uq_sync_log_key (idempotency_key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            CREATE INDEX idx_sync_log_trace ON sync_log(trace_id);
+            CREATE INDEX idx_sync_log_key ON sync_log(idempotency_key);
         ");
     }
 }

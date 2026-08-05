@@ -1,28 +1,67 @@
-# Dependencies / build (legacy)
+# ── Node / Next.js ──
 node_modules/
 .next/
 out/
 
-# OS
+# ── OS ──
 .DS_Store
 Thumbs.db
 
-# Editor
+# ── Editor ──
 *.pem
+*.swp
+*.swo
 
-# Env
-.env*
+# ── Environment & Secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
 
-# Legacy Next.js
+# ── Credentials ─────────────────────────────────────────────────────────────
+crm/credentials/
+tkvibes-lead-engine/credentials/
+*_service_account.json
+credentials/google-service-account.json
+
+# ── CRM local config ──
+crm/config.local.php
+
+# ── CRM data (SQLite databases, generated files) ──
+crm/data/
+crm/data.db
+crm/data/crm.db
+
+# ── Legacy ──
 next-env.d.ts
 
-# Hermes local config / credentials
+# ── Hermes local config / credentials ──
 .hermes/gsc-*
 .hermes/__pycache__/
 .hermes/desktop-attachments/
 .hermes-verify-tmp.js
 local-llm/
 
-# CRM
-crm/config.local.php
-crm/data/
+# ── Hermes memory & plans ──
+memory/
+.hermes/plans/
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Test outputs ──
+.pytest_cache/
+
+# ── Pipeline state ──
+tkvibes-lead-engine/.pipeline_status.json
+
+# ── Operations dashboard ──
+operations-dashboard/.next/
+operations-dashboard/node_modules/
+operations-dashboard/prisma/dev.db
