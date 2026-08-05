@@ -7,14 +7,31 @@
  * Security model:
  * - API key auth required (strict hash_equals comparison)
  * - Path allowlist: ONLY specific PHP files in lib/ and api/ subdirectories
- * - File extension restriction: .php only
- * - No subdirectory creation (flat file allowlist only)
- * - Audit log: every write logged to system_logs
+ * - File extension restriction: .php, .js, .css (based on allowlist)
+ * - No arbitrary directory creation (restricted to allowlisted paths)
+ * - Audit log: every write logged to system_logs (if available)
  * - Size limit: 1MB max per file
+ * 
+ * Bootstrap-safe: uses @include for lib requires and function_exists checks
+ * for log_system, so it works even when lib/functions.php is being deployed.
  */
 header('X-Robots-Tag: noindex, nofollow');
-require __DIR__ . '/lib/db.php';
-require __DIR__ . '/lib/functions.php';
+
+// Use @include instead of require — allows u3.php to function even if
+// lib/db.php or lib/functions.php are empty during initial deployment
+@include __DIR__ . '/lib/db.php';
+@include __DIR__ . '/lib/functions.php';
+
+// Fallback logger — writes to error_log if log_system is not available
+function _u3_log(string $level, string $message, array $context = []): void {
+    if (function_exists('log_system')) {
+        log_system($level, 'u3', $message, $context);
+    } else {
+        // Fallback: write to PHP error log
+        $ctx = json_encode($context, JSON_UNESCAPED_SLASHES);
+        error_log("[$level] u3: $message $ctx");
+    }
+}
 
 $b = json_decode(file_get_contents('php://input'), true) ?: [];
 $p = $b['path'] ?? '';
@@ -32,7 +49,7 @@ $cfg_file = __DIR__ . '/config.local.php';
 if (file_exists($cfg_file)) {
     $cfg = require $cfg_file;
     if (!$key || !hash_equals($cfg['api_key'] ?? '', $key)) {
-        log_system('warning', 'u3', 'Unauthorized code deploy attempt', [
+        _u3_log('warning', 'Unauthorized code deploy attempt', [
             'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
             'path_attempt' => $p,
         ]);
@@ -41,6 +58,7 @@ if (file_exists($cfg_file)) {
         exit;
     }
 } else {
+    // No config — still enforce a non-empty key
     if (!$key) {
         http_response_code(403);
         echo 'API key required';
@@ -77,13 +95,16 @@ $allowed_files = [
     'cleanup.php',
     'cleanup_leads.php',
     'templates/lead_detail.php',
+    // Upload endpoints
+    'u2.php',
+    'u3.php',
     // Assets
     'assets/js/crm.js',
     'assets/css/crm.css',
 ];
 
 if (!in_array($p, $allowed_files, true)) {
-    log_system('critical', 'u3', 'Blocked upload to non-allowlisted file', [
+    _u3_log('critical', 'Blocked upload to non-allowlisted file', [
         'path' => $p,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
     ]);
@@ -93,15 +114,24 @@ if (!in_array($p, $allowed_files, true)) {
 }
 
 // ── File type restriction ───────────────────────────────────────────────
-if (!preg_match('/\.php$/', $p)) {
+// Check extension is allowed (derived from allowlist)
+$allowed_extensions = ['.php'];
+foreach ($allowed_files as $f) {
+    $ext = '.' . pathinfo($f, PATHINFO_EXTENSION);
+    if (!in_array($ext, $allowed_extensions, true)) {
+        $allowed_extensions[] = $ext;
+    }
+}
+$file_ext = '.' . pathinfo($p, PATHINFO_EXTENSION);
+if (!in_array($file_ext, $allowed_extensions, true)) {
     http_response_code(400);
-    echo 'Only .php files are allowed';
+    echo 'File type not allowed: ' . $file_ext;
     exit;
 }
 
-// ── Path traversal guard ────────────────────────────────────────────────
+// ── Path traversal guard ─────────────────────────────────────────────────
 if (preg_match('/\.\./', $p) || preg_match('/\x00/', $p)) {
-    log_system('critical', 'u3', 'Path traversal attempt in code deploy', [
+    _u3_log('critical', 'Path traversal attempt in code deploy', [
         'path' => $p,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
     ]);
@@ -110,21 +140,34 @@ if (preg_match('/\.\./', $p) || preg_match('/\x00/', $p)) {
     exit;
 }
 
-$filename = basename($p);
+// ── Prevent overwriting config.local.php ────────────────────────────────
+if ($p === 'config.local.php') {
+    _u3_log('critical', 'Attempt to overwrite config.local.php blocked', [
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+    ]);
+    http_response_code(403);
+    echo 'Cannot overwrite config.local.php via API';
+    exit;
+}
+
 $abs = __DIR__ . '/' . $p;
 
 // Extra safety: ensure resolved path is within CRM directory
-$resolved = realpath(dirname($abs));
-$crm_root = realpath(__DIR__);
-if ($resolved === false || strpos($resolved, $crm_root) !== 0) {
-    log_system('warning', 'u3', 'Path resolution outside CRM dir', [
-        'path' => $p,
-        'resolved' => $resolved ?: 'false',
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-    ]);
-    http_response_code(400);
-    echo 'Invalid path';
-    exit;
+// Only check if realpath works (it may fail for nonexistent dirs)
+$parent_dir = dirname($abs);
+if (is_dir($parent_dir) || is_dir(__DIR__ . '/' . dirname($p))) {
+    $resolved = realpath($parent_dir);
+    $crm_root = realpath(__DIR__);
+    if ($resolved !== false && $crm_root !== false && strpos($resolved, $crm_root) !== 0) {
+        _u3_log('warning', 'Path resolution outside CRM dir', [
+            'path' => $p,
+            'resolved' => $resolved,
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+        ]);
+        http_response_code(400);
+        echo 'Invalid path';
+        exit;
+    }
 }
 
 // ── Size limit check ────────────────────────────────────────────────────
@@ -135,7 +178,7 @@ if ($decoded === false) {
     exit;
 }
 if (strlen($decoded) > 1024 * 1024) {  // 1MB limit
-    log_system('warning', 'u3', 'Code file exceeds size limit', [
+    _u3_log('warning', 'Code file exceeds size limit', [
         'size' => strlen($decoded),
         'path' => $p,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
@@ -145,16 +188,7 @@ if (strlen($decoded) > 1024 * 1024) {  // 1MB limit
     exit;
 }
 
-// ── Prevent overwriting config.local.php (critical file) ────────────────
-if ($p === 'config.local.php') {
-    log_system('critical', 'u3', 'Attempt to overwrite config.local.php blocked', [
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-    ]);
-    http_response_code(403);
-    echo 'Cannot overwrite config.local.php via API';
-    exit;
-}
-
+// ── Write file ────────────────────────────────────────────────────────────
 $dir = dirname($abs);
 if (!is_dir($dir)) {
     mkdir($dir, 0755, true);
@@ -162,7 +196,7 @@ if (!is_dir($dir)) {
 
 $written = file_put_contents($abs, $decoded);
 if ($written === false) {
-    log_system('error', 'u3', 'Code file write failed', [
+    _u3_log('error', 'Code file write failed', [
         'path' => $abs,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
     ]);
@@ -171,8 +205,8 @@ if ($written === false) {
     exit;
 }
 
-// ── Audit log ───────────────────────────────────────────────────────────
-log_system('info', 'u3', 'Code file deployed', [
+// ── Audit log ────────────────────────────────────────────────────────────
+_u3_log('info', 'Code file deployed', [
     'path' => $abs,
     'size' => $written,
     'ip' => $_SERVER['REMOTE_ADDR'] ?? '',

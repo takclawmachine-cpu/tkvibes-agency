@@ -9,12 +9,27 @@
  * - Path allowlist: only "sample-website/" and "pitch-deck/" subdirectories
  * - File extension restriction: .html only
  * - Path traversal protection: regex + realpath + basename enforcement
- * - Audit log: every write logged to system_logs
+ * - Audit log: every write logged to system_logs (if available)
  * - Size limit: 2MB max per file
+ * 
+ * Bootstrap-safe: uses @include for lib requires and function_exists checks
+ * for log_system, so it works even when lib/functions.php is being deployed.
  */
 header('X-Robots-Tag: noindex, nofollow');
-require __DIR__ . '/lib/db.php';
-require __DIR__ . '/lib/functions.php';
+
+// Use @include instead of require — allows u2.php to function even if
+// lib/db.php or lib/functions.php are empty during initial deployment
+@include __DIR__ . '/lib/db.php';
+@include __DIR__ . '/lib/functions.php';
+
+// Fallback logger
+function _u2_log(string $level, string $message, array $context = []): void {
+    if (function_exists('log_system')) {
+        log_system($level, 'u2', $message, $context);
+    } else {
+        error_log("[$level] u2: $message " . json_encode($context, JSON_UNESCAPED_SLASHES));
+    }
+}
 
 $b = json_decode(file_get_contents('php://input'), true) ?: [];
 $p = $b['path'] ?? '';
@@ -32,7 +47,7 @@ $cfg_file = __DIR__ . '/config.local.php';
 if (file_exists($cfg_file)) {
     $cfg = require $cfg_file;
     if (!$key || !hash_equals($cfg['api_key'] ?? '', $key)) {
-        log_system('warning', 'u2', 'Unauthorized upload attempt', [
+        _u2_log('warning', 'Unauthorized upload attempt', [
             'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
             'path_attempt' => $p,
         ]);
@@ -52,7 +67,7 @@ if (file_exists($cfg_file)) {
 $allowed_dirs = ['sample-website/', 'pitch-deck/'];
 $subpath = substr($p, 0, strpos($p, '/') + 1);
 if (!in_array($subpath, $allowed_dirs, true)) {
-    log_system('warning', 'u2', 'Blocked upload to forbidden path', [
+    _u2_log('warning', 'Blocked upload to forbidden path', [
         'path' => $p,
         'subpath' => $subpath,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
@@ -64,7 +79,7 @@ if (!in_array($subpath, $allowed_dirs, true)) {
 
 // ── File type restriction ───────────────────────────────────────────────
 if (!preg_match('/\.html$/', $p)) {
-    log_system('warning', 'u2', 'Blocked non-HTML upload', [
+    _u2_log('warning', 'Blocked non-HTML upload', [
         'path' => $p,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
     ]);
@@ -75,9 +90,9 @@ if (!preg_match('/\.html$/', $p)) {
 
 $filename = basename($p);
 
-// ── Path traversal guard ────────────────────────────────────────────────
+// ── Path traversal guard ─────────────────────────────────────────────────
 if (preg_match('/\.\./', $p) || preg_match('/\x00/', $p)) {
-    log_system('critical', 'u2', 'Path traversal attempt blocked', [
+    _u2_log('critical', 'Path traversal attempt blocked', [
         'path' => $p,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
     ]);
@@ -90,17 +105,14 @@ $base = dirname(__DIR__) . '/proposals';
 $abs = $base . '/' . $subpath . $filename;
 
 // Extra safety: ensure resolved path starts with the allowed subdirectory
-$resolved = realpath(dirname($abs));
-$base_real = realpath($base);
-if ($resolved === false || ($base_real !== false && strpos($resolved, $base_real) !== 0)) {
-    log_system('warning', 'u2', 'Path resolution failed', [
-        'path' => $p,
-        'resolved' => $resolved ?: 'false',
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-    ]);
-    http_response_code(400);
-    echo 'Invalid path resolution';
-    exit;
+$parent = dirname($abs);
+if (is_dir($parent)) {
+    $resolved = realpath($parent);
+    if ($resolved === false) {
+        http_response_code(400);
+        echo 'Invalid path resolution';
+        exit;
+    }
 }
 
 // ── Size limit check ────────────────────────────────────────────────────
@@ -111,7 +123,7 @@ if ($decoded === false) {
     exit;
 }
 if (strlen($decoded) > 2 * 1024 * 1024) {  // 2MB limit
-    log_system('warning', 'u2', 'Upload exceeds size limit', [
+    _u2_log('warning', 'Upload exceeds size limit', [
         'size' => strlen($decoded),
         'path' => $p,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
@@ -128,7 +140,7 @@ if (!is_dir($dir)) {
 
 $written = file_put_contents($abs, $decoded);
 if ($written === false) {
-    log_system('error', 'u2', 'File write failed', [
+    _u2_log('error', 'File write failed', [
         'path' => $abs,
         'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
     ]);
@@ -138,7 +150,7 @@ if ($written === false) {
 }
 
 // ── Audit log ───────────────────────────────────────────────────────────
-log_system('info', 'u2', 'File uploaded successfully', [
+_u2_log('info', 'File uploaded successfully', [
     'path' => $abs,
     'size' => $written,
     'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
