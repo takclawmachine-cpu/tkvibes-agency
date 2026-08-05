@@ -3,6 +3,11 @@ name: Deploy to Hostinger
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "crm/**"
+      - "tkvibes-lead-engine/**"
+      - "deploy_crm.py"
+      - ".github/**"
   workflow_dispatch:
 
 concurrency:
@@ -44,14 +49,19 @@ jobs:
             set ftp:rest-list no;
             set ftp:use-mdtm off;
             open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
-            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 \
-              --exclude-glob=.git* \
-              --exclude-glob=.github/** \
-              --exclude-glob=scripts/** \
-              --exclude-glob=README.md \
-              --exclude-glob=AGENTS.md \
-              --exclude-glob=memory/** \
-              --exclude-glob=.gitignore \
+            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3
+              --exclude-glob=.git*
+              --exclude-glob=.github/**
+              --exclude-glob=scripts/**
+              --exclude-glob=README.md
+              --exclude-glob=AGENTS.md
+              --exclude-glob=memory/**
+              --exclude-glob=.gitignore
+              --exclude-glob=crm/**
+              --exclude-glob=tkvibes-lead-engine/**
+              --exclude-glob=operations-dashboard/**
+              --exclude-glob=local-llm/**
+              --exclude-glob=deliverables/**
               ./ /public_html/;
             bye;
           "
