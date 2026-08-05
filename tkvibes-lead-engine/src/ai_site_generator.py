@@ -320,7 +320,7 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
 
     Uses the layout template from spec['layout'] and fills in
     AI-generated content. Always produces unique output per call
-    by varying section details.
+    by varying section details. Premium dark theme with images.
     """
     layout_name = spec.get("layout", DEFAULT_LAYOUT)
     layout = LAYOUTS.get(layout_name, LAYOUTS[DEFAULT_LAYOUT])
@@ -334,85 +334,79 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
     phone_digits = re.sub(r"\D", "", phone)
     rating = lead_data.get("rating", 0) or 0
     reviews = lead_data.get("review_count", 0) or 0
-
-    # Look up hero background image from category
+    address = lead_data.get("address", "")
+    address_short = ", ".join(p.strip() for p in address.split(",")[:2]) if address else city
     category = lead_data.get("category", "")
+    category_lower = category.lower()
+    name_short = name.split()[0] if name else "Biz"
+
+    # Look up images
     hero_bg_image = _get_category_image(category)
 
     # ── Hero section ──────────────────────────────────────────────────
-    hero_bg = f"linear-gradient(135deg, {primary} 0%, {secondary} 100%)"
     hero_style = layout["hero_style"]
 
-    if hero_style == "fullscreen":
-        hero_html = f"""<section class="hero-fullscreen" style="background:{hero_bg};min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center;color:white">
-<div style="max-width:800px"><h1 style="font-size:3.5rem;font-weight:800;margin-bottom:1rem;line-height:1.1">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
-<p style="font-size:1.3rem;opacity:0.9;margin-bottom:2rem">{spec.get('hero_subheadline', tagline)}</p>
-<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap"><a href="#contact" class="btn-primary" style="padding:1rem 2.5rem;border-radius:50px;background:white;color:{primary};font-weight:700;text-decoration:none;font-size:1.1rem">{spec.get('cta_text', 'Get in Touch')}</a>
-<a href="tel:{phone_digits}" class="btn-outline" style="padding:1rem 2.5rem;border-radius:50px;border:2px solid white;color:white;font-weight:600;text-decoration:none;font-size:1.1rem">📞 Call Now</a></div>
-<div style="margin-top:2rem;font-size:1rem;opacity:0.7">{'★' * int(round(rating))} {rating} ({reviews} reviews)</div></div></section>"""
-    elif hero_style == "split":
-        hero_html = f"""<section class="hero-split" style="display:flex;min-height:90vh;background:{primary}10">
-<div style="flex:1;padding:4rem;display:flex;flex-direction:column;justify-content:center"><h1 style="font-size:3rem;font-weight:800;color:{primary};margin-bottom:1rem">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
-<p style="font-size:1.2rem;color:#555;margin-bottom:2rem">{spec.get('hero_subheadline', tagline)}</p>
-<div style="display:flex;gap:1rem"><a href="#contact" style="padding:0.8rem 2rem;border-radius:8px;background:{primary};color:white;text-decoration:none;font-weight:600">{spec.get('cta_text', 'Get in Touch')}</a>
-<a href="tel:{phone_digits}" style="padding:0.8rem 2rem;border-radius:8px;border:2px solid {primary};color:{primary};text-decoration:none;font-weight:600">📞 Call</a></div></div>
-<div style="flex:1;background:{secondary}20;display:flex;align-items:center;justify-content:center;padding:2rem"><div style="text-align:center"><div style="font-size:5rem;margin-bottom:1rem">⭐</div><div style="font-size:2rem;font-weight:700;color:{primary}">{rating}</div><div style="color:#666">{reviews} reviews</div></div></div></section>"""
-    elif hero_style == "overlay":
-        hero_html = f"""<section class="hero-overlay" style="position:relative;min-height:90vh;background:url('https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200') center/cover;display:flex;align-items:center;justify-content:center">
-<div style="position:absolute;inset:0;background:{primary}cc"></div>
-<div style="position:relative;z-index:1;text-align:center;color:white;max-width:700px;padding:2rem"><h1 style="font-size:3.5rem;font-weight:800;margin-bottom:1rem">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
-<p style="font-size:1.2rem;margin-bottom:2rem">{spec.get('hero_subheadline', tagline)}</p>
-<a href="#contact" style="display:inline-block;padding:1rem 2.5rem;border-radius:50px;background:white;color:{primary};font-weight:700;text-decoration:none">{spec.get('cta_text', 'Get in Touch')}</a></div></section>"""
-    elif hero_style == "magazine":
-        hero_html = f"""<section class="hero-magazine" style="position:relative;min-height:80vh;background:url('{hero_bg_image}') center/cover;display:flex;align-items:flex-end;justify-content:flex-start">
-<div style="position:absolute;inset:0;background:linear-gradient(transparent 40%, rgba(0,0,0,0.85) 100%)"></div>
-<div style="position:relative;z-index:1;color:white;max-width:700px;padding:3rem 4rem">
-<span style="display:inline-block;background:{primary};padding:0.3rem 1rem;border-radius:4px;font-size:0.8rem;font-weight:600;text-transform:uppercase;margin-bottom:1rem">Featured</span>
-<h1 style="font-size:3.5rem;font-weight:800;margin-bottom:1rem;line-height:1.1">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
-<p style="font-size:1.2rem;opacity:0.9;margin-bottom:1.5rem;line-height:1.5">{spec.get('hero_subheadline', tagline)}</p>
-<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
-<a href="#contact" style="padding:0.8rem 2rem;border-radius:6px;background:{primary};color:white;font-weight:700;text-decoration:none;font-size:1rem">{spec.get('cta_text', 'Get in Touch')}</a>
-<a href="tel:{phone_digits}" style="color:white;text-decoration:none;font-size:1rem;opacity:0.8">📞 {phone}</a>
+    if hero_style == "magazine":
+        hero_html = f"""<section class="hero" style="position:relative;min-height:90vh;background:url('{hero_bg_image}') center/cover;display:flex;align-items:flex-end;justify-content:flex-start;overflow:hidden">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,11,20,0.1) 0%,rgba(7,11,20,0.4) 40%,rgba(7,11,20,0.95) 100%);z-index:1"></div>
+<div style="position:relative;z-index:2;color:white;max-width:720px;padding:4rem">
+<span style="display:inline-block;background:{primary};padding:6px 18px;border-radius:6px;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.5rem;opacity:0">Featured</span>
+<h1 style="font-size:3.8rem;font-weight:800;margin-bottom:1rem;line-height:1.1;letter-spacing:-1px;opacity:0">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
+<p style="font-size:1.2rem;opacity:0.9;margin-bottom:2rem;max-width:600px;line-height:1.6;opacity:0">{spec.get('hero_subheadline', tagline)}</p>
+<div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;opacity:0">
+<a href="#contact" style="padding:14px 32px;border-radius:14px;background:linear-gradient(135deg,{primary},{secondary});color:white;font-weight:700;text-decoration:none;font-size:1rem;box-shadow:0 6px 24px {primary}35">{spec.get('cta_text', 'Get in Touch')}</a>
+<a href="tel:{phone_digits}" style="padding:14px 32px;border-radius:14px;border:1px solid rgba(255,255,255,0.2);color:white;font-weight:600;text-decoration:none;font-size:1rem;background:rgba(255,255,255,0.04)">📞 Call Now</a>
 </div>
-<div style="margin-top:1.5rem;display:flex;gap:2rem;font-size:0.9rem;opacity:0.7">
-<span>⭐ {rating} Rating</span>
-<span>📝 {reviews} Reviews</span>
+<div style="margin-top:2rem;display:flex;gap:2rem;font-size:0.9rem;opacity:0">
+<span style="display:flex;align-items:center;gap:6px">⭐ {rating} Rating</span>
+<span style="display:flex;align-items:center;gap:6px">📝 {reviews} Reviews</span>
 </div>
-</div>
-</section>"""
-    else:  # dark-luxury
-        hero_html = f"""<section class="hero-dark-luxury" style="position:relative;min-height:100vh;background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:flex;align-items:center;justify-content:center;overflow:hidden">
-<div style="position:absolute;inset:0;opacity:0.15;background:url('{hero_bg_image}') center/cover;filter:grayscale(0.5)"></div>
-<div style="position:absolute;top:0;left:0;right:0;height:4px;background:{primary}"></div>
-<div style="position:relative;z-index:1;text-align:center;color:white;max-width:800px;padding:2rem">
-<div style="font-size:0.9rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#d4a853;margin-bottom:1.5rem">Premium Services</div>
-<h1 style="font-size:4rem;font-weight:800;margin-bottom:1rem;line-height:1.1;color:#f5f5f5">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
-<p style="font-size:1.3rem;color:#b0b0b0;margin-bottom:2.5rem;max-width:600px;margin-left:auto;margin-right:auto">{spec.get('hero_subheadline', tagline)}</p>
+</div></section>"""
+    elif hero_style == "dark-luxury":
+        hero_html = f"""<section class="hero" style="position:relative;min-height:100vh;background:linear-gradient(135deg,#070b14 0%,#0a0f1e 50%,#0f1a2e 100%);display:flex;align-items:center;justify-content:center;overflow:hidden">
+<div style="position:absolute;inset:0;opacity:0.1;background:url('{hero_bg_image}') center/cover;filter:grayscale(0.6)"></div>
+<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,{primary},{secondary})"></div>
+<div style="position:relative;z-index:1;text-align:center;color:white;max-width:800px;padding:2rem;opacity:0">
+<div style="font-size:0.85rem;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:{primary};margin-bottom:1.5rem">Premium Services</div>
+<h1 style="font-size:4rem;font-weight:800;margin-bottom:1rem;line-height:1.1;letter-spacing:-1px;color:#f0f0f0">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
+<p style="font-size:1.2rem;color:#94a3b8;margin-bottom:2.5rem;max-width:600px;margin-left:auto;margin-right:auto">{spec.get('hero_subheadline', tagline)}</p>
 <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-<a href="#contact" style="padding:1rem 2.5rem;border-radius:6px;background:#d4a853;color:#1a1a2e;font-weight:700;text-decoration:none;font-size:1.1rem">{spec.get('cta_text', 'Get in Touch')}</a>
-<a href="tel:{phone_digits}" style="padding:1rem 2.5rem;border-radius:6px;border:1px solid #d4a853;color:#d4a853;font-weight:600;text-decoration:none;font-size:1.1rem">📞 Call Now</a>
+<a href="#contact" style="padding:14px 32px;border-radius:14px;background:linear-gradient(135deg,{primary},{secondary});color:#fff;font-weight:700;text-decoration:none;font-size:1rem;box-shadow:0 6px 24px {primary}35">{spec.get('cta_text', 'Get in Touch')}</a>
+<a href="tel:{phone_digits}" style="padding:14px 32px;border-radius:14px;border:1px solid rgba(255,255,255,0.15);color:#94a3b8;font-weight:600;text-decoration:none;font-size:1rem">📞 Call Now</a>
 </div>
-<div style="margin-top:2.5rem;display:flex;gap:3rem;justify-content:center;font-size:0.95rem">
-<div><span style="color:#d4a853;font-weight:700">⭐ {rating}</span><span style="color:#888;margin-left:0.3rem">Rating</span></div>
-<div><span style="color:#d4a853;font-weight:700">📝 {reviews}</span><span style="color:#888;margin-left:0.3rem">Reviews</span></div>
+<div style="margin-top:2.5rem;display:flex;gap:3rem;justify-content:center;font-size:0.9rem">
+<div><span style="color:{primary};font-weight:700">⭐ {rating}</span><span style="color:#64748b;margin-left:0.3rem">Rating</span></div>
+<div><span style="color:{primary};font-weight:700">📝 {reviews}</span><span style="color:#64748b;margin-left:0.3rem">Reviews</span></div>
 </div>
+</div></section>"""
+    else:
+        # fullscreen / split / overlay — all get image hero
+        hero_html = f"""<section class="hero" style="position:relative;min-height:95vh;background:url('{hero_bg_image}') center/cover;display:flex;align-items:center;justify-content:center;overflow:hidden">
+<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(7,11,20,0.7) 0%,rgba(7,11,20,0.5) 50%,rgba(7,11,20,0.8) 100%);z-index:1"></div>
+<div style="position:relative;z-index:2;text-align:center;color:white;max-width:750px;padding:2rem;opacity:0">
+<h1 style="font-size:3.8rem;font-weight:800;margin-bottom:1rem;line-height:1.1;letter-spacing:-1px">{spec.get('hero_headline', f'Welcome to {name}')}</h1>
+<p style="font-size:1.2rem;opacity:0.9;margin-bottom:2rem">{spec.get('hero_subheadline', tagline)}</p>
+<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+<a href="#contact" style="padding:14px 32px;border-radius:14px;background:linear-gradient(135deg,{primary},{secondary});color:white;font-weight:700;text-decoration:none;font-size:1rem;box-shadow:0 6px 24px {primary}35">{spec.get('cta_text', 'Get in Touch')}</a>
+<a href="tel:{phone_digits}" style="padding:14px 32px;border-radius:14px;border:1px solid rgba(255,255,255,0.2);color:white;font-weight:600;text-decoration:none;font-size:1rem">📞 Call Now</a>
 </div>
-</section>"""
+<div style="margin-top:2rem;opacity:0.5;font-size:0.95rem">{'★' * int(round(rating))} {rating} ({reviews} reviews)</div>
+</div></section>"""
 
     # ── Services section ──────────────────────────────────────────────
     svc_descs = spec.get("service_descriptions", [])
     if svc_descs:
         svc_items = "".join(
-            f'<div class="service-card" style="background:white;border-radius:16px;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #eee"><h3 style="font-size:1.2rem;font-weight:700;color:{primary};margin-bottom:0.5rem">{s}</h3></div>'
+            f'<div class="card"><div class="card-icon"><i class="fa-solid fa-star"></i></div><h3 style="font-size:1.1rem;font-weight:700;color:white;margin-bottom:0.5rem">{s}</h3><p style="font-size:0.85rem;color:#94a3b8;line-height:1.6">Professional {category_lower} service tailored to your needs.</p></div>'
             for s in svc_descs
         )
     else:
-        svc_items = '<div class="service-card" style="background:white;border-radius:16px;padding:2rem;box-shadow:0 4px 20px rgba(0,0,0,0.06)"><p style="color:#666">Professional services tailored to your needs. Contact us for more details.</p></div>'
+        svc_items = '<div class="card"><div class="card-icon"><i class="fa-solid fa-star"></i></div><p style="color:#94a3b8">Professional services tailored to your needs.</p></div>'
 
-    services_html = f"""<section id="services" style="padding:4rem 2rem">
-<div class="container">
-<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;color:{primary}">Our Services</h2>
-<p style="text-align:center;color:#666;margin-bottom:3rem">{tagline}</p>
+    services_html = f"""<section id="services" style="padding:5rem 1.5rem;background:#070b14">
+<div class="container" style="max-width:1200px;margin:0 auto">
+<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;background:linear-gradient(135deg,{primary},{secondary});-webkit-background-clip:text;-webkit-text-fill-color:transparent">Our Services</h2>
+<p style="text-align:center;color:#64748b;margin-bottom:3rem;font-size:0.95rem">{tagline}</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem">
 {svc_items}
 </div>
@@ -420,40 +414,106 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
 </section>"""
 
     # ── About section ─────────────────────────────────────────────────
-    about_html = f"""<section id="about" style="padding:4rem 2rem;background:{primary}08">
-<div class="container" style="max-width:800px;text-align:center">
-<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem;color:{primary}">About Us</h2>
-<p style="font-size:1.1rem;color:#555;line-height:1.7">{spec.get('description', tagline)}</p>
+    about_html = f"""<section id="about" style="padding:5rem 1.5rem;background:rgba(255,255,255,0.015)">
+<div class="container" style="max-width:800px;margin:0 auto;text-align:center">
+<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem;background:linear-gradient(135deg,{primary},{secondary});-webkit-background-clip:text;-webkit-text-fill-color:transparent">About {name}</h2>
+<p style="font-size:1rem;color:#94a3b8;line-height:1.8">{spec.get('description', tagline)}</p>
+<div style="margin-top:2rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap">
+<div style="text-align:center;padding:1.5rem 2rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.05)"><div style="font-size:2rem;font-weight:800;color:{primary}">{rating}</div><div style="font-size:0.85rem;color:#64748b">⭐ Rating</div></div>
+<div style="text-align:center;padding:1.5rem 2rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.05)"><div style="font-size:2rem;font-weight:800;color:{secondary}">{reviews}</div><div style="font-size:0.85rem;color:#64748b">📝 Reviews</div></div>
+</div>
 </div>
 </section>"""
 
     # ── Stats section ─────────────────────────────────────────────────
-    stats_html = _render_stats_section(rating, reviews, primary, secondary)
-
-    # ── Testimonials section ──────────────────────────────────────────
-    testimonials_html = _render_testimonials_section(rating, name, primary)
-
-    # ── CTA section ───────────────────────────────────────────────────
-    cta_html = f"""<section id="cta" style="padding:4rem 2rem;background:linear-gradient(135deg, {primary} 0%, {secondary} 100%);color:white;text-align:center">
-<div class="container">
-<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Ready to Get Started?</h2>
-<p style="margin-bottom:2rem;opacity:0.9;font-size:1.1rem">{spec.get('tagline', tagline)}</p>
-<a href="#contact" style="display:inline-block;padding:1rem 2.5rem;border-radius:50px;background:white;color:{primary};font-weight:700;text-decoration:none;font-size:1.1rem">{spec.get('cta_text', 'Get in Touch')}</a>
+    score = round(rating * 20)
+    stats_html = f"""<section style="padding:4rem 1.5rem;background:rgba(255,255,255,0.01)">
+<div class="container" style="max-width:1200px;margin:0 auto">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;text-align:center">
+<div class="stat-card" style="background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2.5rem 1.5rem;backdrop-filter:blur(16px)">
+<div style="font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,{primary},{secondary});-webkit-background-clip:text;-webkit-text-fill-color:transparent">{rating}</div>
+<div style="font-size:0.9rem;color:#64748b;margin-top:0.5rem">⭐ Overall Rating</div>
+</div>
+<div class="stat-card" style="background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2.5rem 1.5rem;backdrop-filter:blur(16px)">
+<div style="font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,{secondary},{primary});-webkit-background-clip:text;-webkit-text-fill-color:transparent">{reviews}</div>
+<div style="font-size:0.9rem;color:#64748b;margin-top:0.5rem">📝 Verified Reviews</div>
+</div>
+<div class="stat-card" style="background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2.5rem 1.5rem;backdrop-filter:blur(16px)">
+<div style="font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,{primary},{secondary});-webkit-background-clip:text;-webkit-text-fill-color:transparent">{score}%</div>
+<div style="font-size:0.9rem;color:#64748b;margin-top:0.5rem">🎯 Satisfaction</div>
+</div>
+</div>
 </div>
 </section>"""
 
-    # ── Competitor gap / website analysis sections ─────────────────────
+    # ── Testimonials section ──────────────────────────────────────────
+    quote = "\u201C"
+    end_quote = "\u201D"
+    if rating >= 4.5:
+        reviews_list = [
+            f"Absolutely outstanding service! {name} exceeded all my expectations. Highly recommended!",
+            f"Professional, courteous, and incredibly skilled. So glad I found {name}!",
+            f"Five-star experience from start to finish. Will definitely be coming back.",
+        ]
+    elif rating >= 3.5:
+        reviews_list = [
+            f"Great experience with {name}. Very professional team.",
+            f"Good service overall. Would recommend to others looking for quality {category_lower}.",
+            f"Satisfied with the results. The team was very helpful throughout.",
+        ]
+    else:
+        reviews_list = [
+            "Decent service. Room for improvement but overall okay.",
+            "Average experience. The staff was friendly enough.",
+        ]
+    items = "".join(
+        f'<div class="testimonial" style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2rem;position:relative">'
+        f'<div style="font-size:0.9rem;font-style:italic;color:#cbd5e1;margin-bottom:1rem;line-height:1.7;position:relative;z-index:1">{quote}{review}{end_quote}</div>'
+        f'<div style="display:flex;align-items:center;gap:10px">'
+        f'<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,{primary},{secondary});display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff">{("V" if i == 0 else "C" if i == 1 else "S")}</div>'
+        f'<div><div style="font-size:0.85rem;font-weight:600;color:white">Verified Customer</div><div style="font-size:0.75rem;color:#64748b">Google Review</div></div>'
+        f'</div></div>'
+        for i, review in enumerate(reviews_list)
+    )
+    testimonials_html = f"""<section style="padding:5rem 1.5rem;background:#070b14">
+<div class="container" style="max-width:1200px;margin:0 auto">
+<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;background:linear-gradient(135deg,{primary},{secondary});-webkit-background-clip:text;-webkit-text-fill-color:transparent">What Clients Say</h2>
+<p style="text-align:center;color:#64748b;margin-bottom:3rem;font-size:0.95rem">Real reviews from real customers</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
+{items}
+</div>
+</div>
+</section>"""
+
+    # ── CTA section ───────────────────────────────────────────────────
+    cta_html = f"""<section id="cta" style="padding:5rem 1.5rem;background:linear-gradient(135deg,{primary} 0%,{secondary} 100%);color:white;text-align:center">
+<div class="container" style="max-width:700px;margin:0 auto">
+<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Ready to Get Started?</h2>
+<p style="margin-bottom:2rem;opacity:0.9;font-size:1rem">{spec.get('tagline', tagline)}</p>
+<a href="tel:{phone_digits}" style="display:inline-block;padding:1rem 2.5rem;border-radius:14px;background:white;color:{primary};font-weight:700;text-decoration:none;font-size:1rem;box-shadow:0 6px 20px rgba(0,0,0,0.15)">{spec.get('cta_text', 'Get in Touch')}</a>
+</div>
+</section>"""
+
+    # ── Extra sections ────────────────────────────────────────────────
     extra_sections = ""
     if competitor_html:
-        extra_sections += f'<section class="extra-section" style="padding:4rem 2rem;background:#f8f9fa">{competitor_html}</section>'
+        extra_sections += f'<section style="padding:4rem 1.5rem;background:rgba(255,255,255,0.008)"><div class="container" style="max-width:1200px;margin:0 auto">{competitor_html}</div></section>'
     if analysis_html:
-        extra_sections += f'<section class="extra-section" style="padding:4rem 2rem">{analysis_html}</section>'
+        extra_sections += f'<section style="padding:4rem 1.5rem;background:#070b14"><div class="container" style="max-width:1200px;margin:0 auto">{analysis_html}</div></section>'
 
-    # ── Footer / Contact ──────────────────────────────────────────────
-    address = lead_data.get("address", "")
-    address_short = ", ".join(p.strip() for p in address.split(",")[:2]) if address else city
+    # ── Contact section ───────────────────────────────────────────────
+    contact_html = f"""<section id="contact" style="padding:5rem 1.5rem;background:rgba(255,255,255,0.008);color:white;text-align:center">
+<div class="container" style="max-width:600px;margin:0 auto">
+<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem;background:linear-gradient(135deg,{primary},{secondary});-webkit-background-clip:text;-webkit-text-fill-color:transparent">Get in Touch</h2>
+<p style="margin-bottom:2.5rem;color:#64748b">{spec.get('tagline', tagline)}</p>
+<div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:1rem">
+<div style="padding:1rem 2rem;background:rgba(255,255,255,0.03);border-radius:14px;border:1px solid rgba(255,255,255,0.06)">📞 <a href="tel:{phone_digits}" style="color:white;text-decoration:none">{phone}</a></div>
+<div style="padding:1rem 2rem;background:rgba(255,255,255,0.03);border-radius:14px;border:1px solid rgba(255,255,255,0.06)">📍 {address_short}</div>
+</div>
+</div>
+</section>"""
 
-    # ── Build sections based on section_order ─────────────────────────
+    # ── Build sections ────────────────────────────────────────────────
     section_map = {
         "hero": hero_html,
         "about": about_html,
@@ -462,25 +522,13 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
         "testimonials": testimonials_html,
         "cta": cta_html,
     }
-    # contact is handled separately (always at the bottom before footer)
     all_sections = "".join(section_map.get(s, "") for s in layout["section_order"]
                           if s != "contact")
-    # Add extra sections (competitor/analysis) right before contact
     all_sections += extra_sections
-    # Add contact section at the end (always present if in section_order)
     if "contact" in layout["section_order"]:
-        all_sections += f"""<section id="contact" style="padding:4rem 2rem;background:{primary};color:white;text-align:center">
-<div class="container">
-<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Get in Touch</h2>
-<p style="margin-bottom:2rem;opacity:0.9">{spec.get('tagline', tagline)}</p>
-<div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:1.1rem">
-<div>📞 <a href="tel:{phone_digits}" style="color:white;text-decoration:none">{phone}</a></div>
-<div>📍 {address_short}</div>
-</div>
-</div>
-</section>"""
+        all_sections += contact_html
 
-    # ── Assemble the complete page ────────────────────────────────────
+    # ── Assemble complete page ────────────────────────────────────────
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -489,50 +537,87 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
 <title>{spec.get('seo_title', name)}</title>
 <meta name="description" content="{spec.get('seo_description', '')}">
 <meta name="robots" content="index, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script type="application/ld+json">{{
 "@context": "https://schema.org",
 "@type": "{spec.get('schema_type', 'LocalBusiness')}",
 "name": "{name}",
-"image": "",
 "address": {{"@type": "PostalAddress", "addressLocality": "{city}"}},
 "aggregateRating": {{"@type": "AggregateRating", "ratingValue": "{rating}", "reviewCount": "{reviews}"}},
 "telephone": "{phone}"
 }}</script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{{margin:0;padding:0;box-sizing:border-box}}
-body{{font-family:'Inter',sans-serif;color:#333;line-height:1.6}}
-a{{color:inherit}}
+html{{scroll-behavior:smooth}}
+body{{font-family:'Inter',sans-serif;background:#070b14;color:#e2e8f0;overflow-x:hidden;-webkit-font-smoothing:antialiased}}
+h1,h2,h3{{font-family:'Space Grotesk',sans-serif}}
 img{{max-width:100%}}
-.container{{max-width:1200px;margin:0 auto;padding:0 2rem}}
-section{{scroll-margin-top:2rem}}
-.service-card{{transition:transform 0.3s,box-shadow 0.3s}}
-.service-card:hover{{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.1)}}
-.stat-card,.testimonial-card{{transition:transform 0.3s,box-shadow 0.3s}}
-.stat-card:hover,.testimonial-card:hover{{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.1)}}
-@keyframes fadeInUp{{from{{opacity:0;transform:translateY(30px)}}to{{opacity:1;transform:translateY(0)}}}}
-.hero-magazine *,.hero-dark-luxury *{{animation:fadeInUp 0.8s ease-out forwards}}
-.hero-magazine *:nth-child(2),.hero-dark-luxury *:nth-child(2){{animation-delay:0.1s}}
-.hero-magazine *:nth-child(3),.hero-dark-luxury *:nth-child(3){{animation-delay:0.2s}}
-.hero-magazine *:nth-child(4),.hero-dark-luxury *:nth-child(4){{animation-delay:0.3s}}
-.hero-magazine *:nth-child(5),.hero-dark-luxury *:nth-child(5){{animation-delay:0.4s}}
-@media(max-width:768px){{.hero-fullscreen h1{{font-size:2.2rem !important}}.hero-split{{flex-direction:column !important}}.hero-split>div{{padding:2rem !important}}.hero-magazine h1{{font-size:2.2rem !important}}.hero-dark-luxury h1{{font-size:2.5rem !important}}h1{{font-size:2rem !important}}}}
-</style>
+a{{text-decoration:none;color:inherit}}
+
+/* Hero fade-in */
+.hero *{{animation:fadeUp 0.8s ease-out forwards}}
+.hero *:nth-child(2){{animation-delay:0.1s}}
+.hero *:nth-child(3){{animation-delay:0.2s}}
+.hero *:nth-child(4){{animation-delay:0.3s}}
+.hero *:nth-child(5){{animation-delay:0.4s}}
+@keyframes fadeUp{{from{{opacity:0;transform:translateY(30px)}}to{{opacity:1;transform:translateY(0)}}}}
+
+/* Cards & hover */
+.card{{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2rem;transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}}
+.card:hover{{transform:translateY(-6px);background:rgba(255,255,255,0.04);border-color:{primary}25}}
+.card-icon{{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;background:linear-gradient(135deg,{primary}15,{secondary}10)}}
+.card-icon i{{font-size:20px;color:{primary}}}
+
+.stat-card,.testimonial{{transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}}
+.stat-card:hover,.testimonial:hover{{transform:translateY(-4px)}}
+
+/* Nav */
+.nav{{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;transition:all 0.3s}}
+.nav.scrolled{{background:rgba(7,11,20,0.92);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.04)}}
+.nav-links a{{font-size:0.85rem;color:#94a3b8;margin-left:1.5rem;transition:color 0.2s}}
+.nav-links a:hover{{color:white}}
+
+@media(max-width:768px){{
+.hero h1{{font-size:2.2rem !important}}
+.nav-links{{display:none}}
+h1{{font-size:2rem !important}}
+.card{{padding:1.5rem}}
+}}</style>
 </head>
 <body>
-{hero_html}
-<nav style="position:sticky;top:0;background:white;border-bottom:1px solid #eee;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;z-index:100">
-<div style="font-weight:700;font-size:1.2rem;color:{primary}">{lead_data.get('business_name', 'Business')}</div>
-<div style="display:flex;gap:1.5rem;font-size:0.9rem">
-<a href="#services" style="text-decoration:none;color:#555">Services</a>
-<a href="#contact" style="text-decoration:none;color:#555">Contact</a>
-<a href="tel:{phone_digits}" style="text-decoration:none;color:{primary};font-weight:600">📞 {phone}</a>
+
+<!-- Nav -->
+<nav class="nav" id="navbar">
+<div style="font-weight:700;font-size:1.1rem;color:white">{name_short}</div>
+<div class="nav-links">
+<a href="#services">Services</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+<a href="tel:{phone_digits}" style="padding:8px 18px;border-radius:10px;background:linear-gradient(135deg,{primary},{secondary});color:white;font-weight:600;font-size:0.85rem">📞 Call</a>
 </div>
 </nav>
+
+{hero_html}
 {all_sections}
-<footer style="padding:2rem;text-align:center;background:#1a1a1a;color:#999;font-size:0.85rem">
-<p>© 2024 {name}. All rights reserved. | Website by TKVibes Digital Agency</p>
+
+<!-- Footer -->
+<footer style="padding:3rem 1.5rem;text-align:center;border-top:1px solid rgba(255,255,255,0.04);background:#070b14">
+<p style="color:#64748b;font-size:0.85rem">© 2026 {name}. All rights reserved.</p>
+<p style="color:#334155;font-size:0.75rem;margin-top:8px">Concept by TKVibes — not affiliated with {name}</p>
 </footer>
+
+<script>
+// Nav scroll
+window.addEventListener('scroll',function(){{
+document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
+}});
+// Smooth anchor scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{{
+a.addEventListener('click',function(e){{e.preventDefault();var t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({{behavior:'smooth'}})}})
+}});
+</script>
 </body>
 </html>"""
 

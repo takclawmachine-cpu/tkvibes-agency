@@ -101,6 +101,99 @@ def _generate_analysis_lead_section(lead: Lead, analysis: dict) -> str:
     return format_website_analysis_site_section(analysis, lead)
 
 
+# ── Category-specific Unsplash images ─────────────────────────────────────
+CATEGORY_IMAGES = {
+    "dental": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200&q=80",
+    "lawyer": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80",
+    "medical": "https://images.unsplash.com/photo-1551076805-e1869033e561?w=1200&q=80",
+    "hospital": "https://images.unsplash.com/photo-1551076805-e1869033e561?w=1200&q=80",
+    "clinic": "https://images.unsplash.com/photo-1551076805-e1869033e561?w=1200&q=80",
+    "pet": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=1200&q=80",
+    "veterinary": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=1200&q=80",
+    "interior": "https://images.unsplash.com/photo-1618220179428-22790b461013?w=1200&q=80",
+    "restaurant": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80",
+    "cafe": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200&q=80",
+    "salon": "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1200&q=80",
+    "spa": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1200&q=80",
+    "gym": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80",
+    "jewelry": "https://images.unsplash.com/photo-1515562141589-8e6e5d9b7e82?w=1200&q=80",
+    "real estate": "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w=1200&q=80",
+    "architect": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
+    "coaching": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1200&q=80",
+    "home": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80",
+    "boutique": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80",
+    "insurance": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1200&q=80",
+    "accountant": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80",
+    "financial": "https://images.unsplash.com/photo-1560472355-536de3962603?w=1200&q=80",
+    "cosmetic": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&q=80",
+    "eye": "https://images.unsplash.com/photo-1582755333449-648ce127ae80?w=1200&q=80",
+    "skin": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&q=80",
+    "orthopedic": "https://images.unsplash.com/photo-1579165466741-7f35e4755661?w=1200&q=80",
+    "physio": "https://images.unsplash.com/photo-1579165466741-7f35e4755661?w=1200&q=80",
+    "pediatric": "https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&q=80",
+    "cardiology": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1200&q=80",
+    "fertility": "https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&q=80",
+    "luxury": "https://images.unsplash.com/photo-1515562141589-8e6e5d9b7e82?w=1200&q=80",
+}
+CATEGORY_ABOUT_IMAGES = {
+    "dental": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80",
+    "lawyer": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80",
+    "medical": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&q=80",
+    "hospital": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&q=80",
+    "clinic": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&q=80",
+    "pet": "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80",
+    "veterinary": "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80",
+    "interior": "https://images.unsplash.com/photo-1618221195710-dd6b41f9cff7?w=800&q=80",
+    "restaurant": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80",
+    "cafe": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
+    "salon": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80",
+    "spa": "https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=800&q=80",
+    "gym": "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=800&q=80",
+    "jewelry": "https://images.unsplash.com/photo-1602173574764-838089ff9851?w=800&q=80",
+    "real estate": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
+    "architect": "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=800&q=80",
+    "coaching": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80",
+    "home": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+    "boutique": "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&q=80",
+    "insurance": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+    "accountant": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+    "financial": "https://images.unsplash.com/photo-1560472355-536de3962603?w=800&q=80",
+    "cosmetic": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80",
+    "eye": "https://images.unsplash.com/photo-1573164574397-2501b18f04c4?w=800&q=80",
+    "skin": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80",
+    "orthopedic": "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&q=80",
+    "physio": "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&q=80",
+    "pediatric": "https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80",
+    "cardiology": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80",
+    "fertility": "https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80",
+    "luxury": "https://images.unsplash.com/photo-1602173574764-838089ff9851?w=800&q=80",
+    "default": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80",
+}
+CATEGORY_ABOUT_DEFAULT = "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80"
+
+
+def _get_category_image(category: str, image_map: dict, default: str) -> str:
+    """Look up the best image URL for a given business category."""
+    cat_lower = (category or "").lower().strip()
+    # Try exact match first
+    if cat_lower in image_map:
+        return image_map[cat_lower]
+    # Try partial match
+    for key in image_map:
+        if key in cat_lower or cat_lower in key:
+            return image_map[key]
+    return default
+
+
+def _build_footer_services(cfg: dict) -> str:
+    """Build footer service links from visual config."""
+    services = cfg.get("services", DEFAULT_CONFIG["services"])
+    items = []
+    for _icon, title, _desc in services:
+        items.append(f'<a href="#services">{title}</a><br>')
+    return "\n".join(items)
+
+
 def render_sample_site(lead: Lead, sample_template: str,
                        competitors: list[dict] | None = None,
                        analysis: dict | None = None) -> str:
@@ -134,6 +227,13 @@ def render_sample_site(lead: Lead, sample_template: str,
     hours_html = build_hours_html(lead.opening_hours or "")
     services_html = build_services_html(cfg)
     why_items = get_why_items(lead.category)
+
+    # Category-specific images
+    hero_image = _get_category_image(category, CATEGORY_IMAGES, CATEGORY_IMAGES.get("default", CATEGORY_IMAGES["dental"]))
+    about_image = _get_category_image(category, CATEGORY_ABOUT_IMAGES, CATEGORY_ABOUT_DEFAULT)
+    
+    # Footer service links
+    footer_services_html = _build_footer_services(cfg)
 
     # Description
     description = f"Your trusted {category_lower} serving the {city} community with {rating}★ rated service and {reviews}+ happy customers."
@@ -181,6 +281,9 @@ def render_sample_site(lead: Lead, sample_template: str,
         "{{ICON_HERO}}": icon_hero,
         "{{NAV_ICON}}": nav_icon,
         "{{TAGLINE}}": tagline,
+        "{{HERO_IMAGE}}": hero_image,
+        "{{ABOUT_IMAGE}}": about_image,
+        "{{FOOTER_SERVICES}}": footer_services_html,
         "{{COMPETITIVE_SECTION}}": competitive_section,
         "{{WEBSITE_ANALYSIS_SECTION}}": website_analysis_section,
     }
