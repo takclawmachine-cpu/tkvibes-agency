@@ -44,23 +44,6 @@ jobs:
             set ftp:rest-list no;
             set ftp:use-mdtm off;
             open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
-            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 \
-              --exclude '.git/' \
-              --exclude '.github/' \
-              --exclude 'scripts/' \
-              --exclude 'README.md' \
-              --exclude 'AGENTS.md' \
-              --exclude 'memory/' \
-              --exclude '.gitignore' \
-              --exclude 'tkvibes-lead-engine/' \
-              --exclude 'operations-dashboard/' \
-              --exclude 'local-llm/' \
-              --exclude 'deliverables/' \
-              --exclude '*.pyc' \
-              --exclude '__pycache__/' \
-              --exclude '.venv/' \
-              --exclude '.next/' \
-              --exclude 'node_modules/' \
-              ./ /public_html/;
+            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 --exclude-glob='.git/' --exclude-glob='.github/' --exclude-glob='scripts/' --exclude-glob='README.md' --exclude-glob='AGENTS.md' --exclude-glob='memory/' --exclude-glob='.gitignore' --exclude-glob='tkvibes-lead-engine/' --exclude-glob='operations-dashboard/' --exclude-glob='local-llm/' --exclude-glob='deliverables/' --exclude-glob='*.pyc' --exclude-glob='__pycache__/' --exclude-glob='.venv/' --exclude-glob='.next/' --exclude-glob='node_modules/' ./ /public_html/;
             bye;
           "
