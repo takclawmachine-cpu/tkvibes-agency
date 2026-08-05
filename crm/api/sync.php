@@ -50,9 +50,11 @@ if (empty($leads)) {
 $pdo = get_db();
 
 // ── Idempotency check ───────────────────────────────────────────────────
+$driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 if ($idempotency_key) {
+    $time_func = $driver === 'sqlite' ? "datetime('now', '-5 minutes')" : "DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
     $check = $pdo->prepare(
-        "SELECT 1 FROM sync_log WHERE idempotency_key = ? AND processed_at > datetime('now', '-5 minutes')"
+        "SELECT 1 FROM sync_log WHERE idempotency_key = ? AND processed_at > $time_func"
     );
     $check->execute([$idempotency_key]);
     if ($check->fetch()) {
@@ -72,9 +74,11 @@ if ($idempotency_key) {
 
 // ── Insert idempotency record ──────────────────────────────────────────
 if ($idempotency_key) {
+    $now_expr = $driver === 'sqlite' ? "datetime('now')" : "NOW()";
+    $ignore_kw = $driver === 'sqlite' ? "OR IGNORE" : "IGNORE";
     $pdo->prepare(
-        "INSERT OR IGNORE INTO sync_log (idempotency_key, trace_id, status, created_at) 
-         VALUES (?, ?, 'processing', datetime('now'))"
+        "INSERT $ignore_kw INTO sync_log (idempotency_key, trace_id, status, created_at) 
+         VALUES (?, ?, 'processing', $now_expr)"
     )->execute([$idempotency_key, $trace_id]);
 }
 
@@ -82,65 +86,127 @@ $added = 0;
 $updated = 0;
 $errors = [];
 
-// ── Prepare upsert statement ────────────────────────────────────────────
-$insert_sql = "
-    INSERT INTO leads (
-        lead_key, business_name, category, owner_name, phone_primary, phone_secondary,
-        whatsapp, email, address, city, pincode, latitude, longitude, opening_hours,
-        has_website, website_url, website_quality, rating, review_count, years_in_business,
-        socials, source, source_url, place_id, lead_score, lead_tier, data_fetched_at,
-        stale_after, outreach_status, opt_out, sample_site_url, pitch_deck_url, notes,
-        contact_channel, wa_link, region, country, assigned_employee, pain_points,
-        recommended_pitch, crm_status, trace_id, created_at, updated_at
-    ) VALUES (
-        :lead_key, :business_name, :category, :owner_name, :phone_primary, :phone_secondary,
-        :whatsapp, :email, :address, :city, :pincode, :latitude, :longitude, :opening_hours,
-        :has_website, :website_url, :website_quality, :rating, :review_count, :years_in_business,
-        :socials, :source, :source_url, :place_id, :lead_score, :lead_tier, :data_fetched_at,
-        :stale_after, :outreach_status, :opt_out, :sample_site_url, :pitch_deck_url, :notes,
-        :contact_channel, :wa_link, :region, :country, :assigned_employee, :pain_points,
-        :recommended_pitch, 'new', :trace_id, datetime('now'), datetime('now')
-    )
-    ON CONFLICT(lead_key) DO UPDATE SET
-        business_name     = excluded.business_name,
-        category          = excluded.category,
-        owner_name        = excluded.owner_name,
-        phone_primary     = excluded.phone_primary,
-        phone_secondary   = excluded.phone_secondary,
-        whatsapp          = excluded.whatsapp,
-        email             = excluded.email,
-        address           = excluded.address,
-        city              = excluded.city,
-        pincode           = excluded.pincode,
-        latitude          = excluded.latitude,
-        longitude         = excluded.longitude,
-        opening_hours     = excluded.opening_hours,
-        has_website       = excluded.has_website,
-        website_url       = excluded.website_url,
-        website_quality   = excluded.website_quality,
-        rating            = excluded.rating,
-        review_count      = excluded.review_count,
-        years_in_business = excluded.years_in_business,
-        socials           = excluded.socials,
-        source            = excluded.source,
-        source_url        = excluded.source_url,
-        place_id          = excluded.place_id,
-        lead_score        = excluded.lead_score,
-        lead_tier         = excluded.lead_tier,
-        data_fetched_at   = excluded.data_fetched_at,
-        stale_after       = excluded.stale_after,
-        outreach_status   = excluded.outreach_status,
-        opt_out           = excluded.opt_out,
-        wa_link           = excluded.wa_link,
-        region            = excluded.region,
-        country           = excluded.country,
-        assigned_employee = excluded.assigned_employee,
-        pain_points       = excluded.pain_points,
-        recommended_pitch = excluded.recommended_pitch,
-        trace_id          = excluded.trace_id,
-        updated_at        = datetime('now')
-";
+// ── Build driver-appropriate upsert SQL ──────────────────────────────────
+$datetime_func = $driver === 'sqlite' ? "datetime('now')" : "NOW()";
 
+if ($driver === 'sqlite') {
+    $insert_sql = "
+        INSERT INTO leads (
+            lead_key, business_name, category, owner_name, phone_primary, phone_secondary,
+            whatsapp, email, address, city, pincode, latitude, longitude, opening_hours,
+            has_website, website_url, website_quality, rating, review_count, years_in_business,
+            socials, source, source_url, place_id, lead_score, lead_tier, data_fetched_at,
+            stale_after, outreach_status, opt_out, sample_site_url, pitch_deck_url, notes,
+            contact_channel, wa_link, region, country, assigned_employee, pain_points,
+            recommended_pitch, crm_status, trace_id, created_at, updated_at
+        ) VALUES (
+            :lead_key, :business_name, :category, :owner_name, :phone_primary, :phone_secondary,
+            :whatsapp, :email, :address, :city, :pincode, :latitude, :longitude, :opening_hours,
+            :has_website, :website_url, :website_quality, :rating, :review_count, :years_in_business,
+            :socials, :source, :source_url, :place_id, :lead_score, :lead_tier, :data_fetched_at,
+            :stale_after, :outreach_status, :opt_out, :sample_site_url, :pitch_deck_url, :notes,
+            :contact_channel, :wa_link, :region, :country, :assigned_employee, :pain_points,
+            :recommended_pitch, 'new', :trace_id, $datetime_func, $datetime_func
+        )
+        ON CONFLICT(lead_key) DO UPDATE SET
+            business_name     = excluded.business_name,
+            category          = excluded.category,
+            owner_name        = excluded.owner_name,
+            phone_primary     = excluded.phone_primary,
+            phone_secondary   = excluded.phone_secondary,
+            whatsapp          = excluded.whatsapp,
+            email             = excluded.email,
+            address           = excluded.address,
+            city              = excluded.city,
+            pincode           = excluded.pincode,
+            latitude          = excluded.latitude,
+            longitude         = excluded.longitude,
+            opening_hours     = excluded.opening_hours,
+            has_website       = excluded.has_website,
+            website_url       = excluded.website_url,
+            website_quality   = excluded.website_quality,
+            rating            = excluded.rating,
+            review_count      = excluded.review_count,
+            years_in_business = excluded.years_in_business,
+            socials           = excluded.socials,
+            source            = excluded.source,
+            source_url        = excluded.source_url,
+            place_id          = excluded.place_id,
+            lead_score        = excluded.lead_score,
+            lead_tier         = excluded.lead_tier,
+            data_fetched_at   = excluded.data_fetched_at,
+            stale_after       = excluded.stale_after,
+            outreach_status   = excluded.outreach_status,
+            opt_out           = excluded.opt_out,
+            wa_link           = excluded.wa_link,
+            region            = excluded.region,
+            country           = excluded.country,
+            assigned_employee = excluded.assigned_employee,
+            pain_points       = excluded.pain_points,
+            recommended_pitch = excluded.recommended_pitch,
+            trace_id          = excluded.trace_id,
+            updated_at        = $datetime_func
+    ";
+} else {
+    // MySQL: use ON DUPLICATE KEY UPDATE
+    $insert_sql = "
+        INSERT INTO leads (
+            lead_key, business_name, category, owner_name, phone_primary, phone_secondary,
+            whatsapp, email, address, city, pincode, latitude, longitude, opening_hours,
+            has_website, website_url, website_quality, rating, review_count, years_in_business,
+            socials, source, source_url, place_id, lead_score, lead_tier, data_fetched_at,
+            stale_after, outreach_status, opt_out, sample_site_url, pitch_deck_url, notes,
+            contact_channel, wa_link, region, country, assigned_employee, pain_points,
+            recommended_pitch, crm_status, trace_id, created_at, updated_at
+        ) VALUES (
+            :lead_key, :business_name, :category, :owner_name, :phone_primary, :phone_secondary,
+            :whatsapp, :email, :address, :city, :pincode, :latitude, :longitude, :opening_hours,
+            :has_website, :website_url, :website_quality, :rating, :review_count, :years_in_business,
+            :socials, :source, :source_url, :place_id, :lead_score, :lead_tier, :data_fetched_at,
+            :stale_after, :outreach_status, :opt_out, :sample_site_url, :pitch_deck_url, :notes,
+            :contact_channel, :wa_link, :region, :country, :assigned_employee, :pain_points,
+            :recommended_pitch, 'new', :trace_id, $datetime_func, $datetime_func
+        )
+        ON DUPLICATE KEY UPDATE
+            business_name     = VALUES(business_name),
+            category          = VALUES(category),
+            owner_name        = VALUES(owner_name),
+            phone_primary     = VALUES(phone_primary),
+            phone_secondary   = VALUES(phone_secondary),
+            whatsapp          = VALUES(whatsapp),
+            email             = VALUES(email),
+            address           = VALUES(address),
+            city              = VALUES(city),
+            pincode           = VALUES(pincode),
+            latitude          = VALUES(latitude),
+            longitude         = VALUES(longitude),
+            opening_hours     = VALUES(opening_hours),
+            has_website       = VALUES(has_website),
+            website_url       = VALUES(website_url),
+            website_quality   = VALUES(website_quality),
+            rating            = VALUES(rating),
+            review_count      = VALUES(review_count),
+            years_in_business = VALUES(years_in_business),
+            socials           = VALUES(socials),
+            source            = VALUES(source),
+            source_url        = VALUES(source_url),
+            place_id          = VALUES(place_id),
+            lead_score        = VALUES(lead_score),
+            lead_tier         = VALUES(lead_tier),
+            data_fetched_at   = VALUES(data_fetched_at),
+            stale_after       = VALUES(stale_after),
+            outreach_status   = VALUES(outreach_status),
+            opt_out           = VALUES(opt_out),
+            wa_link           = VALUES(wa_link),
+            region            = VALUES(region),
+            country           = VALUES(country),
+            assigned_employee = VALUES(assigned_employee),
+            pain_points       = VALUES(pain_points),
+            recommended_pitch = VALUES(recommended_pitch),
+            trace_id          = VALUES(trace_id),
+            updated_at        = $datetime_func
+    ";
+}
 $stmt = $pdo->prepare($insert_sql);
 
 // ── Begin transaction ────────────────────────────────────────────────────
@@ -221,18 +287,21 @@ try {
         } else {
             $added++;
             // Auto-create proposal generation job for new leads
+            $now_expr = $driver === 'sqlite' ? "datetime('now')" : "NOW()";
+            $ignore_kw = $driver === 'sqlite' ? "OR IGNORE" : "IGNORE";
             $pdo->prepare(
-                "INSERT OR IGNORE INTO proposal_generation_jobs 
+                "INSERT $ignore_kw INTO proposal_generation_jobs 
                  (lead_key, feedback, status, trace_id, created_at, updated_at)
-                 VALUES (?, '', 'pending', ?, datetime('now'), datetime('now'))"
+                 VALUES (?, '', 'pending', ?, $now_expr, $now_expr)"
             )->execute([$l['lead_key'], $trace_id ?: uniqid('sync_')]);
         }
     }
 
     // Record idempotency
     if ($idempotency_key) {
+        $now_expr = $driver === 'sqlite' ? "datetime('now')" : "NOW()";
         $pdo->prepare(
-            "UPDATE sync_log SET status = 'completed', processed_at = datetime('now') 
+            "UPDATE sync_log SET status = 'completed', processed_at = $now_expr 
              WHERE idempotency_key = ?"
         )->execute([$idempotency_key]);
     }
@@ -259,8 +328,9 @@ try {
 
     // Mark idempotency record as failed
     if ($idempotency_key) {
+        $now_expr = $driver === 'sqlite' ? "datetime('now')" : "NOW()";
         $pdo->prepare(
-            "UPDATE sync_log SET status = 'failed', error_message = ? WHERE idempotency_key = ?"
+            "UPDATE sync_log SET status = 'failed', error_message = ?, processed_at = $now_expr WHERE idempotency_key = ?"
         )->execute([substr($e->getMessage(), 0, 255), $idempotency_key]);
     }
 

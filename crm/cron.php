@@ -1,55 +1,96 @@
 <?php
-header('X-Robots-Tag: noindex, nofollow');
 /**
  * TKVibes CRM — Cron Jobs
- * Scheduled tasks: Google Sheets sync, lead reassignment.
- * 
- * 1. Archive NOT_QUALIFIED leads older than 24h (soft-remove from dashboards)
- * 2. Clean up activity logs older than 90 days
- * 3. Sync from Google Sheet (import new leads + update existing lead data)
- * 4. Write back CRM state changes to Google Sheet (crm_status, notes, etc.)
- * 5. Process pending proposal generation jobs (placeholder — webhook integration TBD)
+ * Scheduled tasks: Google Sheets sync (disabled), lead reassignment, proposal job recovery.
+ *
+ * Security improvements:
+ * - File-based locking prevents concurrent execution
+ * - MySQL-compatible SQL throughout
+ * - Trace ID support for job recovery
+ * - Audit logging for all cron actions
  */
-
+header('X-Robots-Tag: noindex, nofollow');
 require __DIR__ . '/lib/db.php';
 require __DIR__ . '/lib/functions.php';
 require_once __DIR__ . '/lib/sheets_sync.php';
 require_once __DIR__ . '/lib/constants.php';
 
+$pdo = get_db();
+$driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+$now_expr = $driver === 'sqlite' ? "datetime('now')" : "NOW()";
+$time_func = $driver === 'sqlite' ? "datetime('now'" : "DATE_SUB(NOW()";
+
+// ── File-based lock to prevent concurrent cron execution ────────────────────
+$lock_file = sys_get_temp_dir() . "/tkvibes_cron.lock";
+$lock_fh = null;
+
+if (file_exists($lock_file)) {
+    $lock_age = time() - filemtime($lock_file);
+    if ($lock_age < 300) {  // Lock is fresh — another cron is running
+        echo json_encode(["status" => "skipped", "reason" => "cron already running"], JSON_PRETTY_PRINT) . "\n";
+        exit;
+    }
+    // Stale lock — remove it
+    unlink($lock_file);
+}
+
+$lock_fh = fopen($lock_file, "w");
+if (!$lock_fh || !flock($lock_fh, LOCK_EX | LOCK_NB)) {
+    echo json_encode(["status" => "skipped", "reason" => "could not acquire lock"], JSON_PRETTY_PRINT) . "\n";
+    exit;
+}
+fwrite($lock_fh, getmypid());
+fflush($lock_fh);
+
+// Ensure lock is released on exit
+register_shutdown_function(function() use ($lock_fh, $lock_file) {
+    if ($lock_fh) {
+        flock($lock_fh, LOCK_UN);
+        fclose($lock_fh);
+    }
+    if (file_exists($lock_file)) {
+        unlink($lock_file);
+    }
+});
+
+$trace_id = "cron-" . date('YmdHis');
+log_system('info', 'cron', 'Cron job started', ['trace_id' => $trace_id]);
+
 $dry_run = in_array('--dry-run', $argv ?? []);
 $report = [];
 
 // ── 1. Archive not_qualified leads older than 24h ──────────────────────────
-$pdo = get_db();
 $stmt = $pdo->prepare("
     UPDATE leads 
-    SET removed_at = datetime('now'),
-        updated_at = datetime('now'),
+    SET removed_at = $now_expr,
+        updated_at = $now_expr,
         crm_status = 'not_qualified'
     WHERE crm_status = 'not_qualified'
       AND removed_at IS NULL
-      AND updated_at < datetime('now', '-1 day')
+      AND updated_at < " . ($driver === 'sqlite' ? "datetime('now', '-1 day')" : "DATE_SUB(NOW(), INTERVAL 1 DAY)") . "
 ");
 if (!$dry_run) {
     $stmt->execute();
     $archived = $stmt->rowCount();
     $report['archived_not_qualified'] = $archived;
 } else {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM leads WHERE crm_status = 'not_qualified' AND removed_at IS NULL AND updated_at < datetime('now', '-1 day')");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM leads WHERE crm_status = 'not_qualified' AND removed_at IS NULL AND updated_at < " . ($driver === 'sqlite' ? "datetime('now', '-1 day')" : "DATE_SUB(NOW(), INTERVAL 1 DAY)"));
     $stmt->execute();
     $report['would_archive'] = (int)$stmt->fetchColumn();
 }
 
 // ── 2. Remove stale activity logs (older than 90 days) ─────────────────────
 if (!$dry_run) {
-    $stmt = $pdo->prepare("DELETE FROM lead_activities WHERE created_at < datetime('now', '-90 days')");
+    $stmt = $pdo->prepare("DELETE FROM lead_activities WHERE created_at < " . ($driver === 'sqlite' ? "datetime('now', '-90 days')" : "DATE_SUB(NOW(), INTERVAL 90 DAY)"));
     $stmt->execute();
     $report['cleaned_activities'] = $stmt->rowCount();
 }
 
-// ── 3. Sync from Google Sheet (if configured) ──────────────────────────────
+// ── 3. Sync from Google Sheet (DISABLED in production) ────────────────────
+// With MySQL as source of truth, sheet sync is no longer needed.
+// Kept for backward compatibility but disabled by default.
 $cfg = require __DIR__ . '/config.local.php';
-if ($cfg['google_service_account'] && $cfg['google_sheet_id']) {
+if ($cfg['google_service_account'] && $cfg['google_sheet_id'] && !empty($cfg['enable_sheet_sync'])) {
     try {
         $client = get_sheets_client();
         if (!$client) {
@@ -72,7 +113,6 @@ if ($cfg['google_service_account'] && $cfg['google_sheet_id']) {
                 $check->execute([$lk]);
                 $exists = $check->fetch();
 
-                // Build field list from allowed sheet columns
                 $set_parts = [];
                 $set_params = [];
                 foreach ($allowed_fields as $f) {
@@ -85,7 +125,7 @@ if ($cfg['google_service_account'] && $cfg['google_sheet_id']) {
 
                 if ($exists) {
                     if (!$dry_run) {
-                        $set_parts[] = "updated_at = datetime('now')";
+                        $set_parts[] = "updated_at = $now_expr";
                         $set_params[] = $lk;
                         $pdo->prepare("UPDATE leads SET " . implode(', ', $set_parts) . " WHERE lead_key = ?")
                             ->execute($set_params);
@@ -94,7 +134,7 @@ if ($cfg['google_service_account'] && $cfg['google_sheet_id']) {
                 } else {
                     if (!$dry_run) {
                         $cols = ['lead_key', 'crm_status', 'created_at', 'updated_at'];
-                        $vals = ['?', "'new'", "datetime('now')", "datetime('now')"];
+                        $vals = ['?', "'new'", $now_expr, $now_expr];
                         $params = [$lk];
                         foreach ($allowed_fields as $f) {
                             if (isset($data[$f]) && $data[$f] !== '') {
@@ -113,85 +153,71 @@ if ($cfg['google_service_account'] && $cfg['google_sheet_id']) {
         }
     } catch (Throwable $e) {
         $report['sheet_sync_error'] = $e->getMessage();
+        log_system('error', 'cron', 'Sheet sync failed', ['error' => $e->getMessage()]);
     }
+} else {
+    $report['sheet_sync'] = 'disabled (MySQL is source of truth)';
 }
 
-// ── 4. Write back CRM state changes to Google Sheet ────────────────────────
-// Find leads that were updated in CRM since last sync but not yet written back
-// This is best-effort; the real-time write-back from leads.php handles most cases.
-// This cron catches any that were missed (e.g. server restart, offline sheets).
-$sheet_columns = ['crm_status', 'crm_notes', 'last_contacted_at', 'next_callback_at'];
-$client = get_sheets_client();
-if ($client) {
-    $written_back = 0;
-    $errors = 0;
-    $stmt = $pdo->query("SELECT lead_key, crm_status, crm_notes, last_contacted_at, next_callback_at FROM leads WHERE updated_at > datetime('now', '-1 hour') LIMIT 50");
-    while ($lead = $stmt->fetch()) {
-        $fields = [];
-        foreach ($sheet_columns as $col) {
-            if (!empty($lead[$col])) {
-                $fields[$col] = $lead[$col];
-            }
-        }
-        if (!empty($fields)) {
-            try {
-                if (!$dry_run) {
-                    $client->update_lead_fields($lead['lead_key'], $fields);
-                }
-                $written_back++;
-            } catch (Throwable $e) {
-                $errors++;
-                error_log("Cron write-back failed for {$lead['lead_key']}: " . $e->getMessage());
-            }
-        }
-    }
-    if ($written_back > 0 || $errors > 0) {
-        $report['cron_writeback'] = "$written_back OK, $errors errors";
-    }
-}
+// ── 4. Write back CRM state changes to Google Sheet (DISABLED) ──────────────
+// With MySQL as source of truth, write-back is no longer needed.
+$report['cron_writeback'] = 'disabled (MySQL is source of truth)';
 
-// ── 5. Process pending proposal generation jobs ─────────────────────────
-// First: recover orphaned 'running' jobs that have no heartbeat (>10 min stale)
+// ── 5. Recover orphaned 'running' proposal jobs & process pending ──────────
 try {
+    // First: recover orphaned 'running' jobs that have no heartbeat (>10 min stale)
+    $stale_time = $driver === 'sqlite' ? "datetime('now', '-10 minutes')" : "DATE_SUB(NOW(), INTERVAL 10 MINUTE)";
+    $recovery_sql = "SELECT id, lead_key FROM proposal_generation_jobs 
+                     WHERE status = 'running' AND updated_at < $stale_time";
+    $stmt = $pdo->query($recovery_sql);
     $recovered = 0;
-    $stmt = $pdo->query("SELECT id, lead_key FROM proposal_generation_jobs WHERE status = 'running' AND updated_at < datetime('now', '-10 minutes')");
     while ($job = $stmt->fetch()) {
         if (!$dry_run) {
-            $pdo->prepare("UPDATE proposal_generation_jobs SET status = 'pending', updated_at = datetime('now') WHERE id = ?")
+            $pdo->prepare("UPDATE proposal_generation_jobs SET status = 'pending', updated_at = $now_expr WHERE id = ?")
                 ->execute([$job['id']]);
-            error_log("Cron: recovered orphaned job #{$job['id']} for lead '{$job['lead_key']}' (stale 'running' >10min)");
+            log_system('info', 'cron', 'Recovered orphaned job', [
+                'job_id' => $job['id'],
+                'lead_key' => $job['lead_key'],
+                'trace_id' => $trace_id,
+            ]);
         }
         $recovered++;
     }
     if ($recovered > 0) {
         $report['proposal_jobs_recovered'] = "$recovered orphaned jobs recovered";
     }
-} catch (Throwable $e) {
-    $report['proposal_jobs_recovery_error'] = $e->getMessage();
-    error_log("Cron proposal_jobs recovery error: " . $e->getMessage());
-}
 
-// Then: process pending jobs
-try {
-    $stmt = $pdo->query("SELECT id, lead_key, feedback, created_at FROM proposal_generation_jobs WHERE status = 'pending' ORDER BY created_at ASC LIMIT 5");
+    // Then: count pending jobs (actual processing is done by process_proposal_jobs.py agent)
+    $pending_sql = "SELECT id, lead_key, feedback, created_at FROM proposal_generation_jobs 
+                    WHERE status = 'pending' ORDER BY created_at ASC LIMIT 10";
+    $stmt = $pdo->query($pending_sql);
     $pending_jobs = $stmt->fetchAll();
     if (!empty($pending_jobs)) {
-        $job_ids = array_column($pending_jobs, 'id');
-        // Mark them as 'running' to prevent re-pickup
-        if (!$dry_run) {
-            $placeholders = implode(',', array_fill(0, count($job_ids), '?'));
-            $pdo->prepare("UPDATE proposal_generation_jobs SET status = 'running', updated_at = " . ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite' ? "datetime('now')" : "NOW()") . " WHERE id IN ($placeholders)")
-                ->execute($job_ids);
-        }
-        $report['proposal_jobs_pending'] = count($pending_jobs) . ' jobs marked as running (awaiting external processing)';
+        $report['proposal_jobs_pending'] = count($pending_jobs) . ' jobs awaiting external processor';
         foreach ($pending_jobs as $j) {
-            error_log("Proposal generation job #{$j['id']} for lead '{$j['lead_key']}' marked as running (feedback: " . substr($j['feedback'], 0, 80) . ")");
+            log_system('info', 'cron', 'Pending proposal job found', [
+                'job_id' => $j['id'],
+                'lead_key' => $j['lead_key'],
+                'trace_id' => $trace_id,
+            ]);
         }
     }
 } catch (Throwable $e) {
     $report['proposal_jobs_error'] = $e->getMessage();
-    error_log("Cron proposal_jobs error: " . $e->getMessage());
+    log_system('error', 'cron', 'Proposal jobs error', ['error' => $e->getMessage()]);
 }
+
+// ── Cleanup old sync_log entries (older than 5 minutes, for idempotency dedup) ─
+if (!$dry_run) {
+    $cleanup_sql = "DELETE FROM sync_log WHERE status = 'processing' AND created_at < " .
+                   ($driver === 'sqlite' ? "datetime('now', '-10 minutes')" : "DATE_SUB(NOW(), INTERVAL 10 MINUTE)");
+    $pdo->exec($cleanup_sql);
+}
+
+log_system('info', 'cron', 'Cron job completed', [
+    'trace_id' => $trace_id,
+    'report' => json_encode($report),
+]);
 
 // Output report
 echo json_encode($report, JSON_PRETTY_PRINT) . "\n";
