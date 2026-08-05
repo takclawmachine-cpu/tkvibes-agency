@@ -25,19 +25,20 @@ jobs:
           echo "Static site files OK"
 
       - name: Install lftp
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+        run: sudo apt-get install -y -qq lftp
 
       - name: Deploy to Hostinger via lftp (FTPS)
         run: |
-          lftp -u "${{ secrets.FTP_USER }}","${{ secrets.FTP_PASS }}" ${{ secrets.FTP_HOST }} << 'LFTP_CMDS'
-          set ftp:ssl-allow yes
-          set ftp:ssl-protect-data yes
-          set ftp:ssl-force yes
-          set ssl:verify-certificate no
-          set ftp:passive-mode yes
-          set net:timeout 60
-          set net:max-retries 10
-          set ftp:use-mdtm off
-          mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 ./ /public_html/ --exclude '.git/' --exclude '.github/' --exclude 'tkvibes-lead-engine/' --exclude 'operations-dashboard/' --exclude 'local-llm/' --exclude 'deliverables/' --exclude 'memory/' --exclude '.venv/' --exclude '.next/' --exclude 'node_modules/' --exclude '__pycache__/' --exclude '*.pyc' --exclude 'README.md' --exclude 'AGENTS.md' --exclude '.gitignore'
-          bye
-          LFTP_CMDS
+          lftp -c "
+            set ftp:ssl-allow yes
+            set ftp:ssl-protect-data yes
+            set ftp:ssl-force yes
+            set ssl:verify-certificate no
+            set ftp:passive-mode yes
+            set dns:order inet
+            set net:timeout 120
+            set net:max-retries 15
+            open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
+            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 --exclude-glob='.git/' --exclude-glob='.github/' --exclude-glob='scripts/' --exclude-glob='tkvibes-lead-engine/' --exclude-glob='operations-dashboard/' --exclude-glob='local-llm/' --exclude-glob='deliverables/' --exclude-glob='.venv/' --exclude-glob='.next/' --exclude-glob='node_modules/' --exclude-glob='memory/' --exclude-glob='__pycache__/' --exclude-glob='\*.pyc' ./ /public_html/;
+            bye;
+          "
