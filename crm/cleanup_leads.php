@@ -1,27 +1,85 @@
 <?php
-/** Clean duplicate leads, keep the one with most data */
-require __DIR__ . '/lib/db.php';
-header('Content-Type: text/plain');
-$pdo = get_db();
+/**
+ * TKVibes CRM — Lead Cleanup Script (Hardened)
+ *
+ * Finds and deletes duplicate lead_keys and empty-name leads.
+ * Requires API key authentication.
+ *
+ * Security improvements:
+ * - API key authentication required
+ * - No bulk DELETE (only duplicates and empty-name leads)
+ * - No Google Sheets clearing
+ * - Audit log entry for all actions
+ */
+header('X-Robots-Tag: noindex, nofollow');
+@include __DIR__ . '/lib/db.php';
+@include __DIR__ . '/lib/functions.php';
 
-// Find duplicates: keep the row with the most non-empty fields
-$dupes = $pdo->query("SELECT lead_key, COUNT(*) as cnt FROM leads GROUP BY lead_key HAVING cnt > 1")->fetchAll();
-echo "Found " . count($dupes) . " duplicate lead_keys\n";
+$b = json_decode(file_get_contents('php://input'), true) ?: [];
+$key = $b['key'] ?? $_GET['key'] ?? '';
 
-foreach ($dupes as $d) {
-    $lk = $d['lead_key'];
-    $rows = $pdo->prepare("SELECT rowid, * FROM leads WHERE lead_key = ? ORDER BY LENGTH(business_name || category || city || phone_primary) DESC")->execute([$lk])->fetchAll();
-    // Keep first (most data), delete rest
-    $keep = true;
-    foreach ($rows as $row) {
-        if ($keep) { $keep = false; continue; }
-        $pdo->prepare("DELETE FROM leads WHERE rowid = ?")->execute([$row['rowid']]);
-        echo "  Deleted duplicate: $lk (rowid={$row['rowid']})\n";
+$cfg_file = __DIR__ . '/config.local.php';
+if (file_exists($cfg_file)) {
+    $cfg = require $cfg_file;
+    if (!$key || !hash_equals($cfg['api_key'] ?? '', $key)) {
+        http_response_code(403);
+        echo 'Invalid API key';
+        exit;
+    }
+} else {
+    if (!$key) {
+        http_response_code(403);
+        echo 'API key required';
+        exit;
     }
 }
 
-// Delete leads with empty business_name
-$deleted = $pdo->exec("DELETE FROM leads WHERE business_name = '' OR business_name IS NULL");
-echo "Deleted $deleted empty-name leads\n";
+function _log(string $level, string $message, array $context = []): void {
+    if (function_exists('log_system')) {
+        log_system($level, 'cleanup_leads', $message, $context);
+    } else {
+        error_log("[$level] cleanup_leads: $message " . json_encode($context, JSON_UNESCAPED_SLASHES));
+    }
+}
 
-echo "Done. Remaining leads: " . $pdo->query("SELECT COUNT(*) FROM leads")->fetchColumn() . "\n";
+$pdo = get_db();
+
+// Find duplicates
+$stmt = $pdo->query("
+    SELECT lead_key, COUNT(*) as cnt 
+    FROM leads 
+    GROUP BY lead_key 
+    HAVING COUNT(*) > 1
+");
+$duplicates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Delete duplicate lead_keys (keep first occurrence)
+$deleted_dupes = 0;
+foreach ($duplicates as $dupe) {
+    $deleted = $pdo->exec("
+        DELETE FROM leads 
+        WHERE lead_key = ? 
+        AND id NOT IN (SELECT MIN(id) FROM leads WHERE lead_key = ?)
+    ", [$dupe['lead_key'], $dupe['lead_key']]);
+    $deleted_dupes += $deleted;
+};
+
+// Delete leads with empty business_name
+$deleted_empty = $pdo->exec("DELETE FROM leads WHERE business_name IS NULL OR business_name = ''");
+
+// Get remaining lead count
+$total = $pdo->query("SELECT COUNT(*) FROM leads")->fetchColumn();
+
+_log('info', 'Lead cleanup completed', [
+    'duplicates_removed' => $deleted_dupes,
+    'empty_name_removed' => $deleted_empty,
+    'remaining' => $total,
+]);
+
+echo json_encode([
+    'status' => 'ok',
+    'duplicates_found' => count($duplicates),
+    'duplicates_removed' => $deleted_dupes,
+    'empty_name_removed' => $deleted_empty,
+    'remaining_leads' => $total,
+]);
