@@ -119,8 +119,15 @@ def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
     return all_leads
 
 
-def process_leads(leads: list[Lead], cfg: dict) -> list[Lead]:
-    """Enrich, score, finalize, dedupe, DNC-filter a batch of leads."""
+def process_leads(leads: list[Lead], cfg: dict, distribute: bool = True) -> list[Lead]:
+    """Enrich, score, finalize, dedupe, DNC-filter a batch of leads.
+    
+    If distribute=True (default), leads are distributed equally across
+    category_groups defined in config.yaml scoring section.
+    """
+    excluded = set((cfg.get("scoring", {}) or {}).get("excluded_categories", []))
+    excluded_lower = {c.lower() for c in excluded}
+    
     for l in leads:
         enrich(l)
         score_lead(l, cfg["scoring"]["high_fit_categories"])
@@ -129,13 +136,91 @@ def process_leads(leads: list[Lead], cfg: dict) -> list[Lead]:
             l.owner_name = ""
 
     leads = dedupe(leads)
+    
+    # Filter out excluded categories (dental, real estate, shopify, etc.)
+    if excluded_lower:
+        filtered = [l for l in leads 
+                    if not any(ex in (l.category or "").lower() for ex in excluded_lower)]
+        removed = len(leads) - len(filtered)
+        if removed > 0:
+            logger.info("Filtered out %d leads from excluded categories", removed)
+        leads = filtered
+    
     leads = apply_dnc(leads)
     leads.sort(key=lambda x: (TIER_RANK.get(x.lead_tier, 9), -x.lead_score))
-
+    
+    # Distribute leads equally across category groups
+    groups = (cfg.get("scoring", {}) or {}).get("category_groups", {})
+    if distribute and groups:
+        leads = _distribute_across_groups(leads, groups)
+    
+    # Run email finder on the final set of leads
     ef = cfg.get("email_finder", {}) or {}
     if ef.get("enabled"):
         leads = find_emails(leads, ef)
     return leads
+
+
+def _distribute_across_groups(leads: list[Lead], groups: dict) -> list[Lead]:
+    """Distribute leads equally across category groups.
+    
+    For each group (legal, medical, veterinary, services), takes an equal
+    share of the total leads, then interleaves them for diversity.
+    """
+    # Build reverse lookup: category -> group_name
+    cat_to_group = {}
+    for gname, cats in groups.items():
+        for c in cats:
+            cat_to_group[c.lower()] = gname
+    
+    group_leads: dict[str, list[Lead]] = {g: [] for g in groups}
+    ungrouped: list[Lead] = []
+    
+    for l in leads:
+        cat_lower = (l.category or "").lower()
+        matched_group = None
+        for gname, cats in groups.items():
+            for c in cats:
+                if c.lower() in cat_lower or cat_lower in c.lower():
+                    matched_group = gname
+                    break
+            if matched_group:
+                break
+        if matched_group:
+            group_leads[matched_group].append(l)
+        else:
+            ungrouped.append(l)
+    
+    # Calculate per-group target
+    n_groups = len(groups)
+    per_group_target = max(1, len(leads) // n_groups) if leads else 0
+    
+    # Take per_group_target from each group, then add remaining
+    result: list[Lead] = []
+    remaining: list[Lead] = []
+    
+    for gname, group_list in group_leads.items():
+        group_list.sort(key=lambda x: (TIER_RANK.get(x.lead_tier, 9), -x.lead_score))
+        taken = group_list[:per_group_target]
+        leftover = group_list[per_group_target:]
+        result.extend(taken)
+        remaining.extend(leftover)
+    
+    # Add ungrouped leads and leftovers
+    remaining.extend(ungrouped)
+    remaining.sort(key=lambda x: (TIER_RANK.get(x.lead_tier, 9), -x.lead_score))
+    result.extend(remaining)
+    
+    # Interleave for diversity (HOT first, then WARM, then COLD)
+    result.sort(key=lambda x: (TIER_RANK.get(x.lead_tier, 9), -x.lead_score))
+    
+    # Log distribution
+    for gname, group_list in group_leads.items():
+        logger.info("[distribution] %s group: %d leads", gname, len(group_list))
+    logger.info("[distribution] ungrouped: %d leads", len(ungrouped))
+    logger.info("[distribution] total distributed: %d leads", len(result))
+    
+    return result
 
 
 COUNTRY_CODES = {
@@ -242,6 +327,8 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--no-crm-push", action="store_true",
                         help="Skip pushing leads to CRM after run")
+    parser.add_argument("--no-distribute", action="store_true",
+                        help="Disable equal category distribution (use scoring-only order)")
     args = parser.parse_args()
 
     load_dotenv()
@@ -284,11 +371,26 @@ def main():
                 len(cfg["targets"]["cities"]), len(cfg["targets"]["categories"]), nq)
 
     # ── Phase 1: Discovery ───────────────────────────────────────────────
+    # Remove excluded categories from config targets before discovery
+    # (dental, real estate, shopify, saas, massage, med spa, home services, etc.)
+    scoring_cfg = cfg.get("scoring", {}) or {}
+    excluded = scoring_cfg.get("excluded_categories", [])
+    if excluded:
+        orig_cats = cfg["targets"]["categories"]
+        excluded_lower = {c.lower() for c in excluded}
+        cfg["targets"]["categories"] = [c for c in orig_cats
+                                        if not any(ex in c.lower() for ex in excluded_lower)]
+        removed = len(orig_cats) - len(cfg["targets"]["categories"])
+        if removed > 0:
+            logger.info("Removed %d excluded categories from discovery: %s", removed, excluded)
     raw = discover_all(cfg, per_country_target=per_country)
     logger.info("Discovery complete: %d raw leads (trace_id=%s)", len(raw), trace_id)
 
     # ── Phase 2: Process ─────────────────────────────────────────────────
-    leads = process_leads(raw, cfg)
+    if args.no_distribute:
+        leads = process_leads(raw, cfg, distribute=False)
+    else:
+        leads = process_leads(raw, cfg, distribute=True)
     hot = sum(1 for l in leads if l.lead_tier == "HOT")
     warm = sum(1 for l in leads if l.lead_tier == "WARM")
     cold = sum(1 for l in leads if l.lead_tier == "COLD")

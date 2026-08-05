@@ -82,55 +82,145 @@ targets:
     - "Saskatoon"
     - "Regina"
     - "Halifax"
+  # ── EXCLUDED categories (not targeted) ──
+  # shopify or WooCommerce shops, SaaS startups, local service businesses
+  # (except lawyers), real estate, coaches/consultants with funnels,
+  # massage centres, med spas, home services, clinics (chiropractors,
+  # physios, small medical practices), lawyers (except law firms)
+  excluded_categories:
+    # Explicitly excluded (too noisy or low-fit)
+    []
   categories:
-    # High-value professionals & clinics (primary targets)
-    - "dental clinic"
-    - "dentist"
-    - "doctor clinic"
-    - "medical clinic"
-    - "lawyer"
+    # Law firms (legal services — high-fit target)
     - "law firm"
+    - "lawyer"
     - "advocate"
-    - "pet clinic"
-    - "veterinary clinic"
-    - "veterinarian"
+    # Medical specialists (chiropractors, physios, small practices — high-fit)
+    - "chiropractor"
+    - "physical therapist"
+    - "physiotherapy clinic"
     - "orthopedic clinic"
-    - "skin clinic"
+    - "cardiology clinic"
+    - "pediatric clinic"
+    - "pediatrician"
     - "dermatologist"
-    - "cosmetic clinic"
     - "eye clinic"
     - "ophthalmologist"
-    - "physiotherapy clinic"
-    - "pediatric clinic"
-    - "cardiology clinic"
+    - "cosmetic clinic"
+    - "skin clinic"
     - "fertility clinic"
+    # Veterinary & pet care (high-fit)
+    - "veterinary clinic"
+    - "pet clinic"
+    - "veterinarian"
     # High-value service businesses (secondary)
     - "interior designer"
     - "architecture firm"
     - "chartered accountant"
     - "financial advisor"
     - "insurance agency"
-    - "real estate agency"
-    - "boutique"
     - "luxury salon"
     - "spa"
     - "jewelry store"
+    - "boutique"
   max_results_per_query: 60
 
 scoring:
   hot_threshold: 70
   warm_threshold: 45
+  # Removed: dental, real estate, shopify, saas, massage, med spa, home services, coaches, consultants
   high_fit_categories:
-    ["dental clinic","dentist","doctor","clinic","hospital","medical",
-     "lawyer","law firm","advocate","attorney","solicitor",
-     "pet clinic","veterinary","veterinarian","vet",
-     "orthopedic","skin clinic","dermatologist","cosmetic","dermatology",
-     "eye clinic","ophthalmologist","optometry",
-     "physiotherapy","physiotherapist","pediatric","cardiology","fertility",
-     "interior designer","architect","architecture",
-     "chartered accountant","ca firm","financial advisor","wealth management",
-     "insurance","real estate","boutique","luxury","salon","spa","jewelry",
-     "cafe","restaurant","gym","home services","coaching","retail"]
+    - "lawyer"
+    - "law firm"
+    - "advocate"
+    - "attorney"
+    - "solicitor"
+    - "chiropractor"
+    - "physical therapist"
+    - "physiotherapy"
+    - "physiotherapist"
+    - "orthopedic"
+    - "cardiology"
+    - "pediatric"
+    - "pediatrician"
+    - "dermatologist"
+    - "eye clinic"
+    - "ophthalmologist"
+    - "cosmetic"
+    - "dermatology"
+    - "skin clinic"
+    - "fertility"
+    - "veterinary"
+    - "veterinarian"
+    - "vet"
+    - "pet clinic"
+    - "interior designer"
+    - "architect"
+    - "architecture"
+    - "chartered accountant"
+    - "ca firm"
+    - "financial advisor"
+    - "wealth management"
+    - "insurance"
+    - "luxury"
+    - "salon"
+    - "spa"
+    - "jewelry"
+    - "boutique"
+    - "cafe"
+    - "restaurant"
+    - "gym"
+    - "coaching"
+    - "retail"
+  # Categories excluded from discovery (user-requested exclusions)
+  excluded_categories:
+    - "dental"
+    - "dentist"
+    - "doctors"
+    - "medical clinic"
+    - "real estate"
+    - "shopify"
+    - "woocommerce"
+    - "saas"
+    - "massage"
+    - "med spa"
+    - "home services"
+    - "coaches"
+    - "consultants"
+  # Target distribution: aim for equal representation across these groups
+  category_groups:
+    legal:
+      - "law firm"
+      - "lawyer"
+      - "advocate"
+    medical:
+      - "chiropractor"
+      - "physical therapist"
+      - "physiotherapy clinic"
+      - "orthopedic clinic"
+      - "cardiology clinic"
+      - "pediatric clinic"
+      - "pediatrician"
+      - "dermatologist"
+      - "eye clinic"
+      - "ophthalmologist"
+      - "cosmetic clinic"
+      - "skin clinic"
+      - "fertility clinic"
+    veterinary:
+      - "veterinary clinic"
+      - "pet clinic"
+      - "veterinarian"
+    services:
+      - "interior designer"
+      - "architecture firm"
+      - "chartered accountant"
+      - "financial advisor"
+      - "insurance agency"
+      - "luxury salon"
+      - "spa"
+      - "jewelry store"
+      - "boutique"
 
 rate_limits:
   per_domain_delay_seconds: 4

@@ -181,7 +181,7 @@ def main():
                            lead_key, type_, filename, len(info["html"]))
                 continue
             result = push_to_crm(lead_key, type_, info["html"],
-                                 filename, api_url, api_key, trace_key)
+                                 filename, api_url, api_key, trace_id)
             if result.get("status") == "ok":
                 pushed += 1
                 logger.info("✅ %s → %s (%s)", lead_key, type_, filename)
