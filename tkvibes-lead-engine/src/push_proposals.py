@@ -1,15 +1,17 @@
 """Push generated proposal files (sample sites + pitch decks) to the CRM.
 
-After the website agent and deck agent generate HTML files in
-data/proposals/<slug>/ or ~/Desktop/clients/<slug>/, run this script
+After the website generator produces HTML files in data/proposals/<slug>/, run this script
 to push them to the CRM so employees can view/download them.
 
-Usage:
-    python -m src.push_proposals                  # push all from data/proposals/
-    python -m src.push_proposals --lead-key KEY   # push for one lead
-    python -m src.push_proposals --dry-run        # show what would be pushed
-"""
+This version uses `_generation_results.json` as the authoritative list of proposals
+to push, rather than scanning ALL proposal directories (which includes stale/old proposals).
 
+Usage:
+    python -m src.push_proposals                  # push all from current run results
+    python -m src.push_proposals --dry-run        # show what would be pushed
+    python -m src.push_proposals --lead-key KEY   # push for one lead
+    python -m src.push_proposals --file FILE --type TYPE --lead-key KEY  # single file
+"""
 import argparse
 import json
 import os
@@ -19,74 +21,27 @@ from urllib.request import Request, urlopen
 from urllib.error import URLError
 
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 from .config import load_config
 from .models import Lead
+from .log_config import get_logger, set_trace_id, get_trace_id
+from .generate_proposals import slugify
+
+logger = get_logger(__name__)
 
 PROPOSALS_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "proposals")
 
 
-def slugify(name: str) -> str:
-    """Match the slugify in scaffold_clients.py."""
-    if not (name or "").strip():
-        return "client"
-    s = re.sub(r"[^a-z0-9\s]", "", name.lower()).strip()
-    s = re.sub(r"\s+", "-", s)
-    return re.sub(r"-{2,}", "-", s)[:60] or "client"
-
-
-def find_proposal_files(lead_key: str, slug: str) -> dict:
-    """Find sample site and pitch deck files for a lead.
-
-    Looks in:
-      data/proposals/<slug>-website.html
-      data/proposals/<slug>/index.html
-      data/proposals/<slug>/pitch-deck.html
-      ~/Desktop/clients/<slug>/<slug>-website.html
-      ~/Desktop/clients/<slug>/<slug>-pitch-deck.html
-    """
-    results = {}
-    proposals_dir = PROPOSALS_DIR
-    clients_dir = os.path.expanduser("~/Desktop/clients")
-
-    # Sample site — flat file
-    paths = [
-        os.path.join(proposals_dir, f"{slug}-website.html"),
-        os.path.join(proposals_dir, f"{slug}.html"),
-        os.path.join(clients_dir, slug, f"{slug}-website.html"),
-    ]
-    for p in paths:
-        if os.path.isfile(p):
-            with open(p, "r", encoding="utf-8") as f:
-                results["sample_site"] = {"html": f.read(), "path": p}
-            break
-
-    # Sample site — folder/index.html
-    folder_idx = os.path.join(proposals_dir, slug, "index.html")
-    if "sample_site" not in results and os.path.isfile(folder_idx):
-        with open(folder_idx, "r", encoding="utf-8") as f:
-            results["sample_site"] = {"html": f.read(), "path": folder_idx}
-
-    # Pitch deck
-    paths = [
-        os.path.join(proposals_dir, f"{slug}-pitch-deck.html"),
-        os.path.join(proposals_dir, slug, "pitch-deck.html"),
-        os.path.join(clients_dir, slug, f"{slug}-pitch-deck.html"),
-    ]
-    for p in paths:
-        if os.path.isfile(p):
-            with open(p, "r", encoding="utf-8") as f:
-                results["pitch_deck"] = {"html": f.read(), "path": p}
-            break
-
-    return results
-
-
 def push_to_crm(lead_key: str, type_: str, html: str, filename: str,
-                api_url: str, api_key: str) -> dict:
-    """POST a proposal to the CRM."""
+                api_url: str, api_key: str, trace_id: str = "") -> dict:
+    """POST a proposal to the CRM proposals.php endpoint."""
+    if not trace_id:
+        trace_id = get_trace_id() or set_trace_id()
+
     payload = json.dumps({
         "key": api_key,
+        "trace_id": trace_id,
         "lead_key": lead_key,
         "type": type_,
         "html": html,
@@ -96,6 +51,7 @@ def push_to_crm(lead_key: str, type_: str, html: str, filename: str,
     url = f"{api_url.rstrip('/')}/api/proposals.php"
     req = Request(url, data=payload, method="POST")
     req.add_header("Content-Type", "application/json")
+    req.add_header("X-Trace-ID", trace_id)
 
     try:
         with urlopen(req, timeout=30) as resp:
@@ -105,6 +61,41 @@ def push_to_crm(lead_key: str, type_: str, html: str, filename: str,
         return {"status": "error", "reason": str(e)}
     except json.JSONDecodeError as e:
         return {"status": "error", "reason": f"bad response: {e}"}
+
+
+def find_proposal_files(lead_key: str, slug: str) -> dict:
+    """Find sample site and pitch deck files for a lead.
+
+    Looks in data/proposals/<slug>/ for index.html and pitch-deck.html.
+    """
+    results = {}
+    slug_dir = os.path.join(PROPOSALS_DIR, slug)
+
+    index_path = os.path.join(slug_dir, "index.html")
+    if os.path.isfile(index_path):
+        with open(index_path, "r", encoding="utf-8") as f:
+            results["sample_site"] = {"html": f.read(), "path": index_path}
+
+    deck_path = os.path.join(slug_dir, "pitch-deck.html")
+    if os.path.isfile(deck_path):
+        with open(deck_path, "r", encoding="utf-8") as f:
+            results["pitch_deck"] = {"html": f.read(), "path": deck_path}
+
+    return results
+
+
+def load_generation_results() -> list[dict]:
+    """Load the _generation_results.json file from the current run."""
+    results_path = os.path.join(PROPOSALS_DIR, "_generation_results.json")
+    if not os.path.isfile(results_path):
+        logger.error("No _generation_results.json found at %s", results_path)
+        return []
+    try:
+        with open(results_path, encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        logger.error("Failed to read _generation_results.json: %s", e)
+        return []
 
 
 def main():
@@ -127,6 +118,8 @@ def main():
         print("ERROR: CRM API URL/KEY not configured in config.yaml")
         sys.exit(1)
 
+    trace_id = set_trace_id()
+
     # Single file mode
     if args.file and args.type:
         if not os.path.isfile(args.file):
@@ -138,81 +131,68 @@ def main():
             print(f"[dry-run] would push {args.type} from {args.file} for lead {args.lead_key or '?'}")
             return
         result = push_to_crm(args.lead_key or "", args.type, html,
-                             os.path.basename(args.file), api_url, api_key)
+                             os.path.basename(args.file), api_url, api_key, trace_id)
         print(f"  Push: {result.get('status', 'error')} — {args.type}")
         if result.get("status") != "ok":
             print(f"  Error: {result.get('reason', 'unknown')}")
         return
 
-    # Batch mode: scan data/proposals/ directory
-    if not os.path.isdir(PROPOSALS_DIR):
-        print(f"No proposals directory at {PROPOSALS_DIR}")
+    # Batch mode: load generation results (authoritative list of what to push)
+    results = load_generation_results()
+    if not results:
+        print("No generation results found. Run generate_proposals.py first.")
         return
 
-    # Try to load handoff JSON to map slug → lead_key
-    export_path = cfg["handoff"]["export_json"]
-    lead_map = {}  # slug → lead_key
-    if os.path.isfile(export_path):
-        with open(export_path, encoding="utf-8") as f:
-            leads_data = json.load(f)
-        for ld in leads_data:
-            slug = slugify(ld.get("business_name", ""))
-            lead_map[slug] = ld.get("lead_key", "")
-
-    # Also check wa_links.json
-    wa_path = os.path.join(PROPOSALS_DIR, "wa_links.json")
-    if os.path.isfile(wa_path):
-        with open(wa_path, encoding="utf-8") as f:
-            wa_data = json.load(f)
-        for item in wa_data:
-            slug = slugify(item.get("business_name", ""))
-            if slug not in lead_map:
-                lead_map[slug] = item.get("lead_key", "")
+    # Filter by lead_key if specified
+    if args.lead_key:
+        results = [r for r in results if r.get("lead_key") == args.lead_key]
+        if not results:
+            print(f"No proposals found for lead_key: {args.lead_key}")
+            return
 
     pushed = 0
     errors = 0
+    skipped = 0
 
-    # Scan the proposals directory
-    for entry in os.listdir(PROPOSALS_DIR):
-        if entry.startswith(".") or entry in ("template.html", "template-v2.html", "wa_links.json"):
+    for result in results:
+        if result.get("status") != "generated":
+            logger.debug("Skipping %s: status=%s", result.get("slug"), result.get("status"))
+            skipped += 1
             continue
 
-        # Determine slug
-        slug = entry
-        if entry.endswith(".html"):
-            slug = slug[:-5]  # remove .html
-
-        lead_key = lead_map.get(slug, "")
-        if not lead_key and args.lead_key:
-            lead_key = args.lead_key
-
+        lead_key = result.get("lead_key", "")
+        slug = result.get("slug", "")
         if not lead_key:
-            print(f"  SKIP {entry}: no lead_key mapping for slug '{slug}'")
+            logger.warning("Skipping %s: no lead_key", slug)
+            skipped += 1
             continue
 
         # Find proposal files
         proposals = find_proposal_files(lead_key, slug)
         if not proposals:
-            print(f"  SKIP {entry}: no proposal files found")
+            logger.warning("Skipping %s: no proposal files found", slug)
+            skipped += 1
             continue
 
         for type_, info in proposals.items():
             filename = os.path.basename(info["path"])
             if args.dry_run:
-                print(f"  [dry-run] {lead_key} → {type_} ({filename}, {len(info['html'])} chars)")
+                logger.info("[dry-run] %s → %s (%s, %d chars)",
+                           lead_key, type_, filename, len(info["html"]))
                 continue
-            result = push_to_crm(lead_key, type_, info["html"], filename, api_url, api_key)
+            result = push_to_crm(lead_key, type_, info["html"],
+                                 filename, api_url, api_key, trace_key)
             if result.get("status") == "ok":
                 pushed += 1
-                print(f"  ✅ {lead_key} → {type_} ({filename})")
+                logger.info("✅ %s → %s (%s)", lead_key, type_, filename)
             else:
                 errors += 1
-                print(f"  ❌ {lead_key} → {type_}: {result.get('reason', 'error')}")
+                logger.error("❌ %s → %s: %s", lead_key, type_, result.get('reason', 'error'))
 
     if not args.dry_run:
-        print(f"\nDone: {pushed} pushed, {errors} errors")
+        logger.info("Done: %d pushed, %d errors, %d skipped", pushed, errors, skipped)
     else:
-        print(f"\nDry-run: would push proposals")
+        logger.info("Dry-run: %d would be pushed, %d skipped", pushed + errors, skipped)
 
 
 if __name__ == "__main__":

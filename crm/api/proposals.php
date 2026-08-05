@@ -104,15 +104,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $slug = preg_replace('/-{2,}/', '-', $slug);
     $slug = substr($slug, 0, 60);
 
+    // Check if trace_id column exists (migration safety)
+    $has_trace_id = false;
+    try {
+        $pdo->query("SELECT trace_id FROM leads LIMIT 1");
+        $has_trace_id = true;
+    } catch (PDOException $e) {
+        // Column doesn't exist — migrate
+        $alter = $driver === 'sqlite' ? "ALTER TABLE leads ADD COLUMN trace_id TEXT DEFAULT ''" : "ALTER TABLE leads ADD COLUMN trace_id VARCHAR(64) DEFAULT ''";
+        try { $pdo->exec($alter); $has_trace_id = true; } catch (PDOException $e2) {}
+    }
+
     if ($type === 'sample_site') {
         $github_url = "https://raw.githubusercontent.com/{$github_repo}/{$github_branch}/Sample%20Webpages%20and%20pitch%20deck/sample%20website/{$slug}.html";
-        // Only update if not already set (don't overwrite local deploy_proposals.php URLs)
-        $pdo->prepare("UPDATE leads SET sample_site_url = COALESCE(NULLIF(sample_site_url, ''), ?), updated_at = $now_expr WHERE lead_key = ?")
-            ->execute([$github_url, $lead_key]);
+        $update_sql = $has_trace_id
+            ? "UPDATE leads SET sample_site_url = COALESCE(NULLIF(sample_site_url, ''), ?), trace_id = ?, updated_at = $now_expr WHERE lead_key = ?"
+            : "UPDATE leads SET sample_site_url = COALESCE(NULLIF(sample_site_url, ''), ?), updated_at = $now_expr WHERE lead_key = ?";
+        $pdo->prepare($update_sql)->execute($has_trace_id ? [$github_url, $trace_id ?: uniqid('prop_'), $lead_key] : [$github_url, $lead_key]);
     } elseif ($type === 'pitch_deck') {
         $github_url = "https://raw.githubusercontent.com/{$github_repo}/{$github_branch}/Sample%20Webpages%20and%20pitch%20deck/pitch%20deck/{$slug}.html";
-        $pdo->prepare("UPDATE leads SET pitch_deck_url = COALESCE(NULLIF(pitch_deck_url, ''), ?), updated_at = $now_expr WHERE lead_key = ?")
-            ->execute([$github_url, $lead_key]);
+        $update_sql = $has_trace_id
+            ? "UPDATE leads SET pitch_deck_url = COALESCE(NULLIF(pitch_deck_url, ''), ?), trace_id = ?, updated_at = $now_expr WHERE lead_key = ?"
+            : "UPDATE leads SET pitch_deck_url = COALESCE(NULLIF(pitch_deck_url, ''), ?), updated_at = $now_expr WHERE lead_key = ?";
+        $pdo->prepare($update_sql)->execute($has_trace_id ? [$github_url, $trace_id ?: uniqid('prop_'), $lead_key] : [$github_url, $lead_key]);
     }
 
     // Mark any pending/running generation jobs as completed when a proposal is uploaded

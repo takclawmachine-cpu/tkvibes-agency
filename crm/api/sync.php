@@ -49,6 +49,62 @@ if (empty($leads)) {
 
 $pdo = get_db();
 
+// ── Migration safety: ensure new columns/tables exist ──────────────────────
+// This handles cases where init_schema() didn't create new columns on existing tables
+$migration_errors = [];
+
+// Ensure sync_log table exists
+try {
+    $pdo->query("SELECT 1 FROM sync_log LIMIT 1");
+} catch (PDOException $e) {
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS sync_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idempotency_key TEXT NOT NULL,
+            trace_id TEXT NOT NULL DEFAULT '',
+            status TEXT NOT NULL DEFAULT 'processing',
+            error_message TEXT,
+            processed_at TEXT,
+            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        )");
+        // MySQL fallback
+        $pdo->exec("CREATE TABLE IF NOT EXISTS sync_log (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            idempotency_key VARCHAR(255) NOT NULL,
+            trace_id VARCHAR(64) NOT NULL DEFAULT '',
+            status VARCHAR(20) NOT NULL DEFAULT 'processing',
+            error_message TEXT,
+            processed_at DATETIME,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    } catch (PDOException $e2) {
+        $migration_errors[] = "sync_log table: " . $e2->getMessage();
+    }
+}
+
+// Ensure trace_id column exists on leads table
+try {
+    $pdo->query("SELECT trace_id FROM leads LIMIT 1");
+} catch (PDOException $e) {
+    try {
+        $pdo->exec("ALTER TABLE leads ADD COLUMN trace_id TEXT NOT NULL DEFAULT ''");
+    } catch (PDOException $e2) {
+        // MySQL
+        $pdo->exec("ALTER TABLE leads ADD COLUMN trace_id VARCHAR(64) NOT NULL DEFAULT ''");
+    }
+}
+
+// Ensure trace_id column exists on proposal_generation_jobs
+try {
+    $pdo->query("SELECT trace_id FROM proposal_generation_jobs LIMIT 1");
+} catch (PDOException $e) {
+    try {
+        $pdo->exec("ALTER TABLE proposal_generation_jobs ADD COLUMN trace_id TEXT NOT NULL DEFAULT ''");
+    } catch (PDOException $e2) {
+        $pdo->exec("ALTER TABLE proposal_generation_jobs ADD COLUMN trace_id VARCHAR(64) NOT NULL DEFAULT ''");
+    }
+}
+
 // ── Idempotency check ───────────────────────────────────────────────────
 $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 if ($idempotency_key) {
