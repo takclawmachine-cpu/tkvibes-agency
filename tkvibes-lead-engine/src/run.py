@@ -82,7 +82,11 @@ def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
                                 city, cat, cfg["targets"]["max_results_per_query"]
                             )
                             cat_leads += city_leads
-                            country_pool += city_leads
+                            # Tag leads with their search category for group distribution
+                            for cl in city_leads:
+                                if not cl.category or cl.category == "Consultant" or cl.category == "":
+                                    cl.category = cat.title()
+                            country_pool += cat_leads
                         except Exception as e:
                             logger.error("[google_places] error: %s", e)
                 all_leads += country_pool
@@ -155,7 +159,7 @@ def process_leads(leads: list[Lead], cfg: dict, distribute: bool = True) -> list
     groups = (cfg.get("scoring", {}) or {}).get("category_groups", {})
     if distribute and groups:
         leads = _distribute_across_groups(leads, groups)
-    
+
     # Run email finder on the final set of leads
     ef = cfg.get("email_finder", {}) or {}
     if ef.get("enabled"):
@@ -163,24 +167,35 @@ def process_leads(leads: list[Lead], cfg: dict, distribute: bool = True) -> list
     return leads
 
 
-def _distribute_across_groups(leads: list[Lead], groups: dict) -> list[Lead]:
+def _distribute_across_groups(leads: list[Lead], groups: dict, search_cat: str = "") -> list[Lead]:
     """Distribute leads equally across category groups.
     
     For each group (legal, medical, veterinary, services), takes an equal
     share of the total leads, then interleaves them for diversity.
-    """
-    # Build reverse lookup: category -> group_name
-    cat_to_group = {}
-    for gname, cats in groups.items():
-        for c in cats:
-            cat_to_group[c.lower()] = gname
     
+    Uses search_cat (the Google Places search category) as fallback if
+    the lead's category field doesn't match any group.
+    """
     group_leads: dict[str, list[Lead]] = {g: [] for g in groups}
     ungrouped: list[Lead] = []
     
+    # Check if search_cat matches any group
+    search_group = None
+    if search_cat:
+        search_lower = search_cat.lower()
+        for gname, cats in groups.items():
+            for c in cats:
+                if c.lower() in search_lower or search_lower in c.lower():
+                    search_group = gname
+                    break
+            if search_group:
+                break
+    
     for l in leads:
         cat_lower = (l.category or "").lower()
-        matched_group = None
+        matched_group = search_group  # Fallback to search category group
+        
+        # Try matching the lead's actual category first
         for gname, cats in groups.items():
             for c in cats:
                 if c.lower() in cat_lower or cat_lower in c.lower():
@@ -188,6 +203,7 @@ def _distribute_across_groups(leads: list[Lead], groups: dict) -> list[Lead]:
                     break
             if matched_group:
                 break
+        
         if matched_group:
             group_leads[matched_group].append(l)
         else:
