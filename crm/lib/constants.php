@@ -13,7 +13,7 @@ define('SHEET_IMPORT_FIELDS', [
     'whatsapp', 'email', 'address', 'city', 'pincode', 'region', 'country',
     'website_url', 'website_quality', 'rating', 'review_count', 'years_in_business',
     'socials', 'pain_points', 'recommended_pitch', 'notes', 'contact_channel',
-    'opening_hours', 'has_website', 'source', 'source_url', 'lead_score', 'lead_tier',
+    'opening_hours', 'has_website', 'source', 'source_url',
     'assigned_employee', 'outreach_status', 'wa_link',
 ]);
 
