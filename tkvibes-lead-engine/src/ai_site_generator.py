@@ -523,7 +523,7 @@ def render_site(lead_data: dict, spec: dict, competitor_html: str = "",
         "cta": cta_html,
     }
     all_sections = "".join(section_map.get(s, "") for s in layout["section_order"]
-                          if s != "contact")
+                          if s not in ("contact", "hero"))
     all_sections += extra_sections
     if "contact" in layout["section_order"]:
         all_sections += contact_html

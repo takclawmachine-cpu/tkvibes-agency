@@ -196,19 +196,26 @@ def _build_footer_services(cfg: dict) -> str:
 
 def render_sample_site(lead: Lead, sample_template: str,
                        competitors: list[dict] | None = None,
-                       analysis: dict | None = None) -> str:
+                       analysis: dict | None = None,
+                       ai_spec: dict | None = None) -> str:
     """Render the sample site template with lead data.
 
     Fills all {{PLACEHOLDER}} variables in template-v2.html.
-    Optionally injects competitor analysis or website audit sections.
+    Optionally injects competitor analysis, website audit, or AI-generated content.
+    When ai_spec is provided, uses AI-generated tagline, hero headline, description,
+    and SEO metadata instead of defaults.
     """
     cfg = get_visual_config(lead.category)
     primary = cfg["primary"]
     secondary = cfg["secondary"]
     icon = cfg.get("icon", "fa-star")
     icon_hero = cfg.get("icon_hero", "fa-building")
-    tagline = cfg.get("tagline", "Excellence You Can Trust")
     meta_suffix = cfg.get("meta_suffix", "Services")
+
+    # Use AI content when available, fall back to category defaults
+    tagline = ai_spec.get("tagline") if ai_spec else None
+    if not tagline:
+        tagline = cfg.get("tagline", "Excellence You Can Trust")
 
     phone = lead.phone_primary or ""
     phone_wa = sanitize_phone(lead.whatsapp or phone)
@@ -235,8 +242,13 @@ def render_sample_site(lead: Lead, sample_template: str,
     # Footer service links
     footer_services_html = _build_footer_services(cfg)
 
-    # Description
-    description = f"Your trusted {category_lower} serving the {city} community with {rating}★ rated service and {reviews}+ happy customers."
+    # Description — use AI content when available
+    if ai_spec and ai_spec.get("description"):
+        description = ai_spec["description"]
+    elif ai_spec and ai_spec.get("hero_subheadline"):
+        description = ai_spec["hero_subheadline"]
+    else:
+        description = f"Your trusted {category_lower} serving the {city} community with {rating}★ rated service and {reviews}+ happy customers."
 
     # Google Maps URL
     maps_url = f"https://www.google.com/maps?q={lat},{lng}&z=16"
@@ -565,8 +577,25 @@ def generate_for_lead(lead: Lead, config: dict, sample_template: str,
     # ── Generation phase ──────────────────────────────────────────────────
     os.makedirs(out_dir, exist_ok=True)
 
-    # Use template-v2 (now premium with images, glassmorphism, animations)
-    sample_html = render_sample_site(lead, sample_template, competitors, analysis)
+    # Use AI to generate unique content (tagline, headline, services, SEO),
+    # then render through the premium template-v2 for the best of both.
+    try:
+        from .visuals import get_visual_config
+        from .ai_site_generator import build_ai_site_spec
+        lead_dict = lead.to_dict()
+        visuals = get_visual_config(lead.category)
+        ai_spec = build_ai_site_spec(lead_dict, visuals)
+        if ai_spec:
+            logger.info("[ai] Content spec for %s (layout: %s, tagline: %s)",
+                        lead.business_name, ai_spec.get("layout"), ai_spec.get("tagline"))
+            sample_html = render_sample_site(lead, sample_template, competitors, analysis,
+                                             ai_spec=ai_spec)
+        else:
+            sample_html = render_sample_site(lead, sample_template, competitors, analysis)
+    except Exception as e:
+        logger.warning("[ai] AI content generation failed for %s, using defaults: %s",
+                       lead.business_name, e)
+        sample_html = render_sample_site(lead, sample_template, competitors, analysis)
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(sample_html)
 
