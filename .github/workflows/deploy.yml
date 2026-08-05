@@ -28,22 +28,43 @@ jobs:
       - name: Install lftp
         run: sudo apt-get install -y -qq lftp
 
-      - name: Deploy to Hostinger via lftp (FTPS)
+      - name: Create lftp deploy script
         run: |
-          lftp -c "
-            set ftp:ssl-allow yes;
-            set ftp:ssl-protect-data yes;
-            set ftp:ssl-force yes;
-            set ssl:verify-certificate no;
-            set ftp:passive-mode yes;
-            set dns:order 'inet inet6';
-            set net:timeout 120;
-            set net:max-retries 15;
-            set net:reconnect-interval-base 10;
-            set net:reconnect-interval-max 60;
-            set ftp:rest-list no;
-            set ftp:use-mdtm off;
-            open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
-            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 --exclude-glob='.git/' --exclude-glob='.github/' --exclude-glob='scripts/' --exclude-glob='README.md' --exclude-glob='AGENTS.md' --exclude-glob='memory/' --exclude-glob='.gitignore' --exclude-glob='tkvibes-lead-engine/' --exclude-glob='operations-dashboard/' --exclude-glob='local-llm/' --exclude-glob='deliverables/' --exclude-glob='*.pyc' --exclude-glob='__pycache__/' --exclude-glob='.venv/' --exclude-glob='.next/' --exclude-glob='node_modules/' ./ /public_html/;
-            bye;
-          "
+          cat > /tmp/deploy-lftp.sh << 'LFTP_SCRIPT'
+          #!/bin/bash
+          set -e
+          FTP_USER="${{ secrets.FTP_USER }}"
+          FTP_PASS="${{ secrets.FTP_PASS }}"
+          FTP_HOST="${{ secrets.FTP_HOST }}"
+          
+          lftp -u "$FTP_USER","$FTP_PASS" $FTP_HOST << 'LFTP_CMDS'
+          set ftp:ssl-allow yes
+          set ftp:ssl-protect-data yes
+          set ftp:ssl-force yes
+          set ssl:verify-certificate no
+          set ftp:passive-mode yes
+          set dns:order inet
+          set net:timeout 120
+          set net:max-retries 15
+          mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3
+            --exclude '\.git/'
+            --exclude '\.github/'
+            --exclude 'scripts/'
+            --exclude 'tkvibes-lead-engine/'
+            --exclude 'operations-dashboard/'
+            --exclude 'local-llm/'
+            --exclude 'deliverables/'
+            --exclude '\.venv/'
+            --exclude '\.next/'
+            --exclude 'node_modules/'
+            --exclude 'memory/'
+            --exclude '\.pyc$'
+            --exclude '__pycache__/'
+            ./ /public_html/
+          bye
+          LFTP_CMDS
+          LFTP_SCRIPT
+          chmod +x /tmp/deploy-lftp.sh
+
+      - name: Deploy to Hostinger
+        run: bash /tmp/deploy-lftp.sh
