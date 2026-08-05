@@ -577,23 +577,27 @@ def generate_for_lead(lead: Lead, config: dict, sample_template: str,
     # ── Generation phase ──────────────────────────────────────────────────
     os.makedirs(out_dir, exist_ok=True)
 
-    # Use AI to generate unique content (tagline, headline, services, SEO),
-    # then render through the premium template-v2 for the best of both.
+    # Use AI to generate unique content (tagline, headline, services, SEO)
+    # and render through the premium layout templates for unique designs.
+    # Falls back to the static template-v2 if AI generation is unavailable.
     try:
         from .visuals import get_visual_config
-        from .ai_site_generator import build_ai_site_spec
+        from .ai_site_generator import build_ai_site_spec, render_site
         lead_dict = lead.to_dict()
         visuals = get_visual_config(lead.category)
         ai_spec = build_ai_site_spec(lead_dict, visuals)
         if ai_spec:
             logger.info("[ai] Content spec for %s (layout: %s, tagline: %s)",
                         lead.business_name, ai_spec.get("layout"), ai_spec.get("tagline"))
-            sample_html = render_sample_site(lead, sample_template, competitors, analysis,
-                                             ai_spec=ai_spec)
+            # Use render_site for unique layout (5 different templates)
+            sample_html = render_site(lead_dict, ai_spec,
+                                       competitor_html=_generate_competitor_lead_section(lead, competitors) if competitors and not lead.has_website else "",
+                                       analysis_html=_generate_analysis_lead_section(lead, analysis) if analysis and analysis.get("issues") and lead.website_url else "")
         else:
+            # Fallback to template-v2 with default AI spec
             sample_html = render_sample_site(lead, sample_template, competitors, analysis)
     except Exception as e:
-        logger.warning("[ai] AI content generation failed for %s, using defaults: %s",
+        logger.warning("[ai] AI content generation failed for %s, using template fallback: %s",
                        lead.business_name, e)
         sample_html = render_sample_site(lead, sample_template, competitors, analysis)
     with open(index_path, "w", encoding="utf-8") as f:

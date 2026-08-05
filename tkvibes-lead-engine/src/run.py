@@ -70,17 +70,19 @@ def discover_all(cfg: dict, per_country_target: int = 20) -> list[Lead]:
             for country in sorted(country_cities):  # deterministic order
                 country_pool: list[Lead] = []
                 logger.info("── [%s] ──", country)
+                # Ensure each category is tried at least once for diversity
                 for cat in cfg["targets"]["categories"]:
-                    if enough(country_pool):
-                        break
+                    cat_leads: list[Lead] = []
                     for city in country_cities[country]:
-                        if enough(country_pool):
+                        if enough(country_pool) and cat_leads:
                             break
                         logger.info("[google_places] %s / %s", city, cat)
                         try:
-                            country_pool += gp.discover(
+                            city_leads = gp.discover(
                                 city, cat, cfg["targets"]["max_results_per_query"]
                             )
+                            cat_leads += city_leads
+                            country_pool += city_leads
                         except Exception as e:
                             logger.error("[google_places] error: %s", e)
                 all_leads += country_pool
