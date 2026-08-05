@@ -2,156 +2,708 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dr. Rajat Sachdeva's Dentistry In Ashok Vihar | Delhi</title>
-<meta name="description" content="Visit Dr. Rajat Sachdeva's Dentistry In Ashok Vihar in Delhi. Your Smile Deserves The Best Care">
-<meta name="robots" content="index, follow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Dr. Rajat Sachdeva's Dentistry In Ashok Vihar — Best Dental Clinic in Delhi</title>
+<meta name="description" content="Dr. Rajat Sachdeva's Dentistry In Ashok Vihar — 0★ rated dental clinic in . 0+ reviews. Your Smile Deserves The Best Care">
+<meta property="og:title" content="Dr. Rajat Sachdeva's Dentistry In Ashok Vihar — Dental Clinic in Delhi">
+<meta property="og:description" content="0★ rated dental clinic with 0+ reviews. Your Smile Deserves The Best Care">
+<meta property="og:image" content="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200&q=80">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script type="application/ld+json">{
-"@context": "https://schema.org",
-"@type": "LocalBusiness",
-"name": "Dr. Rajat Sachdeva's Dentistry In Ashok Vihar",
-"address": {"@type": "PostalAddress", "addressLocality": "Delhi"},
-"aggregateRating": {"@type": "AggregateRating", "ratingValue": "0", "reviewCount": "0"},
-"telephone": "+919818894041"
-}</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:#070b14;color:#e2e8f0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:'Space Grotesk',sans-serif}
-img{max-width:100%}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Inter',sans-serif;background:#070b14;color:#e2e8f0;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif}
+img{max-width:100%;height:auto;display:block}
 a{text-decoration:none;color:inherit}
 
-/* Hero fade-in */
-.hero *{animation:fadeUp 0.8s ease-out forwards}
-.hero *:nth-child(2){animation-delay:0.1s}
-.hero *:nth-child(3){animation-delay:0.2s}
-.hero *:nth-child(4){animation-delay:0.3s}
-.hero *:nth-child(5){animation-delay:0.4s}
-@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#070b14}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#8b5cf6,#a78bfa);border-radius:3px}
 
-/* Cards & hover */
-.card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2rem;transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
-.card:hover{transform:translateY(-6px);background:rgba(255,255,255,0.04);border-color:#8b5cf625}
-.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;background:linear-gradient(135deg,#8b5cf615,#a78bfa10)}
-.card-icon i{font-size:20px;color:#8b5cf6}
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.section{padding:100px 0;position:relative}
+.section-sm{padding:60px 0}
 
-.stat-card,.testimonial{transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
-.stat-card:hover,.testimonial:hover{transform:translateY(-4px)}
+/* Glass */
+.glass{background:rgba(255,255,255,0.035);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:20px}
+.glass-strong{background:rgba(255,255,255,0.06);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.1);border-radius:24px}
+
+/* Glow orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(140px);opacity:0.08;pointer-events:none;z-index:0}
+.orb-1{width:500px;height:500px;background:#8b5cf6;top:-150px;left:-150px}
+.orb-2{width:400px;height:400px;background:#a78bfa;bottom:-100px;right:-100px}
+
+/* Animations */
+.fade-up{opacity:1;transform:translateY(0);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
+.fade-up.anim-out{opacity:0;transform:translateY(40px)}
+.fade-up.animate-in{opacity:1;transform:translateY(0)}
+.fade-scale{opacity:1;transform:scale(1);transition:all 0.7s cubic-bezier(0.16,1,0.3,1)}
+.fade-scale.anim-out{opacity:0;transform:scale(0.92)}
+.fade-scale.animate-in{opacity:1;transform:scale(1)}
+.stagger > *{opacity:0;transform:translateY(30px);transition:all 0.6s cubic-bezier(0.16,1,0.3,1)}
+.stagger.animate-in > *{opacity:1;transform:translateY(0)}
+.stagger > *:nth-child(1){transition-delay:0s}
+.stagger > *:nth-child(2){transition-delay:0.1s}
+.stagger > *:nth-child(3){transition-delay:0.2s}
+.stagger > *:nth-child(4){transition-delay:0.3s}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 32px;border-radius:14px;font-weight:600;font-size:15px;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);border:none;cursor:pointer;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff;box-shadow:0 6px 24px #8b5cf635}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px #8b5cf645}
+.btn-outline{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);color:#e2e8f0}
+.btn-outline:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2)}
+
+/* Cards */
+.card-clean{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:32px;transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
+.card-clean:hover{transform:translateY(-6px);background:rgba(255,255,255,0.04);border-color:#8b5cf625}
+
+/* Grids */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.grid-2x1{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+
+/* Stats */
+.stat-num{font-size:2.8rem;font-weight:800;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+
+/* Section labels */
+.section-label{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);font-size:13px;font-weight:500;color:#8b5cf6;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.5px}
+.section-title{font-size:2.5rem;font-weight:700;line-height:1.2;margin-bottom:16px;letter-spacing:-0.5px}
+.section-sub{color:#94a3b8;font-size:16px;line-height:1.7;max-width:560px}
+
+/* Service card icon */
+.service-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;background:linear-gradient(135deg,#8b5cf615,#a78bfa10)}
+.service-icon i{font-size:22px;color:#8b5cf6}
+
+/* Quote */
+.quote{position:relative;padding:28px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:20px}
+.quote::before{content:'\201C';position:absolute;top:-6px;left:18px;font-size:4rem;color:#8b5cf6;opacity:0.15;font-family:Georgia,serif;line-height:1}
+
+/* Hours */
+.hours-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px}
+.hours-row:last-child{border:none}
+.hours-row span:first-child{color:#94a3b8}
+.hours-row span:last-child{color:#fff;font-weight:500}
+
+/* Divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);margin:0 auto;max-width:70%}
+
+/* Stars */
+.stars{color:#fbbf24}
+.rating-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);font-size:14px;font-weight:600;color:#fbbf24}
+
+/* WA Float */
+.wa-float{position:fixed;bottom:24px;left:24px;z-index:999;width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(37,211,102,0.35);cursor:pointer;transition:transform 0.3s}
+.wa-float:hover{transform:scale(1.1)}
+.wa-float i{font-size:26px;color:#fff}
+
+/* Scroll top */
+.scroll-top{position:fixed;bottom:24px;right:24px;z-index:999;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a78bfa);display:none;align-items:center;justify-content:center;cursor:pointer;border:none;color:#fff;font-size:18px;box-shadow:0 4px 20px #8b5cf635;transition:all 0.3s}
+.scroll-top:hover{transform:translateY(-3px);box-shadow:0 8px 30px #8b5cf645}
+.scroll-top.show{display:flex}
 
 /* Nav */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;transition:all 0.3s}
-.nav.scrolled{background:rgba(7,11,20,0.92);backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.04)}
-.nav-links a{font-size:0.85rem;color:#94a3b8;margin-left:1.5rem;transition:color 0.2s}
-.nav-links a:hover{color:white}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 0;transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
+.nav.scrolled{background:rgba(7,11,20,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,255,255,0.04)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:12px}
+.nav-logo-icon{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo-icon i{color:#fff;font-size:18px}
+.nav-logo-text{font-weight:700;font-size:18px;color:#fff;letter-spacing:-0.3px}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;font-weight:500;color:#94a3b8;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{display:none}
+.hamburger{display:flex;align-items:center;justify-content:center;width:42px;height:42px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:#fff;font-size:20px;cursor:pointer;transition:all 0.2s}
+.hamburger:hover{background:rgba(255,255,255,0.08)}
 
-@media(max-width:768px){
-.hero h1{font-size:2.2rem !important}
-.nav-links{display:none}
-h1{font-size:2rem !important}
-.card{padding:1.5rem}
-}</style>
+/* Mobile menu */
+.mobile-menu{position:fixed;top:0;right:-100%;width:80%;max-width:340px;height:100vh;height:100dvh;background:rgba(7,11,20,0.98);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);z-index:200;transition:right 0.5s cubic-bezier(0.16,1,0.3,1);padding:28px;display:flex;flex-direction:column;gap:24px}
+.mobile-menu.open{right:0}
+.mobile-menu a{font-size:17px;color:#e2e8f0;padding:10px 0;display:block;font-weight:500;border-bottom:1px solid rgba(255,255,255,0.04)}
+.mobile-menu .close-btn{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mobile-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;display:none}
+.mobile-overlay.show{display:block}
+
+/* Map */
+.map-wrap{border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+.map-wrap iframe{width:100%;height:320px;border:0}
+
+/* Popup */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
+.popup-overlay.show{display:flex}
+.popup-box{max-width:420px;width:100%;padding:32px;border-radius:24px;position:relative;text-align:center}
+
+/* Cookie */
+.cookie{position:fixed;bottom:0;left:0;right:0;padding:16px 24px;z-index:9998;display:none;background:rgba(7,11,20,0.95)}
+.cookie.show{display:block}
+.cookie-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;max-width:800px;margin:0 auto}
+.cookie-inner p{font-size:13px;color:#94a3b8;flex:1;min-width:200px}
+
+/* Logo scroller */
+.scroller{overflow:hidden;padding:30px 0}
+.scroller-track{display:flex;gap:60px;animation:scroll 30s linear infinite;width:max-content}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Image overlay */
+.img-overlay{position:relative;overflow:hidden;border-radius:20px}
+.img-overlay img{width:100%;height:100%;object-fit:cover;transition:transform 0.8s cubic-bezier(0.16,1,0.3,1)}
+.img-overlay:hover img{transform:scale(1.05)}
+.img-overlay .overlay-content{position:absolute;bottom:0;left:0;right:0;padding:24px;background:linear-gradient(transparent,rgba(7,11,20,0.85))}
+
+/* Hero image backgrounds */
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200&q=80') center/cover;filter:brightness(0.35) saturate(0.8);z-index:0}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(7,11,20,0.6) 0%,rgba(7,11,20,0.3) 50%,rgba(7,11,20,0.7) 100%);z-index:1}
+.hero-overlay-gradient{position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(7,11,20,0.4) 40%,rgba(7,11,20,0.95) 100%);z-index:1}
+
+/* Contact row */
+.contact-row{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;transition:all 0.2s}
+.contact-row:hover{background:rgba(255,255,255,0.03)}
+.contact-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.04);flex-shrink:0}
+.contact-icon i{color:#8b5cf6;font-size:18px}
+
+/* Footer */
+.footer{padding:80px 0 30px;border-top:1px solid rgba(255,255,255,0.04)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.footer h4{font-weight:700;color:#e2e8f0;margin-bottom:20px;font-size:15px;text-transform:uppercase;letter-spacing:0.5px}
+.footer a,.footer p{font-size:14px;color:#64748b;line-height:2;transition:color 0.2s}
+.footer a:hover{color:#e2e8f0}
+.footer .footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.footer .footer-desc{color:#64748b;font-size:14px;line-height:1.7;margin-bottom:20px}
+.footer-social{display:flex;gap:12px}
+.footer-social a{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:#64748b;font-size:16px;transition:all 0.2s}
+.footer-social a:hover{background:#8b5cf620;border-color:#8b5cf630;color:#8b5cf6}
+.footer-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:12px;color:#475569}
+
+/* ===== DESKTOP ONLY ===== */
+@media (min-width: 768px) {
+  .hamburger{display:none}
+  .nav-cta{display:inline-flex}
+  .hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center}
+  .section-title{font-size:3rem}
+  .stat-num{font-size:3.2rem}
+  .section{padding:120px 0}
+  .footer-grid{grid-template-columns:2fr 1fr 1fr 1fr}
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 767px) {
+  .nav-links,.nav-cta{display:none}
+  .hamburger{display:flex}
+  .hero-grid{display:flex;flex-direction:column;gap:32px}
+  .hero-section{padding-top:100px;padding-bottom:60px;min-height:auto}
+  .hero-section h1{font-size:1.8rem !important;letter-spacing:-0.5px}
+  .hero-section .btn{width:100%;justify-content:center}
+  .hero-btns{flex-direction:column}
+  .hero-btns .btn{width:100%}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .grid-2x1{grid-template-columns:1fr;gap:32px}
+  .section{padding:60px 0}
+  .section-title{font-size:1.6rem;letter-spacing:-0.3px}
+  .stat-num{font-size:2rem}
+  .container{padding:0 16px}
+  .map-wrap iframe{height:240px}
+  .footer-grid{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .wa-float{width:50px;height:50px;bottom:16px;left:16px}
+  .wa-float i{font-size:22px}
+  .scroll-top{width:40px;height:40px;bottom:16px;right:16px}
+  .glass-strong{padding:24px}
+  .card-clean{padding:24px}
+  .popup-box{padding:24px;margin:12px}
+  .cookie-inner{flex-direction:column;text-align:center}
+}
+
+/* Parallax section background */
+.parallax-section{position:relative;overflow:hidden}
+.parallax-section .section-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-attachment:fixed;filter:brightness(0.2) saturate(0.6);z-index:0}
+.parallax-section .section-bg-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,11,20,0.8) 0%,rgba(7,11,20,0.95) 100%);z-index:1}
+.parallax-section .container{position:relative;z-index:2}
+
+/* Hero stats row */
+.hero-stats{display:flex;gap:32px;margin-top:32px}
+.hero-stat{text-align:center}
+.hero-stat-value{font-size:1.8rem;font-weight:800;color:#fff}
+.hero-stat-label{font-size:0.8rem;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+</style>
 </head>
 <body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
 <!-- Nav -->
 <nav class="nav" id="navbar">
-<div style="font-weight:700;font-size:1.1rem;color:white">Dr.</div>
+<div class="container nav-inner">
+<a href="#" class="nav-logo">
+<div class="nav-logo-icon"><i class="fa-solid fa-tooth" style="color:#fff;font-size:16px"></i></div>
+<span class="nav-logo-text">Dr. Vihar</span>
+</a>
 <div class="nav-links">
-<a href="#services">Services</a>
 <a href="#about">About</a>
+<a href="#services">Services</a>
+<a href="#why-us">Why Us</a>
+<a href="#testimonials">Reviews</a>
 <a href="#contact">Contact</a>
-<a href="tel:919818894041" style="padding:8px 18px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;font-weight:600;font-size:0.85rem">📞 Call</a>
+</div>
+<a href="tel:+919818894041" class="btn btn-primary nav-cta" style="padding:10px 22px;font-size:13px"><i class="fa-solid fa-phone"></i>Call Now</a>
+<button class="hamburger" id="menu-toggle" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
 </div>
 </nav>
 
-<section class="hero" style="position:relative;min-height:95vh;background:url('https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200') center/cover;display:flex;align-items:center;justify-content:center;overflow:hidden">
-<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(7,11,20,0.7) 0%,rgba(7,11,20,0.5) 50%,rgba(7,11,20,0.8) 100%);z-index:1"></div>
-<div style="position:relative;z-index:2;text-align:center;color:white;max-width:750px;padding:2rem;opacity:0">
-<h1 style="font-size:3.8rem;font-weight:800;margin-bottom:1rem;line-height:1.1;letter-spacing:-1px">Welcome to Dr. Rajat Sachdeva's Dentistry In Ashok Vihar</h1>
-<p style="font-size:1.2rem;opacity:0.9;margin-bottom:2rem">Your Smile Deserves The Best Care</p>
-<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-<a href="#contact" style="padding:14px 32px;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;font-weight:700;text-decoration:none;font-size:1rem;box-shadow:0 6px 24px #8b5cf635">Get in Touch</a>
-<a href="tel:919818894041" style="padding:14px 32px;border-radius:14px;border:1px solid rgba(255,255,255,0.2);color:white;font-weight:600;text-decoration:none;font-size:1rem">📞 Call Now</a>
+<!-- Mobile Menu -->
+<div class="mobile-overlay" id="mobile-overlay"></div>
+<div class="mobile-menu" id="mobile-menu">
+<button class="close-btn" id="menu-close"><i class="fa-solid fa-xmark"></i></button>
+<a href="#about" class="mm-link">About</a>
+<a href="#services" class="mm-link">Services</a>
+<a href="#why-us" class="mm-link">Why Us</a>
+<a href="#testimonials" class="mm-link">Reviews</a>
+<a href="#contact" class="mm-link">Contact</a>
+<a href="tel:+919818894041" class="btn btn-primary" style="margin-top:20px;width:100%"><i class="fa-solid fa-phone"></i>Call Now</a>
 </div>
-<div style="margin-top:2rem;opacity:0.5;font-size:0.95rem"> 0 (0 reviews)</div>
-</div></section>
-<section class="hero" style="position:relative;min-height:95vh;background:url('https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200') center/cover;display:flex;align-items:center;justify-content:center;overflow:hidden">
-<div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(7,11,20,0.7) 0%,rgba(7,11,20,0.5) 50%,rgba(7,11,20,0.8) 100%);z-index:1"></div>
-<div style="position:relative;z-index:2;text-align:center;color:white;max-width:750px;padding:2rem;opacity:0">
-<h1 style="font-size:3.8rem;font-weight:800;margin-bottom:1rem;line-height:1.1;letter-spacing:-1px">Welcome to Dr. Rajat Sachdeva's Dentistry In Ashok Vihar</h1>
-<p style="font-size:1.2rem;opacity:0.9;margin-bottom:2rem">Your Smile Deserves The Best Care</p>
-<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-<a href="#contact" style="padding:14px 32px;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;font-weight:700;text-decoration:none;font-size:1rem;box-shadow:0 6px 24px #8b5cf635">Get in Touch</a>
-<a href="tel:919818894041" style="padding:14px 32px;border-radius:14px;border:1px solid rgba(255,255,255,0.2);color:white;font-weight:600;text-decoration:none;font-size:1rem">📞 Call Now</a>
-</div>
-<div style="margin-top:2rem;opacity:0.5;font-size:0.95rem"> 0 (0 reviews)</div>
-</div></section><section id="about" style="padding:5rem 1.5rem;background:rgba(255,255,255,0.015)">
-<div class="container" style="max-width:800px;margin:0 auto;text-align:center">
-<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">About Dr. Rajat Sachdeva's Dentistry In Ashok Vihar</h2>
-<p style="font-size:1rem;color:#94a3b8;line-height:1.8">Your trusted dental clinic serving the Delhi community.</p>
-<div style="margin-top:2rem;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap">
-<div style="text-align:center;padding:1.5rem 2rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.05)"><div style="font-size:2rem;font-weight:800;color:#8b5cf6">0</div><div style="font-size:0.85rem;color:#64748b">⭐ Rating</div></div>
-<div style="text-align:center;padding:1.5rem 2rem;background:rgba(255,255,255,0.03);border-radius:16px;border:1px solid rgba(255,255,255,0.05)"><div style="font-size:2rem;font-weight:800;color:#a78bfa">0</div><div style="font-size:0.85rem;color:#64748b">📝 Reviews</div></div>
+
+<!-- Hero -->
+<section class="hero-section section parallax-section" id="hero" style="min-height:100vh;display:flex;align-items:center">
+<div class="hero-bg" style="background-image:url('https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200&q=80');filter:brightness(0.3) saturate(0.7)"></div>
+<div class="hero-overlay-gradient"></div>
+<div class="container" style="position:relative;z-index:2;width:100%">
+<div class="hero-grid">
+<div>
+<div class="fade-up anim-out">
+<div class="rating-badge" style="margin-bottom:24px">
+<i class="fa-solid fa-star"></i>0/5 · 0+ Google Reviews
 </div>
 </div>
-</section><section id="services" style="padding:5rem 1.5rem;background:#070b14">
-<div class="container" style="max-width:1200px;margin:0 auto">
-<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Our Services</h2>
-<p style="text-align:center;color:#64748b;margin-bottom:3rem;font-size:0.95rem">Your Smile Deserves The Best Care</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem">
-<div class="card"><div class="card-icon"><i class="fa-solid fa-star"></i></div><p style="color:#94a3b8">Professional services tailored to your needs.</p></div>
+<h1 class="fade-up anim-out" style="font-size:3.2rem;font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1px">
+Dr. Rajat Sachdeva's Dentistry In Ashok Vihar<br>
+<span style="background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Your Smile Deserves The Best Care</span>
+</h1>
+<p class="fade-up anim-out" style="color:#94a3b8;font-size:16px;line-height:1.8;margin-bottom:32px;max-width:500px">
+Your trusted dental clinic serving the Delhi community with 0★ rated service and 0+ happy customers.
+</p>
+<div class="hero-btns fade-up anim-out" style="display:flex;gap:12px;flex-wrap:wrap">
+<a href="tel:+919818894041" class="btn btn-primary"><i class="fa-solid fa-phone"></i>Book Appointment</a>
+<a href="https://wa.me/919818894041" class="btn btn-outline"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i>Chat on WhatsApp</a>
+</div>
+<div class="hero-stats fade-up anim-out" style="margin-top:36px">
+<div class="hero-stat"><div class="hero-stat-value">0</div><div class="hero-stat-label">Rating</div></div>
+<div class="hero-stat"><div class="hero-stat-value">0</div><div class="hero-stat-label">Reviews</div></div>
+<div class="hero-stat"><div class="hero-stat-value" data-count="10">10+</div><div class="hero-stat-label">Years</div></div>
 </div>
 </div>
-</section><section style="padding:5rem 1.5rem;background:#070b14">
-<div class="container" style="max-width:1200px;margin:0 auto">
-<h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:0.5rem;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">What Clients Say</h2>
-<p style="text-align:center;color:#64748b;margin-bottom:3rem;font-size:0.95rem">Real reviews from real customers</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
-<div class="testimonial" style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2rem;position:relative"><div style="font-size:0.9rem;font-style:italic;color:#cbd5e1;margin-bottom:1rem;line-height:1.7;position:relative;z-index:1">“Decent service. Room for improvement but overall okay.”</div><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a78bfa);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff">V</div><div><div style="font-size:0.85rem;font-weight:600;color:white">Verified Customer</div><div style="font-size:0.75rem;color:#64748b">Google Review</div></div></div></div><div class="testimonial" style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:2rem;position:relative"><div style="font-size:0.9rem;font-style:italic;color:#cbd5e1;margin-bottom:1rem;line-height:1.7;position:relative;z-index:1">“Average experience. The staff was friendly enough.”</div><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a78bfa);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff">C</div><div><div style="font-size:0.85rem;font-weight:600;color:white">Verified Customer</div><div style="font-size:0.75rem;color:#64748b">Google Review</div></div></div></div>
+<div class="fade-up anim-out" style="display:flex;justify-content:center;align-items:center">
+<div class="img-overlay" style="width:100%;max-width:500px;height:480px;border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,0.4)">
+<img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80" alt="Dr. Rajat Sachdeva's Dentistry In Ashok Vihar" style="width:100%;height:100%;object-fit:cover">
+<div class="overlay-content" style="text-align:center">
+<div class="rating-badge"><i class="fa-solid fa-star"></i> 0 · 0 reviews</div>
 </div>
 </div>
-</section><section id="cta" style="padding:5rem 1.5rem;background:linear-gradient(135deg,#8b5cf6 0%,#a78bfa 100%);color:white;text-align:center">
-<div class="container" style="max-width:700px;margin:0 auto">
-<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Ready to Get Started?</h2>
-<p style="margin-bottom:2rem;opacity:0.9;font-size:1rem">Your Smile Deserves The Best Care</p>
-<a href="tel:919818894041" style="display:inline-block;padding:1rem 2.5rem;border-radius:14px;background:white;color:#8b5cf6;font-weight:700;text-decoration:none;font-size:1rem;box-shadow:0 6px 20px rgba(0,0,0,0.15)">Get in Touch</a>
 </div>
-</section><section style="padding:4rem 1.5rem;background:rgba(255,255,255,0.008)"><div class="container" style="max-width:1200px;margin:0 auto"><div style="max-width:800px;width:100%">
-<h2 class="anim-fade-up d1" style="font-family:'Poppins',sans-serif;font-size:2.2rem;font-weight:700;margin-bottom:1.5rem;text-align:center">Your Competitors Are Beating You Online</h2>
-<p class="anim-fade-up d2" style="text-align:center;color:#94a3b8;margin-bottom:2rem;font-size:0.9rem">While you have no website, these nearby businesses are capturing your customers</p>
-<div style="display:flex;flex-direction:column;gap:1rem;max-width:600px;margin:0 auto">
-<div class="glass anim-fade-up d3" style="display:flex;align-items:center;gap:1rem;padding:1.5rem"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#4ade80);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;color:#fff;font-size:18px">1</div><div style="flex:1"><div style="font-weight:700;margin-bottom:4px">SmileCare Dental</div><div style="font-size:0.85rem;color:#94a3b8">4.0 ★★★★☆ (100 reviews)</div><div style="font-size:0.8rem;color:#64748b">Near Delhi</div></div><div style="text-align:right;flex-shrink:0"><span style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(34,197,94,0.15);color:#4ade80;font-size:0.75rem;font-weight:600">✓ Website</span></div></div>
-<div class="glass anim-fade-up d4" style="display:flex;align-items:center;gap:1rem;padding:1.5rem"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#4ade80);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;color:#fff;font-size:18px">2</div><div style="flex:1"><div style="font-weight:700;margin-bottom:4px">City Dental Hub</div><div style="font-size:0.85rem;color:#94a3b8">4.0 ★★★★☆ (170 reviews)</div><div style="font-size:0.8rem;color:#64748b">Near Delhi</div></div><div style="text-align:right;flex-shrink:0"><span style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(34,197,94,0.15);color:#4ade80;font-size:0.75rem;font-weight:600">✓ Website</span></div></div>
-<div class="glass anim-fade-up d5" style="display:flex;align-items:center;gap:1rem;padding:1.5rem"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#4ade80);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;color:#fff;font-size:18px">3</div><div style="flex:1"><div style="font-weight:700;margin-bottom:4px">DentoPlus Clinic</div><div style="font-size:0.85rem;color:#94a3b8">4.6 ★★★★☆ (156 reviews)</div><div style="font-size:0.8rem;color:#64748b">Near Delhi</div></div><div style="text-align:right;flex-shrink:0"><span style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(34,197,94,0.15);color:#4ade80;font-size:0.75rem;font-weight:600">✓ Website</span></div></div>
-</div><p class="anim-fade-up d7" style="text-align:center;color:#ef4444;margin-top:2rem;font-size:0.9rem"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px"></i>Every day without a website, Dr. Rajat Sachdeva's Dentistry In Ashok Vihar loses potential customers to these competitors.</p></div></div></section><section id="contact" style="padding:5rem 1.5rem;background:rgba(255,255,255,0.008);color:white;text-align:center">
-<div class="container" style="max-width:600px;margin:0 auto">
-<h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem;background:linear-gradient(135deg,#8b5cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Get in Touch</h2>
-<p style="margin-bottom:2.5rem;color:#64748b">Your Smile Deserves The Best Care</p>
-<div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;font-size:1rem">
-<div style="padding:1rem 2rem;background:rgba(255,255,255,0.03);border-radius:14px;border:1px solid rgba(255,255,255,0.06)">📞 <a href="tel:919818894041" style="color:white;text-decoration:none">+919818894041</a></div>
-<div style="padding:1rem 2rem;background:rgba(255,255,255,0.03);border-radius:14px;border:1px solid rgba(255,255,255,0.06)">📍 Delhi</div>
+</div>
+</div>
+</section>
+
+<!-- Stats Bar -->
+<section class="section-sm">
+<div class="container">
+<div class="glass-strong fade-up anim-out" style="padding:36px">
+<div class="grid-4" style="text-align:center">
+<div class="fade-up anim-out"><div class="stat-num" data-count="0">0</div><div style="font-size:14px;color:#94a3b8;margin-top:6px;font-weight:500">Google Rating</div></div>
+<div class="fade-up anim-out"><div class="stat-num" data-count="0">0</div><div style="font-size:14px;color:#94a3b8;margin-top:6px;font-weight:500">Verified Reviews</div></div>
+<div class="fade-up anim-out"><div class="stat-num">10+</div><div style="font-size:14px;color:#94a3b8;margin-top:6px;font-weight:500">Years Experience</div></div>
+<div class="fade-up anim-out"><div class="stat-num">98%</div><div style="font-size:14px;color:#94a3b8;margin-top:6px;font-weight:500">Satisfaction Rate</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- About -->
+<section id="about" class="section">
+<div class="container">
+<div class="grid-2x1">
+<div class="fade-up anim-out">
+<div class="img-overlay" style="height:420px;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+<img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80" alt="About Dr. Rajat Sachdeva's Dentistry In Ashok Vihar" style="width:100%;height:100%;object-fit:cover">
+</div>
+</div>
+<div class="fade-up anim-out">
+<div class="section-label"><i class="fa-solid fa-info-circle"></i><span>About Us</span></div>
+<h2 class="section-title">Trusted Dental Clinic<br>in Delhi</h2>
+<p style="color:#94a3b8;line-height:1.8;margin-bottom:16px;font-size:15px">
+Dr. Rajat Sachdeva's Dentistry In Ashok Vihar is a premier dental clinic serving the Delhi community with excellence. With a 0-star rating and over 0 reviews on Google, we have earned the trust of countless customers.
+</p>
+<p style="color:#94a3b8;line-height:1.8;margin-bottom:28px;font-size:15px">
+We combine expertise, modern techniques, and genuine care to deliver outstanding results. Every interaction is built on transparency, quality, and customer satisfaction.
+</p>
+<div class="grid-2" style="gap:12px">
+<div class="check-row" style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:#8b5cf615;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-check" style="color:#8b5cf6;font-size:14px"></i></div><span style="font-size:14px;color:#cbd5e1">Modern Facilities</span></div>
+<div class="check-row" style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:#8b5cf615;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-check" style="color:#8b5cf6;font-size:14px"></i></div><span style="font-size:14px;color:#cbd5e1">Expert Professional Team</span></div>
+<div class="check-row" style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:#8b5cf615;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-check" style="color:#8b5cf6;font-size:14px"></i></div><span style="font-size:14px;color:#cbd5e1">Affordable & Transparent</span></div>
+<div class="check-row" style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:#8b5cf615;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-check" style="color:#8b5cf6;font-size:14px"></i></div><span style="font-size:14px;color:#cbd5e1">Customer-First Approach</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Services -->
+<section id="services" class="section">
+<div class="container">
+<div style="text-align:center;margin-bottom:48px" class="fade-up anim-out">
+<div class="section-label"><i class="fa-solid fa-list"></i><span>Our Services</span></div>
+<h2 class="section-title">Professional Dental Care Services</h2>
+<p class="section-sub" style="margin:0 auto">Comprehensive solutions tailored to meet your needs with the highest standards of quality</p>
+</div>
+<div class="grid-3 stagger anim-out">
+<div class="card fade-up">
+<div class="service-icon"><i class="fa-solid fa-teeth"></i></div>
+<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Dental Implants</h3>
+<p style="font-size:14px;color:#94a3b8;line-height:1.6">Advanced implant solutions for a confident smile</p>
+</div>
+<div class="card fade-up">
+<div class="service-icon"><i class="fa-solid fa-teeth-open"></i></div>
+<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Root Canal</h3>
+<p style="font-size:14px;color:#94a3b8;line-height:1.6">Painless root canal treatment with modern techniques</p>
+</div>
+<div class="card fade-up">
+<div class="service-icon"><i class="fa-solid fa-star-of-life"></i></div>
+<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Teeth Whitening</h3>
+<p style="font-size:14px;color:#94a3b8;line-height:1.6">Professional whitening for a brighter smile</p>
+</div>
+<div class="card fade-up">
+<div class="service-icon"><i class="fa-solid fa-braces"></i></div>
+<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Braces & Aligners</h3>
+<p style="font-size:14px;color:#94a3b8;line-height:1.6">Orthodontic solutions for perfectly aligned teeth</p>
+</div>
+</div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Why Us -->
+<section id="why-us" class="section">
+<div class="container">
+<div style="text-align:center;margin-bottom:48px" class="fade-up anim-out">
+<div class="section-label"><i class="fa-solid fa-shield-halved"></i><span>Why Choose Us</span></div>
+<h2 class="section-title">Why Customers Trust Dr. Vihar</h2>
+</div>
+<div class="grid-3 stagger anim-out">
+<div class="card fade-up" style="text-align:center">
+<div class="service-icon" style="margin:0 auto 16px"><i class="fa-solid fa-shield-halved"></i></div>
+<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Trusted & Safe</h3>
+<p style="font-size:14px;color:#94a3b8;line-height:1.6">Sterilized equipment, strict hygiene protocols</p>
+</div>
+<div class="card fade-up" style="text-align:center">
+<div class="service-icon" style="margin:0 auto 16px"><i class="fa-solid fa-shield-halved"></i></div>
+<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Flexible Hours</h3>
+<p style="font-size:14px;color:#94a3b8;line-height:1.6">Open 7 days a week, morning and evening slots</p>
+</div>
+<div class="card fade-up" style="text-align:center">
+<div class="service-icon" style="margin:0 auto 16px"><i class="fa-solid fa-shield-halved"></i></div>
+<h3 style="font-size:17px;font-weight:700;margin-bottom:8px">Affordable Care</h3>
+<p style="font-size:14px;color:#94a3b8;line-height:1.6">Premium treatments at honest prices</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Competitive / Website Analysis Section -->
+
+<section class="section" style="background:rgba(239,68,68,0.03)">
+<div class="container">
+<div style="text-align:center;margin-bottom:40px" class="fade-up">
+<div class="section-label"><span>Competitive Gap</span></div>
+<h2 class="section-title">Competitors Are Winning Online</h2>
+<p class="section-sub" style="max-width:500px;margin:0 auto">Your competitors have websites and are capturing customers who search online</p>
+</div>
+<div class="grid-2" style="max-width:600px;margin:0 auto">
+<div class="card fade-up" style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-check" style="color:#22c55e;font-size:16px"></i></div><div><div style="font-weight:600;font-size:14px">SmileCare Dental</div><div style="font-size:12px;color:#94a3b8">4.5★ · 135 reviews</div></div></div>
+<div class="card fade-up" style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-check" style="color:#22c55e;font-size:16px"></i></div><div><div style="font-weight:600;font-size:14px">City Dental Hub</div><div style="font-size:12px;color:#94a3b8">4.1★ · 61 reviews</div></div></div>
+<div class="card fade-up" style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-check" style="color:#22c55e;font-size:16px"></i></div><div><div style="font-weight:600;font-size:14px">DentoPlus Clinic</div><div style="font-size:12px;color:#94a3b8">4.3★ · 53 reviews</div></div></div>
+</div>
+<div class="fade-up" style="text-align:center;margin-top:24px">
+<div style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;background:rgba(239,68,68,0.1);color:#ef4444;font-size:14px;font-weight:600">
+<i class="fa-solid fa-triangle-exclamation"></i>
+Dr. Rajat Sachdeva's Dentistry In Ashok Vihar has no website — every day you're losing customers
+</div>
+</div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Testimonials -->
+<section id="testimonials" class="section" style="background:rgba(255,255,255,0.008)">
+<div class="container">
+<div style="text-align:center;margin-bottom:48px" class="fade-up anim-out">
+<div class="section-label"><i class="fa-solid fa-star"></i><span>Client Reviews</span></div>
+<h2 class="section-title">What Our Customers Say</h2>
+<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px">
+<div class="stars" style="font-size:22px"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+<span style="font-size:24px;font-weight:800;color:#fff">0</span>
+<span style="color:#64748b;font-size:15px">(0 reviews on Google)</span>
+</div>
+</div>
+<div class="grid-3 stagger anim-out">
+<div class="quote fade-up anim-out">
+<div class="stars" style="font-size:14px;margin-bottom:14px"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+<p style="font-size:14px;color:#cbd5e1;line-height:1.8;margin-bottom:18px">"Absolutely outstanding service! Extremely professional team who genuinely care about their customers. Highly recommended to everyone looking for top-quality dental clinic."</p>
+<div style="display:flex;align-items:center;gap:12px">
+<img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Client" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+<div><div style="font-size:14px;font-weight:600;color:#fff">Priya S.</div><div style="font-size:11px;color:#64748b">Google Review</div></div>
+</div>
+</div>
+<div class="quote fade-up anim-out">
+<div class="stars" style="font-size:14px;margin-bottom:14px"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+<p style="font-size:14px;color:#cbd5e1;line-height:1.8;margin-bottom:18px">"Exceptional experience from start to finish. The team went above and beyond to ensure everything was perfect. Will definitely be returning for all my dental clinic needs."</p>
+<div style="display:flex;align-items:center;gap:12px">
+<img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="Client" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+<div><div style="font-size:14px;font-weight:600;color:#fff">Rahul M.</div><div style="font-size:11px;color:#64748b">Google Review</div></div>
+</div>
+</div>
+<div class="quote fade-up anim-out">
+<div class="stars" style="font-size:14px;margin-bottom:14px"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+<p style="font-size:14px;color:#cbd5e1;line-height:1.8;margin-bottom:18px">"The best dental clinic in Delhi! Professional, affordable, and the results speak for themselves. So glad I found Dr. Vihar."</p>
+<div style="display:flex;align-items:center;gap:12px">
+<img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="Client" loading="lazy" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+<div><div style="font-size:14px;font-weight:600;color:#fff">Anita K.</div><div style="font-size:11px;color:#64748b">Google Review</div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Contact -->
+<section id="contact" class="section">
+<div class="container">
+<div style="text-align:center;margin-bottom:48px" class="fade-up anim-out">
+<div class="section-label"><i class="fa-solid fa-location-dot"></i><span>Visit Us</span></div>
+<h2 class="section-title">Location & Hours</h2>
+</div>
+<div class="grid-2x1">
+<div class="fade-up anim-out">
+<div class="glass" style="padding:8px">
+<div class="map-wrap">
+<iframe src="https://www.google.com/maps?q=28.6139,77.209&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div>
+<div style="padding:16px 12px">
+<div style="display:flex;align-items:flex-start;gap:12px">
+<div style="width:36px;height:36px;border-radius:10px;background:#8b5cf615;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px"><i class="fa-solid fa-location-dot" style="color:#8b5cf6;font-size:14px"></i></div>
+<span style="font-size:14px;color:#cbd5e1;line-height:1.6"></span>
+</div>
+</div>
+</div>
+</div>
+<div class="fade-up anim-out">
+<div class="glass" style="padding:28px;margin-bottom:20px">
+<h3 style="font-size:16px;font-weight:700;margin-bottom:20px"><i class="fa-regular fa-clock" style="color:#8b5cf6;margin-right:10px"></i>Opening Hours</h3>
+<div class="hours-row"><span>Hours not listed</span><span>—</span></div>
+</div>
+<div class="glass" style="padding:28px">
+<h3 style="font-size:16px;font-weight:700;margin-bottom:20px"><i class="fa-solid fa-phone" style="color:#8b5cf6;margin-right:10px"></i>Get in Touch</h3>
+<a href="tel:+919818894041" class="contact-row">
+<div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+<div><div style="font-size:14px;font-weight:600;color:#e2e8f0">+919818894041</div><div style="font-size:12px;color:#64748b">Call us now</div></div>
+</a>
+<a href="https://wa.me/919818894041" class="contact-row">
+<div class="contact-icon"><i class="fa-brands fa-whatsapp" style="color:#25D366;font-size:18px"></i></div>
+<div><div style="font-size:14px;font-weight:600;color:#e2e8f0">Chat on WhatsApp</div><div style="font-size:12px;color:#64748b">Instant reply guaranteed</div></div>
+</a>
+<a href="https://www.google.com/maps?q=28.6139,77.209&z=16" target="_blank" class="contact-row">
+<div class="contact-icon"><i class="fa-solid fa-location-arrow"></i></div>
+<div><div style="font-size:14px;font-weight:600;color:#e2e8f0">Get Directions</div><div style="font-size:12px;color:#64748b">Open in Google Maps</div></div>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CTA Banner -->
+<section class="section-sm">
+<div class="container">
+<div class="glass-strong fade-up anim-out" style="padding:56px;text-align:center;background:linear-gradient(135deg,#8b5cf608 0%,#a78bfa08 100%);position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;opacity:0.05;background:url('https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=1200&q=80') center/cover"></div>
+<div style="position:relative;z-index:1">
+<h2 class="section-title" style="margin-bottom:12px">Ready to Experience the Best?</h2>
+<p class="section-sub" style="margin:0 auto 32px;text-align:center">Book your appointment at Dr. Rajat Sachdeva's Dentistry In Ashok Vihar today and see why 0+ customers trust us.</p>
+<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+<a href="tel:+919818894041" class="btn btn-primary"><i class="fa-solid fa-phone"></i>Call Now</a>
+<a href="https://wa.me/919818894041" class="btn btn-outline"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i>Message Us</a>
+</div>
+</div>
 </div>
 </div>
 </section>
 
 <!-- Footer -->
-<footer style="padding:3rem 1.5rem;text-align:center;border-top:1px solid rgba(255,255,255,0.04);background:#070b14">
-<p style="color:#64748b;font-size:0.85rem">© 2026 Dr. Rajat Sachdeva's Dentistry In Ashok Vihar. All rights reserved.</p>
-<p style="color:#334155;font-size:0.75rem;margin-top:8px">Concept by TKVibes — not affiliated with Dr. Rajat Sachdeva's Dentistry In Ashok Vihar</p>
+<footer class="footer">
+<div class="container">
+<div class="footer-grid">
+<div>
+<div class="footer-logo">
+<div class="nav-logo-icon"><i class="fa-solid fa-tooth" style="color:#fff;font-size:16px"></i></div>
+<span class="nav-logo-text" style="font-size:17px">Dr. Vihar</span>
+</div>
+<p class="footer-desc">Your trusted dental clinic serving the Delhi community with 0★ rated service and 0+ happy customers.</p>
+<div class="footer-social">
+<a href="https://wa.me/919818894041" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+<a href="tel:+919818894041" aria-label="Phone"><i class="fa-solid fa-phone"></i></a>
+<a href="https://www.google.com/maps?q=28.6139,77.209&z=16" target="_blank" aria-label="Google Maps"><i class="fa-solid fa-location-dot"></i></a>
+</div>
+</div>
+<div>
+<h4>Quick Links</h4>
+<a href="#about">About Us</a><br>
+<a href="#services">Services</a><br>
+<a href="#why-us">Why Choose Us</a><br>
+<a href="#testimonials">Reviews</a><br>
+<a href="#contact">Contact</a>
+</div>
+<div>
+<h4>Services</h4>
+<a href="#services">Dental Implants</a><br>
+<a href="#services">Root Canal</a><br>
+<a href="#services">Teeth Whitening</a><br>
+<a href="#services">Braces & Aligners</a><br>
+</div>
+<div>
+<h4>Contact</h4>
+<a href="tel:+919818894041" style="display:block;margin-bottom:8px"><i class="fa-solid fa-phone" style="color:#8b5cf6;margin-right:8px"></i>+919818894041</a>
+<a href="https://wa.me/919818894041" target="_blank" style="display:block;margin-bottom:8px"><i class="fa-brands fa-whatsapp" style="color:#25D366;margin-right:8px"></i>WhatsApp</a>
+<p style="margin-top:8px"><i class="fa-solid fa-location-dot" style="color:#8b5cf6;margin-right:8px"></i></p>
+</div>
+</div>
+<div class="footer-bottom">
+<p>&copy; 2026 Dr. Rajat Sachdeva's Dentistry In Ashok Vihar. All rights reserved.</p>
+<p style="color:#334155">Concept by TKVibes — not affiliated with Dr. Rajat Sachdeva's Dentistry In Ashok Vihar</p>
+</div>
+</div>
 </footer>
 
+<!-- WA Float -->
+<a href="https://wa.me/919818894041" class="wa-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+
+<!-- Scroll Top -->
+<button class="scroll-top" id="scrollTop"><i class="fa-solid fa-chevron-up"></i></button>
+
+<!-- Popup Offer -->
+<div class="popup-overlay" id="popup">
+<div class="popup-box glass-strong">
+<button onclick="document.getElementById('popup').classList.remove('show')" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);color:#94a3b8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-xmark"></i></button>
+<div style="width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><i class="fa-solid fa-calendar-check" style="color:#fff;font-size:26px"></i></div>
+<h3 style="font-size:22px;font-weight:700;margin-bottom:8px;letter-spacing:-0.3px">Book Your Visit Today!</h3>
+<p style="color:#94a3b8;font-size:14px;margin-bottom:24px;line-height:1.6">Schedule your appointment at <strong style="color:#e2e8f0">Dr. Vihar</strong> — rated 0★ by 0+ customers.</p>
+<a href="tel:+919818894041" class="btn btn-primary" style="width:100%"><i class="fa-solid fa-phone"></i>Call to Book</a>
+<button onclick="document.getElementById('popup').classList.remove('show')" style="margin-top:12px;background:none;border:none;color:#64748b;font-size:13px;cursor:pointer;width:100%;padding:8px">Maybe later</button>
+</div>
+</div>
+
+<!-- Cookie -->
+<div class="cookie glass-strong" id="cookieBanner">
+<div class="cookie-inner">
+<p><i class="fa-solid fa-cookie-bite" style="margin-right:8px;color:#8b5cf6"></i>This site uses cookies to enhance your experience.</p>
+<div style="display:flex;gap:8px">
+<button onclick="localStorage.setItem('ck','1');document.getElementById('cookieBanner').classList.remove('show')" class="btn btn-primary" style="padding:8px 18px;font-size:13px">Accept</button>
+<button onclick="document.getElementById('cookieBanner').classList.remove('show')" class="btn btn-outline" style="padding:8px 18px;font-size:13px">Decline</button>
+</div>
+</div>
+</div>
+
 <script>
-// Nav scroll
-window.addEventListener('scroll',function(){
-document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
+// Intersection Observer animations
+(function(){
+var observer = new IntersectionObserver(function(entries) {
+entries.forEach(function(entry) {
+if (entry.isIntersecting) {
+entry.target.classList.remove('anim-out');
+entry.target.classList.add('animate-in');
+observer.unobserve(entry.target);
+}
 });
-// Smooth anchor scroll
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'})})
+}, { threshold: 0.08 });
+
+// Observe fade-up elements
+document.querySelectorAll('.fade-up.anim-out').forEach(function(el) {
+observer.observe(el);
+});
+
+// Observe stagger elements
+document.querySelectorAll('.stagger.anim-out').forEach(function(el) {
+observer.observe(el);
+});
+
+// Stats counter
+document.querySelectorAll('.stat-num[data-count]').forEach(function(el) {
+var target = parseFloat(el.dataset.count);
+var isDec = target && target < 10;
+var obs2 = new IntersectionObserver(function(entries) {
+entries.forEach(function(entry) {
+if (entry.isIntersecting) {
+var cur = 0;
+var step = (target || 0) / 50;
+var iv = setInterval(function() {
+cur += step;
+if (cur >= target) { cur = target; clearInterval(iv); }
+el.textContent = isDec ? cur.toFixed(1) : Math.floor(cur);
+}, 25);
+obs2.unobserve(entry.target);
+}
+});
+}, { threshold: 0.1 });
+obs2.observe(el);
+});
+})();
+
+// Navbar scroll
+window.addEventListener('scroll',function(){
+document.getElementById('navbar').classList.toggle('scrolled',window.scrollY > 50);
+var btn=document.getElementById('scrollTop');
+if(btn) btn.classList.toggle('show',window.scrollY > 400);
+});
+
+// Mobile menu
+(function(){
+var mm=document.getElementById('mobile-menu');
+var mo=document.getElementById('mobile-overlay');
+var toggle=document.getElementById('menu-toggle');
+var close=document.getElementById('menu-close');
+if(toggle) toggle.addEventListener('click',function(){mm.classList.add('open');mo.classList.add('show')});
+if(close) close.addEventListener('click',function(){mm.classList.remove('open');mo.classList.remove('show')});
+if(mo) mo.addEventListener('click',function(){mm.classList.remove('open');mo.classList.remove('show')});
+document.querySelectorAll('.mm-link').forEach(function(a){
+a.addEventListener('click',function(){mm.classList.remove('open');mo.classList.remove('show')});
+});
+})();
+
+// Popup after delay
+setTimeout(function(){
+var p = document.getElementById('popup');
+if(p) p.classList.add('show');
+}, 4000);
+
+// Cookie consent
+if(!localStorage.getItem('ck')){
+var c = document.getElementById('cookieBanner');
+if(c) c.classList.add('show');
+}
+
+// Scroll top smooth
+document.getElementById('scrollTop')?.addEventListener('click',function(){
+window.scrollTo({top:0,behavior:'smooth'});
 });
 </script>
 </body>
