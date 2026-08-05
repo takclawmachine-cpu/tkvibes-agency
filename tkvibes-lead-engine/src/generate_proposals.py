@@ -594,11 +594,35 @@ def generate_for_lead(lead: Lead, config: dict, sample_template: str,
                                        competitor_html=_generate_competitor_lead_section(lead, competitors) if competitors and not lead.has_website else "",
                                        analysis_html=_generate_analysis_lead_section(lead, analysis) if analysis and analysis.get("issues") and lead.website_url else "")
         else:
-            # Fallback to template-v2 with default AI spec
-            sample_html = render_sample_site(lead, sample_template, competitors, analysis)
+            # Fallback: create a default AI spec with category-appropriate layout
+            # This ensures unique layouts even without AI API
+            from .ai_site_generator import LAYOUTS, DEFAULT_LAYOUT
+            layout_names = list(LAYOUTS.keys())
+            # Pick layout based on category hash for variety (deterministic)
+            import hashlib
+            cat_hash = int(hashlib.md5((lead.category or "").encode()).hexdigest(), 16) % len(layout_names)
+            default_spec = {
+                "layout": layout_names[cat_hash],
+                "primary_color": visuals.get("primary", "#000"),
+                "secondary_color": visuals.get("secondary", "#000"),
+                "tagline": visuals.get("tagline", "Excellence You Can Trust"),
+                "description": f"Your trusted {lead.category or 'business'} serving the {lead.city or ''} community.",
+                "hero_headline": f"Welcome to {lead.business_name or 'Your Business'}",
+                "hero_subheadline": visuals.get("tagline", "Quality Service"),
+                "service_descriptions": [s[1] for s in visuals.get("services", [])],
+                "cta_text": "Get in Touch",
+                "seo_title": f"{lead.business_name or 'Business'} | {lead.city or ''}",
+                "seo_description": f"Visit {lead.business_name or 'Business'} in {lead.city or ''}.",
+                "schema_type": "LocalBusiness",
+                "color_swap": False,
+            }
+            sample_html = render_site(lead_dict, default_spec,
+                                       competitor_html=_generate_competitor_lead_section(lead, competitors) if competitors and not lead.has_website else "",
+                                       analysis_html=_generate_analysis_lead_section(lead, analysis) if analysis and analysis.get("issues") and lead.website_url else "")
     except Exception as e:
         logger.warning("[ai] AI content generation failed for %s, using template fallback: %s",
                        lead.business_name, e)
+        # Final fallback: use render_sample_site with template-v2.html
         sample_html = render_sample_site(lead, sample_template, competitors, analysis)
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(sample_html)
