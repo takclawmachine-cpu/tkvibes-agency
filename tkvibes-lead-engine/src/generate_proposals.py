@@ -565,30 +565,8 @@ def generate_for_lead(lead: Lead, config: dict, sample_template: str,
     # ── Generation phase ──────────────────────────────────────────────────
     os.makedirs(out_dir, exist_ok=True)
 
-    # Try AI-powered generation first; fall back to template on failure
-    ai_sample_html = None
-    try:
-        from .visuals import get_visual_config
-        lead_dict = lead.to_dict()
-        visuals = get_visual_config(lead.category)
-        ai_spec = build_ai_site_spec(lead_dict, visuals)
-        # Build competitor/analysis HTML for AI generator
-        comp_html = ""
-        if competitors:
-            comp_html = format_competitor_html(competitors, lead)
-        anl_html = ""
-        if analysis:
-            anl_html = format_website_analysis_html(analysis, lead)
-        ai_sample_html = render_site(lead_dict, ai_spec, comp_html, anl_html)
-        logger.info("[ai] Generated sample site for %s (layout: %s)", lead.business_name, ai_spec.get("layout"))
-    except Exception as e:
-        logger.warning("[ai] AI generation failed for %s, using template: %s", lead.business_name, e)
-
-    if ai_sample_html:
-        sample_html = ai_sample_html
-    else:
-        # Fallback to template-based generation
-        sample_html = render_sample_site(lead, sample_template, competitors, analysis)
+    # Use template-v2 (now premium with images, glassmorphism, animations)
+    sample_html = render_sample_site(lead, sample_template, competitors, analysis)
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(sample_html)
 
