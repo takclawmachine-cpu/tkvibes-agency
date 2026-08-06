@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pitch Deck - Mississauga Uptown Dental | TKVibes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fafafa;overflow-x:hidden}
+
+:root{
+  --text-hero:clamp(2.5rem,1.5rem+5vw,6rem);
+  --text-xl:clamp(1.5rem,1rem+2vw,3rem);
+  --text-lg:clamp(1.125rem,0.9rem+1vw,1.75rem);
+  --text-base:clamp(0.875rem,0.8rem+0.375vw,1.125rem);
+  --primary:#4f8cf7;
+  --primary-dark:#3661b3;
+  --accent:#f59e0b;
+}
+
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.slide::before{content:'';position:absolute;inset:0;z-index:0}
+
+.slide-content{position:relative;z-index:1;max-width:1000px;margin:0 auto;width:100%}
+
+.display-heading{font-family:'Space Grotesk',sans-serif;font-size:var(--text-hero);font-weight:800;line-height:0.9;letter-spacing:-0.05em}
+.slide-heading{font-family:'Space Grotesk',sans-serif;font-size:var(--text-xl);font-weight:700;line-height:1.1;letter-spacing:-0.035em;margin-bottom:1rem}
+.slide-body{font-size:var(--text-lg);line-height:1.5;opacity:0.7;max-width:36rem}
+
+.tag{display:inline-block;padding:0.3rem 0.8rem;border-radius:100px;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;background:rgba(79,140,247,0.15);color:var(--primary);border:1px solid rgba(79,140,247,0.3);margin-bottom:1rem}
+
+.rating-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.12);border-radius:100px;padding:0.5rem 1rem;font-size:var(--text-base);margin-bottom:1.5rem}
+.rating-badge i{color:var(--accent)}
+
+.deliverables-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;margin-top:2rem}
+.delivery-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:1.5rem;transition:all 0.3s ease}
+.delivery-card:hover{background:rgba(255,255,255,0.07);border-color:rgba(79,140,247,0.3);transform:translateY(-4px)}
+.delivery-card i{font-size:1.5rem;color:var(--primary);margin-bottom:0.75rem}
+.delivery-card h3{font-size:var(--text-base);font-weight:700;margin-bottom:0.5rem}
+.delivery-card p{font-size:0.8rem;opacity:0.6;line-height:1.5}
+
+.stats-row{display:flex;flex-wrap:wrap;gap:2rem;margin-top:2rem}
+.stat-item{text-align:center}
+.stat-number{font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:800;color:var(--primary);line-height:1}
+.stat-label{font-size:0.8rem;opacity:0.5;margin-top:0.25rem}
+
+.cta-group{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2rem}
+.btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.85rem 2rem;border-radius:100px;font-weight:600;font-size:var(--text-base);text-decoration:none;transition:all 0.3s ease}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#6b9aff);color:#fff;box-shadow:0 4px 20px rgba(79,140,247,0.15)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(79,140,247,0.25)}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff}
+.btn-outline:hover{background:rgba(255,255,255,0.06)}
+
+.nav-dots{position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:0.5rem}
+.nav-dot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(255,255,255,0.3);background:transparent;cursor:pointer;transition:all 0.3s ease}
+.nav-dot.active{background:var(--primary);border-color:var(--primary);box-shadow:0 0 8px rgba(79,140,247,0.5)}
+
+.footer-note{position:absolute;bottom:1.5rem;left:2rem;right:2rem;font-size:0.7rem;opacity:0.35;z-index:1;text-align:center}
+
+.bg-overlay{background:linear-gradient(rgba(10,15,30,0.75),rgba(10,15,30,0.85))}
+
+@media(max-width:768px){
+  .slide{padding:2rem 1rem}
+  .deliverables-grid{grid-template-columns:1fr}
+  .nav-dots{right:0.75rem}
+  .stats-row{gap:1rem;justify-content:center}
+  .cta-group{flex-direction:column}
+  .btn{justify-content:center}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<div class="nav-dots" id="navDots"></div>
+
+<!-- Slide 1: Cover -->
+<section class="slide" style="background:linear-gradient(135deg,#0a0a0f,#111122,#0f0f2a)" data-index="0">
+  <div class="slide-content" style="text-align:center">
+    <div class="tag" style="display:inline-block">TKVibes Digital Agency</div>
+    <h1 class="display-heading" style="margin:1rem 0">A Better Online<br>Presence for</h1>
+    <h2 style="font-family:'Space Grotesk',sans-serif;font-size:var(--text-xl);font-weight:700;color:var(--primary);margin-bottom:1.5rem">Mississauga Uptown Dental</h2>
+    <div class="rating-badge" style="display:inline-flex;margin:0 auto 1.5rem">
+      <i class="fas fa-star"></i> 4.7 &middot; 85 reviews
+    </div>
+    <p style="font-size:var(--text-base);opacity:0.5">Mississauga &middot; Dental Clinic</p>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<!-- Slide 2: The Gap -->
+<section class="slide bg-overlay" data-index="1">
+  <div class="slide-content">
+    <span class="tag">The Challenge</span>
+    <h2 class="slide-heading">You're Being<br>Outpaced Online</h2>
+    <p class="slide-body">
+      You have a strong 4.7-star reputation with 85+ reviews, but without a professional website, potential patients are landing on a site that does not reflect your quality of care.
+    </p>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-number">68%</div><div class="stat-label">Patients research online first</div></div>
+      <div class="stat-item"><div class="stat-number">3x</div><div class="stat-label">More bookings with a website</div></div>
+      <div class="stat-item"><div class="stat-number">80%</div><div class="stat-label">Trust a practice with a website</div></div>
+    </div>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<!-- Slide 3: What You're Missing -->
+<section class="slide" style="background:linear-gradient(135deg,#0f0f2a,#0a0a0f)" data-index="2">
+  <div class="slide-content">
+    <span class="tag">What You're Missing</span>
+    <h2 class="slide-heading">Opportunities<br>You're Leaving Behind</h2>
+    <div class="deliverables-grid">
+      <div class="delivery-card"><i class="fas fa-search"></i><h3>Local SEO</h3><p>Appear in "dentist near me" searches and Google Maps</p></div>
+      <div class="delivery-card"><i class="fas fa-calendar-check"></i><h3>Online Booking</h3><p>24/7 appointment scheduling from any device</p></div>
+      <div class="delivery-card"><i class="fas fa-comments"></i><h3>Review Engine</h3><p>Automated review collection &amp; reputation management</p></div>
+      <div class="delivery-card"><i class="fas fa-share-alt"></i><h3>Social Proof</h3><p>Showcase your 85+ five-star reviews prominently</p></div>
+    </div>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<!-- Slide 4: Solution -->
+<section class="slide bg-overlay" data-index="3">
+  <div class="slide-content" style="display:flex;flex-direction:column;justify-content:center;min-height:70vh">
+    <span class="tag">The Solution</span>
+    <h2 class="slide-heading">A Complete Digital<br>Presence for Mississauga</h2>
+    <p class="slide-body">
+      We build a beautiful, modern website with 3D visuals, smooth animations, and patient-friendly design — optimized to convert visitors into appointments.
+    </p>
+    <div style="margin-top:1.5rem">
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+        <span class="tag" style="background:rgba(245,158,11,0.15);color:var(--accent);border-color:rgba(245,158,11,0.3)"><i class="fas fa-mobile-alt"></i> Mobile-first</span>
+        <span class="tag" style="background:rgba(245,158,11,0.15);color:var(--accent);border-color:rgba(245,158,11,0.3)"><i class="fas fa-rocket"></i> Fast loading</span>
+        <span class="tag" style="background:rgba(245,158,11,0.15);color:var(--accent);border-color:rgba(245,158,11,0.3)"><i class="fas fa-globe"></i> SEO-optimized</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<!-- Slide 5: What TKVibes Delivers -->
+<section class="slide" style="background:linear-gradient(135deg,#0a0a0f,#111122)" data-index="4">
+  <div class="slide-content">
+    <span class="tag">What We Deliver</span>
+    <h2 class="slide-heading">Full-Service Digital<br>Transformation</h2>
+    <div class="deliverables-grid">
+      <div class="delivery-card"><i class="fas fa-paint-brush"></i><h3>Web Design</h3><p>Custom 3D interactive website with immersive visuals</p></div>
+      <div class="delivery-card"><i class="fas fa-code"></i><h3>Development</h3><p>Fast, responsive, SEO-optimized HTML/CSS/JS</p></div>
+      <div class="delivery-card"><i class="fas fa-chart-line"></i><h3>SEO</h3><p>Local search optimization to rank #1 in Mississauga</p></div>
+      <div class="delivery-card"><i class="fas fa-envelope"></i><h3>Automation</h3><p>Patient booking forms, review requests, follow-ups</p></div>
+    </div>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<!-- Slide 6: Proof -->
+<section class="slide bg-overlay" data-index="5">
+  <div class="slide-content" style="text-align:center">
+    <span class="tag">Proven Results</span>
+    <h2 class="slide-heading">Trusted by 50+<br>Healthcare Practices</h2>
+    <div class="stats-row" style="justify-content:center">
+      <div class="stat-item"><div class="stat-number">50+</div><div class="stat-label">Projects Delivered</div></div>
+      <div class="stat-item"><div class="stat-number">98%</div><div class="stat-label">Client Satisfaction</div></div>
+      <div class="stat-item"><div class="stat-number">3x</div><div class="stat-label">Avg. Booking Increase</div></div>
+      <div class="stat-item"><div class="stat-number">4.9</div><div class="stat-label">Avg. Rating</div></div>
+    </div>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<!-- Slide 7: ROI -->
+<section class="slide" style="background:linear-gradient(135deg,#0f0f2a,#0a0a0f)" data-index="6">
+  <div class="slide-content">
+    <span class="tag">Expected Impact</span>
+    <h2 class="slide-heading">What You Can<br>Expect to Gain</h2>
+    <div class="deliverables-grid">
+      <div class="delivery-card"><i class="fas fa-eye"></i><h3>Visibility</h3><p>#1 in local search results for dental keywords in Mississauga</p></div>
+      <div class="delivery-card"><i class="fas fa-phone-alt"></i><h3>Inquiries</h3><p>40-60% increase in phone calls &amp; contact form submissions</p></div>
+      <div class="delivery-card"><i class="fas fa-calendar-alt"></i><h3>Bookings</h3><p>Direct online booking from search results</p></div>
+      <div class="delivery-card"><i class="fas fa-trophy"></i><h3>Reputation</h3><p>Showcase your 85+ reviews prominently</p></div>
+    </div>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<!-- Slide 8: CTA -->
+<section class="slide bg-overlay" data-index="7">
+  <div class="slide-content" style="text-align:center">
+    <span class="tag" style="display:inline-block">Next Step</span>
+    <h2 class="slide-heading" style="margin-bottom:1.5rem">Let's Build Your<br>Digital Presence</h2>
+    <p class="slide-body" style="margin:0 auto 2rem;text-align:center">
+      Book a free, no-obligation consultation to see how we can transform Mississauga Uptown Dental's online presence.
+    </p>
+    <div class="cta-group" style="justify-content:center">
+      <a href="tel:+919052321388" class="btn btn-primary"><i class="fas fa-phone"></i> Call Now</a>
+      <a href="https://wa.me/919052321388" target="_blank" class="btn btn-outline"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+    </div>
+    <p style="margin-top:2rem;font-size:0.8rem;opacity:0.4">
+      services@tkvibes.in &middot; TKVibes Digital Agency
+    </p>
+  </div>
+  <div class="footer-note">Concept by TKVibes — not affiliated with Mississauga Uptown Dental</div>
+</section>
+
+<script>
+// Navigation dots
+const slides = document.querySelectorAll('.slide');
+const navDots = document.getElementById('navDots');
+slides.forEach((_,i) => {
+  const dot = document.createElement('button');
+  dot.className = 'nav-dot' + (i===0?' active':'');
+  dot.onclick = () => slides[i].scrollIntoView({behavior:'smooth'});
+  navDots.appendChild(dot);
+});
+
+// Update active dot on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const idx = parseInt(entry.target.dataset.index);
+      document.querySelectorAll('.nav-dot').forEach((d,i) => d.classList.toggle('active',i===idx));
+    }
+  });
+}, {threshold:0.5});
+slides.forEach(s => observer.observe(s));
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowDown' || e.key === 'ArrowRight'){
+    const active = document.querySelector('.nav-dot.active');
+    if(active && active.nextElementSibling) active.nextElementSibling.click();
+  }
+  if(e.key === 'ArrowUp' || e.key === 'ArrowLeft'){
+    const active = document.querySelector('.nav-dot.active');
+    if(active && active.previousElementSibling) active.previousElementSibling.click();
+  }
+});
+</script>
+</body>
+</html>
