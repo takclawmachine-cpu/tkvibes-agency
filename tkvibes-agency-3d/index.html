@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TKVibes — Digital Agency | Premium Websites & Brand Identity</title>
+<meta name="description" content="TKVibes builds sharp websites, brand systems, and growth-ready digital experiences for businesses that want to feel more credible online.">
+<meta property="og:title" content="TKVibes — Digital Agency">
+<meta property="og:description" content="Websites that look premium, feel effortless, and convert clearly.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%236C63FF'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='20' fill='white'%3ET%3C/text%3E%3C/svg%3E" sizes="any">
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e8e8ed;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+::selection{background:#6C63FF;color:#fff}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#0a0a0f}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#6C63FF,#3B82F6);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#8B83FF}
+img{max-width:100%;height:auto}
+
+/* ===== CONTAINER ===== */
+.container{max-width:1200px;margin:0 auto;padding:0 24px;width:100%}
+
+/* ===== TYPOGRAPHY ===== */
+h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif;font-weight:700;line-height:1.1}
+h1{font-size:clamp(2.5rem,6vw,5rem);letter-spacing:-0.03em}
+h2{font-size:clamp(2rem,4vw,3.5rem);letter-spacing:-0.02em}
+h3{font-size:clamp(1.25rem,2vw,1.75rem)}
+p{line-height:1.7;color:#a0a0b0;font-size:clamp(0.95rem,1.2vw,1.1rem)}
+.section-label{font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:#6C63FF;margin-bottom:0.75rem;display:block}
+.section-title{margin-bottom:1.5rem}
+.section-subtitle{max-width:600px;margin-bottom:3rem;color:#a0a0b0}
+.gradient-text{background:linear-gradient(135deg,#6C63FF,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ===== NAVBAR ===== */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 0;transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
+.navbar.scrolled{background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(108,99,255,0.1);padding:0.6rem 0}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:#fff;text-decoration:none;display:flex;align-items:center;gap:0.5rem}
+.nav-logo i{color:#6C63FF;font-size:1.3rem}
+.nav-links{display:flex;list-style:none;gap:2rem;align-items:center}
+.nav-links a{color:#a0a0b0;text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:#6C63FF;transition:width 0.3s}
+.nav-links a:hover{color:#fff}
+.nav-links a:hover::after{width:100%}
+.nav-cta-btn{background:linear-gradient(135deg,#6C63FF,#3B82F6);color:#fff!important;padding:0.6rem 1.5rem;border-radius:50px;font-weight:600!important;transition:transform 0.3s,box-shadow 0.3s!important}
+.nav-cta-btn::after{display:none!important}
+.nav-cta-btn:hover{transform:scale(1.05);box-shadow:0 8px 30px rgba(108,99,255,0.3)!important;color:#fff!important}
+.mobile-toggle{display:none;background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:0.5rem}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:80px}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(108,99,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,0.03) 1px,transparent 1px);background-size:60px 60px;z-index:0}
+.hero-orbs{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:orbFloat 20s ease-in-out infinite}
+.hero-orb:nth-child(1){width:600px;height:600px;background:#6C63FF;top:-200px;right:-100px;animation-delay:0s}
+.hero-orb:nth-child(2){width:400px;height:400px;background:#3B82F6;bottom:-100px;left:-100px;animation-delay:-7s}
+.hero-orb:nth-child(3){width:300px;height:300px;background:#8B5CF6;top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-14s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-30px) scale(1.1)}66%{transform:translate(-20px,20px) scale(0.9)}}
+
+/* 3D Canvas container */
+#hero-3d-container{position:absolute;inset:0;z-index:1;pointer-events:none}
+#hero-canvas{width:100%;height:100%;display:block}
+.shimmer-placeholder{position:absolute;inset:0;z-index:1;background:linear-gradient(110deg,#0a0a0f 30%,#1a1a2e 50%,#0a0a0f 70%);background-size:200% 100%;animation:shimmer 2s ease-in-out infinite;transition:opacity 0.8s ease}
+.shimmer-placeholder.loaded{opacity:0;pointer-events:none}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.hero-content{position:relative;z-index:2;max-width:800px}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.2);border-radius:50px;padding:0.4rem 1rem 0.4rem 0.4rem;font-size:0.8rem;color:#6C63FF;margin-bottom:2rem;font-weight:500}
+.hero-badge-dot{width:8px;height:8px;border-radius:50%;background:#6C63FF;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.hero h1{color:#fff;margin-bottom:1.5rem}
+.hero h1 span{display:block}
+.hero p{font-size:clamp(1rem,1.4vw,1.2rem);color:#a0a0b0;max-width:600px;margin-bottom:2.5rem;line-height:1.8}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:0.6rem;padding:0.9rem 2rem;border-radius:50px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.95rem;text-decoration:none;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,#6C63FF,#3B82F6);color:#fff;box-shadow:0 4px 20px rgba(108,99,255,0.3)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 35px rgba(108,99,255,0.4)}
+.btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.15)}
+.btn-outline:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.3);transform:translateY(-3px)}
+.hero-scroll-indicator{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:0.5rem;color:#a0a0b0;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;animation:scrollBounce 2s ease-in-out infinite}
+.hero-scroll-indicator i{font-size:1rem}
+@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* ===== SECTIONS ===== */
+.section{padding:clamp(4rem,8vw,8rem) 0;position:relative}
+.section-dark{background:rgba(255,255,255,0.02)}
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(108,99,255,0.15),transparent);margin:0 auto;max-width:1200px}
+
+/* ===== SERVICES ===== */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
+.service-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:2.5rem 2rem;transition:all 0.4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6C63FF,#3B82F6);opacity:0;transition:opacity 0.4s}
+.service-card:hover{transform:translateY(-8px);border-color:rgba(108,99,255,0.2);box-shadow:0 20px 60px rgba(0,0,0,0.3);background:rgba(255,255,255,0.05)}
+.service-card:hover::before{opacity:1}
+.service-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.5rem;background:rgba(108,99,255,0.1);color:#6C63FF}
+.service-card h3{color:#fff;margin-bottom:0.75rem}
+.service-card p{font-size:0.9rem;color:#a0a0b0;margin-bottom:0}
+
+/* ===== STATS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+.stat-number{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,4vw,4rem);font-weight:700;background:linear-gradient(135deg,#fff,#a0a0b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.stat-label{color:#a0a0b0;font-size:0.9rem;margin-top:0.5rem;font-weight:500}
+
+/* ===== PROCESS ===== */
+.process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;position:relative}
+.process-step{position:relative;padding-left:3.5rem}
+.process-step-num{position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6C63FF,#3B82F6);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.9rem;color:#fff;box-shadow:0 4px 15px rgba(108,99,255,0.3)}
+.process-step h3{color:#fff;margin-bottom:0.5rem;font-size:1.15rem}
+.process-step p{font-size:0.9rem;color:#a0a0b0}
+
+/* ===== SHOWCASE ===== */
+.showcase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:24px}
+.showcase-card{border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);transition:all 0.4s cubic-bezier(0.16,1,0.3,1);cursor:pointer;text-decoration:none;display:block}
+.showcase-card:hover{transform:translateY(-6px);border-color:rgba(108,99,255,0.2);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.showcase-visual{height:220px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(59,130,246,0.08));overflow:hidden}
+.showcase-visual img{width:100%;height:100%;object-fit:cover}
+.showcase-info{padding:1.5rem}
+.showcase-tag{display:inline-block;padding:0.25rem 0.75rem;border-radius:50px;font-size:0.75rem;font-weight:600;background:rgba(108,99,255,0.1);color:#6C63FF;margin-bottom:0.75rem}
+.showcase-info h3{color:#fff;font-size:1.1rem;margin-bottom:0.4rem}
+.showcase-info p{font-size:0.85rem;color:#a0a0b0}
+
+/* ===== TESTIMONIALS ===== */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px}
+.testimonial-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:2rem;transition:all 0.3s}
+.testimonial-card:hover{border-color:rgba(108,99,255,0.15);transform:translateY(-4px)}
+.testimonial-stars{color:#f59e0b;margin-bottom:1rem;font-size:0.9rem}
+.testimonial-text{font-style:italic;color:#c0c0d0;margin-bottom:1.5rem;line-height:1.7;font-size:0.95rem}
+.testimonial-author{display:flex;align-items:center;gap:1rem}
+.testimonial-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;color:#fff;flex-shrink:0}
+.testimonial-name{color:#fff;font-weight:600;font-size:0.9rem}
+.testimonial-role{color:#a0a0b0;font-size:0.8rem}
+
+/* ===== CTA SECTION ===== */
+.cta-section{background:linear-gradient(135deg,rgba(108,99,255,0.05),rgba(59,130,246,0.05));border-radius:24px;padding:clamp(3rem,5vw,5rem);text-align:center;border:1px solid rgba(108,99,255,0.1);position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(108,99,255,0.08),transparent 70%);pointer-events:none}
+.cta-section h2{color:#fff;margin-bottom:1rem;position:relative}
+.cta-section p{max-width:500px;margin:0 auto 2rem;color:#a0a0b0;position:relative}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative}
+
+/* ===== CONTACT ===== */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.contact-info h3{color:#fff;margin-bottom:1rem}
+.contact-detail{display:flex;align-items:flex-start;gap:1rem;margin-top:1.5rem}
+.contact-detail-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(108,99,255,0.1);color:#6C63FF;flex-shrink:0}
+.contact-detail h5{color:#fff;font-size:0.9rem;margin-bottom:0.2rem}
+.contact-detail a{color:#a0a0b0;text-decoration:none;transition:color 0.3s;font-size:0.9rem}
+.contact-detail a:hover{color:#6C63FF}
+.contact-form{display:flex;flex-direction:column;gap:1rem}
+.contact-form input,.contact-form textarea,.contact-form select{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1.2rem;color:#fff;font-family:'Inter',sans-serif;font-size:0.95rem;transition:border-color 0.3s;outline:none;width:100%}
+.contact-form input:focus,.contact-form textarea:focus,.contact-form select:focus{border-color:#6C63FF}
+.contact-form input::placeholder,.contact-form textarea::placeholder{color:#666}
+.contact-form textarea{min-height:120px;resize:vertical}
+.contact-form select option{background:#1a1a2e;color:#fff}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* ===== FOOTER ===== */
+.footer{background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.05);padding:clamp(3rem,5vw,5rem) 0 2rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand h3{color:#fff;margin-bottom:1rem;font-size:1.3rem}
+.footer-brand h3 i{color:#6C63FF}
+.footer-brand p{font-size:0.85rem;color:#a0a0b0;max-width:300px}
+.footer-col h4{color:#fff;font-size:0.9rem;margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:0.08em}
+.footer-col a{display:block;color:#a0a0b0;text-decoration:none;font-size:0.85rem;margin-bottom:0.6rem;transition:color 0.3s}
+.footer-col a:hover{color:#6C63FF}
+.footer-social{display:flex;gap:0.75rem;margin-top:1.5rem}
+.footer-social a{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;color:#a0a0b0;transition:all 0.3s;text-decoration:none}
+.footer-social a:hover{background:#6C63FF;color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.05);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:0.8rem;color:#666}
+
+/* ===== WHATSAPP FLOAT ===== */
+.whatsapp-float{position:fixed;bottom:24px;left:24px;z-index:999;width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;box-shadow:0 4px 20px rgba(37,211,102,0.3);text-decoration:none;transition:all 0.3s;animation:whatsappPulse 2s ease-in-out infinite}
+.whatsapp-float:hover{transform:scale(1.1);box-shadow:0 8px 30px rgba(37,211,102,0.4)}
+@keyframes whatsappPulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.3)}50%{box-shadow:0 4px 30px rgba(37,211,102,0.6)}}
+
+/* ===== SCROLL TO TOP ===== */
+.scroll-top{position:fixed;bottom:24px;right:24px;z-index:999;width:44px;height:44px;border-radius:50%;background:rgba(108,99,255,0.15);border:1px solid rgba(108,99,255,0.2);color:#6C63FF;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transform:translateY(20px);transition:all 0.4s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.scroll-top.visible{opacity:1;transform:translateY(0)}
+.scroll-top:hover{background:#6C63FF;color:#fff}
+
+/* ===== COOKIE BANNER ===== */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:10000;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.05);padding:1rem 2rem;display:none;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.cookie-banner.show{display:flex}
+.cookie-banner p{font-size:0.85rem;color:#a0a0b0;max-width:700px}
+.cookie-btns{display:flex;gap:0.75rem}
+.cookie-btn{padding:0.5rem 1.2rem;border-radius:50px;font-size:0.8rem;font-weight:600;cursor:pointer;border:none;transition:all 0.3s}
+.cookie-accept{background:#6C63FF;color:#fff}
+.cookie-accept:hover{background:#5A52E0}
+.cookie-decline{background:rgba(255,255,255,0.08);color:#a0a0b0}
+.cookie-decline:hover{background:rgba(255,255,255,0.12)}
+
+/* ===== MARKETING POPUP ===== */
+.popup-overlay{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:1rem}
+.popup-overlay.show{display:flex}
+.popup-card{background:linear-gradient(135deg,#1a1a2e,#0f0f1a);border:1px solid rgba(108,99,255,0.15);border-radius:24px;padding:3rem 2.5rem;max-width:500px;width:100%;text-align:center;position:relative;box-shadow:0 40px 80px rgba(0,0,0,0.5)}
+.popup-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:#666;font-size:1.2rem;cursor:pointer;transition:color 0.3s}
+.popup-close:hover{color:#fff}
+.popup-icon{font-size:3rem;color:#6C63FF;margin-bottom:1rem}
+.popup-card h3{color:#fff;margin-bottom:0.75rem}
+.popup-card p{color:#a0a0b0;margin-bottom:2rem;font-size:0.9rem}
+.popup-btn{display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,#6C63FF,#3B82F6);color:#fff;padding:0.85rem 2rem;border-radius:50px;text-decoration:none;font-weight:600;font-family:'Space Grotesk',sans-serif;transition:all 0.3s}
+.popup-btn:hover{transform:scale(1.05);box-shadow:0 8px 30px rgba(108,99,255,0.3)}
+.popup-later{display:block;margin-top:1rem;color:#666;background:none;border:none;cursor:pointer;font-size:0.85rem;font-family:'Inter',sans-serif;transition:color 0.3s}
+.popup-later:hover{color:#a0a0b0}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:repeat(2,1fr);gap:2rem}
+}
+@media(max-width:768px){
+  .nav-links{position:fixed;top:0;right:-100%;width:280px;height:100vh;background:rgba(10,10,15,0.98);backdrop-filter:blur(20px);flex-direction:column;padding:5rem 2rem 2rem;transition:right 0.4s cubic-bezier(0.16,1,0.3,1);gap:1.5rem;z-index:1001;border-left:1px solid rgba(255,255,255,0.05)}
+  .nav-links.open{right:0}
+  .mobile-toggle{display:block;z-index:1002}
+  .mobile-toggle.open{color:#6C63FF}
+  .hero{text-align:center;padding-top:100px}
+  .hero p{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .hero-scroll-indicator{display:none}
+  .contact-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .services-grid{grid-template-columns:1fr}
+  .showcase-grid{grid-template-columns:1fr}
+  .testimonials-grid{grid-template-columns:1fr}
+  .process-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:1.5rem}
+  .section{padding:3rem 0}
+  .popup-card{padding:2rem 1.5rem}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+  .hero-actions{flex-direction:column;align-items:center}
+  .btn{width:100%;justify-content:center}
+}
+
+/* ===== REDUCED MOTION ===== */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo"><i class="fas fa-bolt"></i> TKVibes</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact" class="nav-cta-btn">Start a Project</a></li>
+    </ul>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-orbs">
+      <div class="hero-orb"></div>
+      <div class="hero-orb"></div>
+      <div class="hero-orb"></div>
+    </div>
+  </div>
+  <div id="hero-3d-container">
+    <div class="shimmer-placeholder" id="shimmerPlaceholder"></div>
+    <canvas id="hero-canvas"></canvas>
+  </div>
+  <div class="container hero-content">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> Boutique digital agency</div>
+    <h1>Websites that look <span class="gradient-text">premium</span>,<span> feel effortless,</span><span>and convert clearly.</span></h1>
+    <p>TKVibes builds sharp websites, brand systems, and growth-ready digital experiences for businesses that want to feel more credible online.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Start a Project</a>
+      <a href="#work" class="btn btn-outline"><i class="fas fa-arrow-right"></i> View Selected Work</a>
+    </div>
+  </div>
+  <div class="hero-scroll-indicator">
+    <span>Scroll</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="section section-dark" id="about">
+  <div class="container">
+    <span class="section-label reveal">About</span>
+    <h2 class="section-title reveal gradient-text">Crafting digital experiences that build trust.</h2>
+    <p class="section-subtitle reveal">We are a boutique digital agency focused on helping modern service brands present themselves with clarity, confidence, and a premium digital presence.</p>
+    <div class="stats-grid">
+      <div class="stat reveal"><div class="stat-number" data-count="50">0</div><div class="stat-label">Projects Delivered</div></div>
+      <div class="stat reveal"><div class="stat-number" data-count="35">0</div><div class="stat-label">Happy Clients</div></div>
+      <div class="stat reveal"><div class="stat-number" data-count="4.9">0</div><div class="stat-label">Avg. Client Rating</div></div>
+      <div class="stat reveal"><div class="stat-number" data-count="2">0</div><div class="stat-label">Years Building</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section class="section" id="services">
+  <div class="container">
+    <span class="section-label reveal">Services</span>
+    <h2 class="section-title reveal">Everything we use to <span class="gradient-text">strengthen</span> your digital presence.</h2>
+    <p class="section-subtitle reveal">From brand identity to automation — we cover the full spectrum of digital growth.</p>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-palette"></i></div>
+        <h3>Brand Identity</h3>
+        <p>Logos, color systems, and branded assets that make businesses feel cohesive across web, print, and social.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-code"></i></div>
+        <h3>Web Design &amp; Development</h3>
+        <p>Premium, conversion-focused websites built with modern frameworks. Clean code, fast load times, beautiful UI.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+        <h3>Search Engine Optimization</h3>
+        <p>Technical SEO, content strategy, and local search optimization to help your business get found by the right people.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-robot"></i></div>
+        <h3>Marketing Automation</h3>
+        <p>Smart workflows, CRM integration, and lead capture systems that turn website visitors into qualified opportunities.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-pen-fancy"></i></div>
+        <h3>Content Creation</h3>
+        <p>Copywriting, visual content, and brand messaging that communicates your value proposition with clarity and impact.</p>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
+        <h3>Digital Strategy</h3>
+        <p>Roadmaps, competitor analysis, and growth planning tailored to your business goals and market position.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== PROCESS ===== -->
+<section class="section section-dark" id="process">
+  <div class="container">
+    <span class="section-label reveal">Our Process</span>
+    <h2 class="section-title reveal">How we <span class="gradient-text">bring your vision</span> to life.</h2>
+    <p class="section-subtitle reveal">A structured approach that ensures clarity, quality, and measurable results at every stage.</p>
+    <div class="process-grid">
+      <div class="process-step reveal">
+        <div class="process-step-num">01</div>
+        <h3>Discovery</h3>
+        <p>We learn about your business, your audience, and your goals. Understanding your brand is the foundation of everything we build.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="process-step-num">02</div>
+        <h3>Design</h3>
+        <p>We craft wireframes, visual concepts, and brand systems that reflect your identity and resonate with your target audience.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="process-step-num">03</div>
+        <h3>Build</h3>
+        <p>We develop your website or digital product with clean code, modern frameworks, and obsessive attention to detail.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="process-step-num">04</div>
+        <h3>Launch &amp; Grow</h3>
+        <p>We deploy, optimize, and provide ongoing support to ensure your digital presence continues to perform and evolve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== WORK ===== -->
+<section class="section" id="work">
+  <div class="container">
+    <span class="section-label reveal">Selected Work</span>
+    <h2 class="section-title reveal">Recent <span class="gradient-text">projects</span> we are proud of.</h2>
+    <p class="section-subtitle reveal">Each project reflects our commitment to quality design, thoughtful UX, and measurable business impact.</p>
+    <div class="showcase-grid">
+      <a href="#" class="showcase-card reveal">
+        <div class="showcase-visual" style="background:linear-gradient(135deg,#1a1a2e,#2d1b69)">
+          <i class="fas fa-tooth" style="font-size:3rem;color:#6C63FF;opacity:0.5"></i>
+        </div>
+        <div class="showcase-info">
+          <span class="showcase-tag">Healthcare</span>
+          <h3>Let&#x27;s Smile Dental</h3>
+          <p>Premium responsive website with appointment booking and brand identity system.</p>
+        </div>
+      </a>
+      <a href="#" class="showcase-card reveal">
+        <div class="showcase-visual" style="background:linear-gradient(135deg,#1a1a2e,#1b3a5c)">
+          <i class="fas fa-water" style="font-size:3rem;color:#3B82F6;opacity:0.5"></i>
+        </div>
+        <div class="showcase-info">
+          <span class="showcase-tag">Services</span>
+          <h3>Deep Water Tank Cleaning</h3>
+          <p>Modern 3D landing page with service area maps and instant quote system.</p>
+        </div>
+      </a>
+      <a href="#" class="showcase-card reveal">
+        <div class="showcase-visual" style="background:linear-gradient(135deg,#1a1a2e,#5c1b1b)">
+          <i class="fas fa-utensils" style="font-size:3rem;color:#f59e0b;opacity:0.5"></i>
+        </div>
+        <div class="showcase-info">
+          <span class="showcase-tag">Food &amp; Hospitality</span>
+          <h3>Tasty Bites 3D Cafe</h3>
+          <p>Interactive 3D menu experience with online ordering and table reservations.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="section section-dark" id="testimonials">
+  <div class="container">
+    <span class="section-label reveal">Testimonials</span>
+    <h2 class="section-title reveal">What our <span class="gradient-text">clients say.</span></h2>
+    <p class="section-subtitle reveal">Real feedback from real businesses we have had the privilege of working with.</p>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testimonial-text">"TKVibes transformed our online presence completely. Our website now reflects the quality of care we provide. Patient inquiries have increased significantly."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:#6C63FF">Dr</div>
+          <div><div class="testimonial-name">Dr. Arjun Mehta</div><div class="testimonial-role">Let&#x27;s Smile Dental</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testimonial-text">"The team understood exactly what we needed. Our new website is clean, professional, and has already generated several qualified leads through the contact form."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:#3B82F6">RK</div>
+          <div><div class="testimonial-name">Rajesh Kumar</div><div class="testimonial-role">Deep Water Solutions</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testimonial-text">"We wanted something different — a website that would wow our customers. TKVibes delivered beyond expectations. The 3D interactive elements are a showstopper."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:#8B5CF6">PS</div>
+          <div><div class="testimonial-name">Priya Sharma</div><div class="testimonial-role">Tasty Bites Cafe</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section" id="cta">
+  <div class="container">
+    <div class="cta-section reveal">
+      <h2>Ready to elevate your <span class="gradient-text">digital presence?</span></h2>
+      <p>Let us build a website that makes your business look premium, feel effortless, and convert clearly.</p>
+      <div class="cta-buttons">
+        <a href="#contact" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Start a Project</a>
+        <a href="https://wa.me/919818246938" target="_blank" rel="noopener" class="btn btn-outline"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="section section-dark" id="contact">
+  <div class="container">
+    <span class="section-label reveal">Contact</span>
+    <h2 class="section-title reveal">Start the <span class="gradient-text">conversation.</span></h2>
+    <p class="section-subtitle reveal">Share your project and we will help map the next step for your digital presence.</p>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3>Let us build something great together.</h3>
+        <p>Whether you need a brand-new website, a brand refresh, or a smarter digital strategy — we would love to hear from you.</p>
+        <div class="contact-detail">
+          <div class="contact-detail-icon"><i class="fas fa-envelope"></i></div>
+          <div><h5>Email</h5><a href="mailto:services@tkvibes.in">services@tkvibes.in</a></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon"><i class="fab fa-whatsapp"></i></div>
+          <div><h5>WhatsApp</h5><a href="https://wa.me/919818246938" target="_blank" rel="noopener">+91 9818246938</a></div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-icon"><i class="fas fa-globe"></i></div>
+          <div><h5>Web</h5><a href="https://tkvibes.in" target="_blank" rel="noopener">tkvibes.in</a></div>
+        </div>
+      </div>
+      <form class="contact-form reveal" action="https://formsubmit.co/services@tkvibes.in" method="POST">
+        <input type="hidden" name="_subject" value="New Project Inquiry from tkvibes.in">
+        <input type="hidden" name="_template" value="box">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <div class="form-row">
+          <input type="email" name="email" placeholder="Email Address" required>
+          <input type="tel" name="phone" placeholder="Phone Number">
+        </div>
+        <select name="service">
+          <option value="">What do you need?</option>
+          <option value="Brand Identity">Brand Identity</option>
+          <option value="Web Design">Web Design &amp; Development</option>
+          <option value="SEO">Search Engine Optimization</option>
+          <option value="Automation">Marketing Automation</option>
+          <option value="Content">Content Creation</option>
+          <option value="Strategy">Digital Strategy</option>
+          <option value="Other">Something Else</option>
+        </select>
+        <textarea name="message" placeholder="Tell us about your project..." required></textarea>
+        <button type="submit" class="btn btn-primary" style="align-self:flex-start"><i class="fas fa-paper-plane"></i> Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3><i class="fas fa-bolt"></i> TKVibes</h3>
+        <p>A boutique digital agency crafting premium websites, brand identity, and growth systems for modern service brands.</p>
+        <div class="footer-social">
+          <a href="https://wa.me/919818246938" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="mailto:services@tkvibes.in" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#services">Brand Identity</a>
+        <a href="#services">Web Design</a>
+        <a href="#services">SEO</a>
+        <a href="#services">Automation</a>
+        <a href="#services">Content Creation</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#about">About</a>
+        <a href="#work">Portfolio</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:services@tkvibes.in">services@tkvibes.in</a>
+        <a href="https://wa.me/919818246938" target="_blank" rel="noopener">+91 9818246938</a>
+        <a href="https://tkvibes.in" target="_blank" rel="noopener">tkvibes.in</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 TKVibes. All rights reserved.</p>
+      <p>Made with <i class="fas fa-heart" style="color:#6C63FF"></i> in India</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== WHATSAPP FLOAT ===== -->
+<a href="https://wa.me/919818246938" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+<!-- ===== SCROLL TO TOP ===== -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top"><i class="fas fa-arrow-up"></i></button>
+
+<!-- ===== COOKIE BANNER ===== -->
+<div class="cookie-banner" id="cookieBanner">
+  <p>We use cookies to improve your experience. By using this site, you agree to our use of cookies.</p>
+  <div class="cookie-btns">
+    <button class="cookie-btn cookie-accept" onclick="acceptCookies()">Accept</button>
+    <button class="cookie-btn cookie-decline" onclick="declineCookies()">Decline</button>
+  </div>
+</div>
+
+<!-- ===== MARKETING POPUP ===== -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup()"><i class="fas fa-times"></i></button>
+    <div class="popup-icon"><i class="fas fa-rocket"></i></div>
+    <h3>Ready for a premium website?</h3>
+    <p>Get a free consultation and discover how we can transform your digital presence.</p>
+    <a href="#contact" class="popup-btn" onclick="closePopup()"><i class="fas fa-paper-plane"></i> Get Started</a>
+    <button class="popup-later" onclick="closePopup()">Maybe later</button>
+  </div>
+</div>
+
+<!-- ===== CDN SCRIPTS ===== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+(function(){
+'use strict';
+
+// ===== COOKIE BANNER =====
+function acceptCookies(){localStorage.setItem('tkvibes-cookies','accepted');document.getElementById('cookieBanner').classList.remove('show')}
+function declineCookies(){localStorage.setItem('tkvibes-cookies','declined');document.getElementById('cookieBanner').classList.remove('show')}
+if(!localStorage.getItem('tkvibes-cookies')){document.getElementById('cookieBanner').classList.add('show')}
+
+// ===== MARKETING POPUP =====
+function closePopup(){document.getElementById('popupOverlay').classList.remove('show');localStorage.setItem('tkvibes-popup','shown')}
+setTimeout(function(){if(!localStorage.getItem('tkvibes-popup')){document.getElementById('popupOverlay').classList.add('show')}},3000);
+
+// ===== NAVBAR =====
+var navbar=document.getElementById('navbar');
+var mobileToggle=document.getElementById('mobileToggle');
+var navLinks=document.getElementById('navLinks');
+mobileToggle.addEventListener('click',function(){navLinks.classList.toggle('open');mobileToggle.classList.toggle('open');var icon=mobileToggle.querySelector('i');icon.className=navLinks.classList.contains('open')?'fas fa-times':'fas fa-bars'});
+navLinks.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){navLinks.classList.remove('open');mobileToggle.classList.remove('open');mobileToggle.querySelector('i').className='fas fa-bars'})});
+
+// ===== SCROLL TOP =====
+var scrollTop=document.getElementById('scrollTop');
+scrollTop.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});
+
+// ===== LENIS SMOOTH SCROLL =====
+var lenis;
+try{
+  lenis=new Lenis({duration:1.2,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t))},orientation:'vertical',smoothWheel:true,wheelMultiplier:1,touchMultiplier:2});
+  function raf(time){lenis.raf(time);requestAnimationFrame(raf)}
+  requestAnimationFrame(raf);
+}catch(e){console.warn('Lenis not available, using native scroll');document.documentElement.style.scrollBehavior='smooth'}
+
+// ===== THREE.JS GLOBE =====
+var isMobile=window.matchMedia('(max-width:768px)').matches||'ontouchstart' in window;
+var container=document.getElementById('hero-3d-container');
+var canvas=document.getElementById('hero-canvas');
+var shimmer=document.getElementById('shimmerPlaceholder');
+
+if(typeof THREE!=='undefined'&&!isMobile){
+  var scene=new THREE.Scene();
+  scene.fog=new THREE.FogExp2(0x0a0a0f,0.0008);
+  var camera=new THREE.PerspectiveCamera(45,container.clientWidth/container.clientHeight,0.1,1000);
+  camera.position.set(0,0,5);
+  var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true});
+  renderer.setSize(container.clientWidth,container.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  // Lighting
+  var ambient=new THREE.AmbientLight(0x404060,0.5);
+  scene.add(ambient);
+  var dirLight=new THREE.DirectionalLight(0x6C63FF,1.2);
+  dirLight.position.set(1,2,3);
+  scene.add(dirLight);
+  var dirLight2=new THREE.DirectionalLight(0x3B82F6,0.8);
+  dirLight2.position.set(-2,-1,2);
+  scene.add(dirLight2);
+  var pointLight=new THREE.PointLight(0x8B5CF6,0.6,20);
+  pointLight.position.set(2,1,3);
+  scene.add(pointLight);
+
+  // Globe group
+  var globeGroup=new THREE.Group();
+  scene.add(globeGroup);
+
+  // Main sphere - wireframe style
+  var sphereGeom=new THREE.SphereGeometry(1.5,48,48);
+  var sphereMat=new THREE.MeshPhongMaterial({
+    color:0x6C63FF,
+    emissive:0x1a1a3e,
+    wireframe:true,
+    transparent:true,
+    opacity:0.3
+  });
+  var sphere=new THREE.Mesh(sphereGeom,sphereMat);
+  globeGroup.add(sphere);
+
+  // Inner glow sphere
+  var innerGeom=new THREE.SphereGeometry(1.45,32,32);
+  var innerMat=new THREE.MeshBasicMaterial({
+    color:0x6C63FF,
+    transparent:true,
+    opacity:0.06
+  });
+  var innerSphere=new THREE.Mesh(innerGeom,innerMat);
+  globeGroup.add(innerSphere);
+
+  // Connection dots (nodes)
+  var dotGeom=new THREE.BufferGeometry();
+  var dotCount=200;
+  var positions=new Float32Array(dotCount*3);
+  var colors=new Float32Array(dotCount*3);
+  for(var i=0;i<dotCount;i++){
+    var theta=Math.random()*Math.PI*2;
+    var phi=Math.acos(2*Math.random()-1);
+    var r=1.52;
+    positions[i*3]=r*Math.sin(phi)*Math.cos(theta);
+    positions[i*3+1]=r*Math.sin(phi)*Math.sin(theta);
+    positions[i*3+2]=r*Math.cos(phi);
+    colors[i*3]=0.42+Math.random()*0.2;
+    colors[i*3+1]=0.39+Math.random()*0.2;
+    colors[i*3+2]=1+Math.random()*0.1;
+  }
+  dotGeom.setAttribute('position',new THREE.BufferAttribute(positions,3));
+  dotGeom.setAttribute('color',new THREE.BufferAttribute(colors,3));
+  var dotMat=new THREE.PointsMaterial({size:0.04,vertexColors:true,transparent:true,opacity:0.8});
+  var dots=new THREE.Points(dotGeom,dotMat);
+  globeGroup.add(dots);
+
+  // Connection lines
+  var linePositions=[];
+  var lineColors=[];
+  var lineCount=80;
+  for(var i=0;i<lineCount;i++){
+    var lat1=Math.random()*Math.PI-0.5*Math.PI;
+    var lon1=Math.random()*Math.PI*2;
+    var lat2=Math.random()*Math.PI-0.5*Math.PI;
+    var lon2=Math.random()*Math.PI*2;
+    var segments=30;
+    for(var j=0;j<=segments;j++){
+      var t=j/segments;
+      var lat=lat1+(lat2-lat1)*t;
+      var lon=lon1+(lon2-lon1)*t;
+      var x=1.53*Math.cos(lat)*Math.cos(lon);
+      var y=1.53*Math.sin(lat);
+      var z=1.53*Math.cos(lat)*Math.sin(lon);
+      linePositions.push(x,y,z);
+      var alpha=1-Math.abs(t-0.5)*2;
+      lineColors.push(0.42*alpha,0.39*alpha,alpha);
+    }
+  }
+  var lineGeom2=new THREE.BufferGeometry();
+  lineGeom2.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));
+  lineGeom2.setAttribute('color',new THREE.Float32BufferAttribute(lineColors,3));
+  var lineMat2=new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:0.3});
+  var lines=new THREE.LineSegments(lineGeom2,lineMat2);
+  globeGroup.add(lines);
+
+  // ── Orbiting project labels ──
+  var projects=[
+    {name:'Let\'s Smile Dental',color:'#6C63FF'},
+    {name:'Deep Water Tank Clean',color:'#3B82F6'},
+    {name:'Tasty Bites 3D Cafe',color:'#8B5CF6'},
+    {name:'Nexus Platform',color:'#5eead4'},
+    {name:'Vertex Brand',color:'#f59e0b'},
+    {name:'Pulse CRM',color:'#ef4444'}
+  ];
+  var orbitLabels=[];
+  var orbitLines=[];
+
+  function createTextSprite(text,colorHex){
+    var canvas=document.createElement('canvas');
+    canvas.width=512;
+    canvas.height=128;
+    var ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,512,128);
+
+    // Background pill
+    ctx.fillStyle='rgba(10,10,15,0.7)';
+    ctx.beginPath();
+    ctx.roundRect(10,20,492,88,44);
+    ctx.fill();
+    ctx.strokeStyle=colorHex||'#6C63FF';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.roundRect(10,20,492,88,44);
+    ctx.stroke();
+
+    // Text
+    ctx.fillStyle='#ffffff';
+    ctx.font='600 36px "Space Grotesk","Inter",sans-serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(text,256,64);
+
+    var texture=new THREE.CanvasTexture(canvas);
+    texture.needsUpdate=true;
+    var mat=new THREE.SpriteMaterial({map:texture,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0.9});
+    var sprite=new THREE.Sprite(mat);
+    sprite.scale.set(3.5,0.875,1);
+    return sprite;
+  }
+
+  for(var i=0;i<projects.length;i++){
+    var angle=(i/projects.length)*Math.PI*2;
+    var orbitRadius=2.8+Math.random()*0.6;
+    var tilt=Math.random()*Math.PI*2;
+    var speed=0.002+Math.random()*0.003;
+
+    var sprite=createTextSprite(projects[i].name,projects[i].color);
+    sprite.position.set(
+      orbitRadius*Math.cos(angle),
+      Math.sin(angle*2)*0.6,
+      orbitRadius*Math.sin(angle)
+    );
+    scene.add(sprite);
+
+    // Thin connection line from label to globe surface
+    var linePoints=[];
+    linePoints.push(new THREE.Vector3(0,0,0));
+    linePoints.push(new THREE.Vector3(sprite.position.x*0.55,sprite.position.y*0.55,sprite.position.z*0.55));
+    var lineGeom3=new THREE.BufferGeometry().setFromPoints(linePoints);
+    var lineMat4=new THREE.LineBasicMaterial({
+      color:new THREE.Color(projects[i].color),
+      transparent:true,
+      opacity:0.12
+    });
+    var line=new THREE.Line(lineGeom3,lineMat4);
+    scene.add(line);
+
+    orbitLabels.push({
+      sprite:sprite,
+      line:line,
+      angle:angle,
+      tilt:tilt,
+      orbitRadius:orbitRadius,
+      speed:speed,
+      yPhase:i*1.5
+    });
+  }
+
+  // Outer ring
+  var ringGeom=new THREE.RingGeometry(1.8,1.85,64);
+  var ringMat2=new THREE.MeshBasicMaterial({color:0x6C63FF,side:THREE.DoubleSide,transparent:true,opacity:0.15});
+  var ring=new THREE.Mesh(ringGeom,ringMat2);
+  ring.rotation.x=Math.PI/2;
+  ring.rotation.z=0.3;
+  globeGroup.add(ring);
+
+  var ring2Geom=new THREE.RingGeometry(2.0,2.04,64);
+  var ringMat3=new THREE.MeshBasicMaterial({color:0x3B82F6,side:THREE.DoubleSide,transparent:true,opacity:0.1});
+  var ring2=new THREE.Mesh(ring2Geom,ringMat3);
+  ring2.rotation.x=0.7;
+  ring2.rotation.y=0.5;
+  globeGroup.add(ring2);
+
+  // Fade out shimmer after scene loads
+  shimmer.classList.add('loaded');
+
+  // Animation loop
+  var mouseX=0,mouseY=0;
+  document.addEventListener('mousemove',function(e){
+    mouseX=(e.clientX/window.innerWidth-0.5)*0.3;
+    mouseY=(e.clientY/window.innerHeight-0.5)*0.3;
+  });
+
+  var scrollProgress=0;
+  if(lenis){
+    lenis.on('scroll',function(e){scrollProgress=e.progress;});
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+    globeGroup.rotation.y+=0.002;
+    globeGroup.rotation.x=Math.sin(Date.now()*0.0005)*0.05;
+    globeGroup.rotation.y+=mouseX*0.002;
+    globeGroup.rotation.x+=mouseY*0.002;
+    globeGroup.position.y=-scrollProgress*2;
+    var scale=1+scrollProgress*0.3;
+    globeGroup.scale.set(scale,scale,scale);
+
+    // Update orbiting labels
+    var t=Date.now()*0.001;
+    for(var i=0;i<orbitLabels.length;i++){
+      var o=orbitLabels[i];
+      var angle=o.angle+t*o.speed;
+      var x=o.orbitRadius*Math.cos(angle);
+      var z=o.orbitRadius*Math.sin(angle);
+      var y=Math.sin(t*0.5+o.yPhase)*0.8;
+      o.sprite.position.set(x,y,z);
+      // Update connection line
+      var pos=o.line.geometry.attributes.position;
+      pos.setXYZ(0,0,0,0);
+      pos.setXYZ(1,x*0.55,y*0.55,z*0.55);
+      pos.needsUpdate=true;
+    }
+
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  // Resize
+  window.addEventListener('resize',function(){
+    var w=container.clientWidth;
+    var h=container.clientHeight;
+    camera.aspect=w/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w,h);
+  });
+} else {
+  // Mobile fallback
+  shimmer.style.display='none';
+  canvas.style.display='none';
+  container.style.background='radial-gradient(ellipse at 30% 50%,rgba(108,99,255,0.08),transparent 70%),radial-gradient(ellipse at 70% 50%,rgba(59,130,246,0.06),transparent 70%)';
+}
+
+// ===== GSAP SCROLLTRIGGER =====
+var gsapLoaded=typeof gsap!=='undefined';
+if(gsapLoaded&&lenis){
+  try{lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(function(time){lenis.raf(time*1000)});gsap.ticker.lagSmoothing(0)}catch(e){}
+}
+
+if(gsapLoaded){
+  // Reveal animations
+  var reveals=document.querySelectorAll('.reveal');
+  reveals.forEach(function(el){
+    gsap.fromTo(el,{opacity:0,y:60},{opacity:1,y:0,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 85%',toggleActions:'play none none none'}});
+  });
+
+  // Service card stagger
+  var cards=document.querySelectorAll('.service-card');
+  if(cards.length){gsap.fromTo(cards,{opacity:0,y:40},{opacity:1,y:0,duration:0.6,stagger:0.12,ease:'power2.out',scrollTrigger:{trigger:'#services .services-grid',start:'top 80%',toggleActions:'play none none none'}});}
+
+  // Testimonial stagger
+  var testimonials=document.querySelectorAll('.testimonial-card');
+  if(testimonials.length){gsap.fromTo(testimonials,{opacity:0,x:-40},{opacity:1,x:0,duration:0.7,stagger:0.15,ease:'power2.out',scrollTrigger:{trigger:'#testimonials .testimonials-grid',start:'top 80%',toggleActions:'play none none none'}});}
+
+  // Stat counters
+  var stats=document.querySelectorAll('.stat-number');
+  stats.forEach(function(el){
+    var target=parseFloat(el.getAttribute('data-count'));
+    var isFloat=target%1!==0;
+    ScrollTrigger.create({trigger:el,start:'top 85%',onEnter:function(){gsap.fromTo(el,{textContent:0},{textContent:target,duration:2,ease:'power2.out',snap:{textContent:isFloat?0.1:1},onUpdate:function(){var val=parseFloat(el.textContent);el.textContent=isFloat?val.toFixed(1):Math.round(val)}});},once:true});
+  });
+
+  // Process steps stagger
+  var steps=document.querySelectorAll('.process-step');
+  if(steps.length){gsap.fromTo(steps,{opacity:0,x:-30},{opacity:1,x:0,duration:0.6,stagger:0.15,ease:'power2.out',scrollTrigger:{trigger:'#process .process-grid',start:'top 80%',toggleActions:'play none none none'}});}
+
+  // Showcase stagger
+  var showcases=document.querySelectorAll('.showcase-card');
+  if(showcases.length){gsap.fromTo(showcases,{opacity:0,y:30},{opacity:1,y:0,duration:0.6,stagger:0.1,ease:'power2.out',scrollTrigger:{trigger:'#work .showcase-grid',start:'top 80%',toggleActions:'play none none none'}});}
+}
+
+// ===== NAVBAR SCROLL =====
+if(lenis){
+  lenis.on('scroll',function(e){if(e.progress>0.05){navbar.classList.add('scrolled')}else{navbar.classList.remove('scrolled')}if(e.progress>0.2){scrollTop.classList.add('visible')}else{scrollTop.classList.remove('visible')}});
+} else {
+  window.addEventListener('scroll',function(){var scrollY=window.scrollY||window.pageYOffset;if(scrollY>100){navbar.classList.add('scrolled')}else{navbar.classList.remove('scrolled')}if(scrollY>300){scrollTop.classList.add('visible')}else{scrollTop.classList.remove('visible')}},{passive:true});
+}
+
+})();
+</script>
+</body>
+</html>
