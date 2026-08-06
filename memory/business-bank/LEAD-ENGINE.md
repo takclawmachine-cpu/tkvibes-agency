@@ -36,7 +36,7 @@ src/
 | `run` | `collect_personal_data: false`, `max_leads_per_run: 20` |
 | `sources` | `google_places: true`, others false |
 | `targets.cities` | 25 India + 25 Canada (see `regions.py`) |
-| `targets.categories` | 30 categories (medical, legal, service) |
+| `targets.categories` | 42 categories (medical, legal, service, food & beverage) |
 | `scoring` | `hot_threshold: 70`, `warm_threshold: 45` |
 | `crm` | `api_url: https://tkvibes.in/crm`, `api_key: ***` |
 | `email_finder` | `enabled: true`, `search_fallback: false` |

@@ -49,6 +49,17 @@ _CATEGORY_PITCH = {
     "home services": "Home services website with service pages + booking + local SEO",
     "coaching": "Coaching website with programs + testimonials + booking + SEO",
     "retail": "E-commerce website with product catalog + payment + SEO",
+    # Food & Beverages
+    "restaurant": "Restaurant website with online menu + reservations + delivery integration + SEO",
+    "cafe": "Cafe website with menu + location + online ordering + SEO",
+    "bakery": "Bakery website with product showcase + online ordering + gallery + SEO",
+    "cloud kitchen": "Cloud kitchen website with menu + delivery app integration + SEO",
+    "caterer": "Catering website with menu packages + event gallery + booking + SEO",
+    "brewery": "Brewery website with beer menu + taproom info + events + SEO",
+    "bar": "Bar/Pub website with drinks menu + events + reservations + SEO",
+    "ice cream": "Ice cream parlor website with flavor menu + locations + SEO",
+    "confectionery": "Confectionery website with product catalog + online ordering + SEO",
+    "food truck": "Food truck website with schedule + location tracker + menu + SEO",
 }
 
 # ── Pain point builders ──────────────────────────────────────────────────────
@@ -117,6 +128,14 @@ def _pain_category(lead) -> str | None:
         return "Property buyers search online first — missing listings and virtual tours"
     if "restaurant" in cat or "cafe" in cat:
         return "Diners check menus and reviews online — no website = lost customers"
+    if "bakery" in cat or "confectionery" in cat:
+        return "Customers search for bakeries online — no website = missed orders and foot traffic"
+    if "cloud kitchen" in cat or "food truck" in cat:
+        return "Online ordering is everything — no website means no discoverability"
+    if "caterer" in cat or "catering" in cat:
+        return "Event planners search for caterers online — no website = lost contracts"
+    if "brewery" in cat or "bar" in cat:
+        return "Nightlife seekers check menus and events online — no website = missed walk-ins"
     return None
 
 

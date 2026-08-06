@@ -123,6 +123,19 @@ targets:
     - "spa"
     - "jewelry store"
     - "boutique"
+    # Food & Beverages (high-fit — restaurants, cafes, bakeries, cloud kitchens)
+    - "restaurant"
+    - "cafe"
+    - "bakery"
+    - "cloud kitchen"
+    - "caterer"
+    - "fast food restaurant"
+    - "fine dining restaurant"
+    - "brewery"
+    - "ice cream parlor"
+    - "confectionery"
+    - "juice bar"
+    - "food truck"
   max_results_per_query: 60
 
 scoring:
@@ -172,6 +185,19 @@ scoring:
     - "gym"
     - "coaching"
     - "retail"
+    # Food & Beverages
+    - "bakery"
+    - "cloud kitchen"
+    - "caterer"
+    - "catering"
+    - "fast food"
+    - "fine dining"
+    - "brewery"
+    - "bar"
+    - "ice cream"
+    - "confectionery"
+    - "juice bar"
+    - "food truck"
   # Categories excluded from discovery (user-requested exclusions)
   excluded_categories:
     - "dental"
@@ -221,6 +247,19 @@ scoring:
       - "spa"
       - "jewelry store"
       - "boutique"
+    food_beverages:
+      - "restaurant"
+      - "cafe"
+      - "bakery"
+      - "cloud kitchen"
+      - "caterer"
+      - "fast food restaurant"
+      - "fine dining restaurant"
+      - "brewery"
+      - "ice cream parlor"
+      - "confectionery"
+      - "juice bar"
+      - "food truck"
 
 rate_limits:
   per_domain_delay_seconds: 4
