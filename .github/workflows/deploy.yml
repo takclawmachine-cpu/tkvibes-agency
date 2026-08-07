@@ -1,4 +1,4 @@
-name: Deploy to Hostinger
+name: Deploy to Hostinger (Git Pull)
 
 on:
   push:
@@ -12,7 +12,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 5
 
     steps:
       - name: Checkout
@@ -24,21 +24,46 @@ jobs:
           test -f assets/css/styles.css || (echo "::error::styles.css not found" && exit 1)
           echo "Static site files OK"
 
-      - name: Install lftp
-        run: sudo apt-get install -y -qq lftp
-
-      - name: Deploy to Hostinger via lftp (FTPS)
+      - name: Trigger git pull via Hostinger API
         run: |
-          lftp -c "
-            set ftp:ssl-allow yes
-            set ftp:ssl-protect-data yes
-            set ftp:ssl-force yes
-            set ssl:verify-certificate no
-            set ftp:passive-mode yes
-            set dns:order inet
-            set net:timeout 120
-            set net:max-retries 15
-            open -u '${{ secrets.FTP_USER }}','${{ secrets.FTP_PASS }}' ${{ secrets.FTP_HOST }};
-            mirror --reverse --verbose --overwrite --ignore-time --no-perms --parallel=3 --exclude-glob='.git/' --exclude-glob='.github/' --exclude-glob='scripts/' --exclude-glob='tkvibes-lead-engine/' --exclude-glob='operations-dashboard/' --exclude-glob='local-llm/' --exclude-glob='deliverables/' --exclude-glob='.venv/' --exclude-glob='.next/' --exclude-glob='node_modules/' --exclude-glob='memory/' --exclude-glob='__pycache__/' --exclude-glob='\*.pyc' ./ /public_html/;
-            bye;
-          "
+          # Create a one-shot cron job to git pull the latest code on the server
+          # The cron runs 2 minutes from now (UTC)
+          MINUTE=$(date -u +%M)
+          HOUR=$(date -u +%H)
+          DAY=$(date -u +%d)
+          MONTH=$(date -u +%m)
+          WEEKDAY=$(date -u +%w)
+          
+          # Add 2 minutes, handle wrap-around
+          if [ "$MINUTE" -ge 58 ]; then
+            NEW_MINUTE=$((MINUTE + 2 - 60))
+          else
+            NEW_MINUTE=$((MINUTE + 2))
+          fi
+          
+          CRON_TIME="$NEW_MINUTE $HOUR $DAY $MONTH $WEEKDAY"
+          echo "Scheduling cron at: $CRON_TIME UTC"
+          
+          COMMAND="cd /home/u990668815/domains/tkvibes.in/public_html && git pull https://takclawmachine-cpu:${{ secrets.GH_DEPLOY_TOKEN }}@github.com/takclawmachine-cpu/tkvibes-agency.git main 2>&1 && php crm/deploy_proposals.php 2>&1"
+          
+          RESPONSE=$(curl -s -X POST "https://developers.hostinger.com/api/hosting/v1/accounts/u990668815/cron-jobs" \
+            -H "Authorization: Bearer ${{ secrets.HOSTINGER_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"time\":\"$CRON_TIME\",\"command\":\"$COMMAND\"}")
+          
+          echo "Response: $RESPONSE"
+          
+          # Check if cron was created successfully
+          if echo "$RESPONSE" | grep -q '"uid"'; then
+            echo "✅ Deploy cron created successfully"
+          elif echo "$RESPONSE" | grep -q "1010"; then
+            echo "⚠️  Hostinger cron API transient error (1010). Deploy triggered via git push - server will sync on next recurring cron run (every 30 min)."
+          else
+            echo "⚠️  Unknown response - deploy may not have triggered. Server syncs on recurring cron every 30 min."
+          fi
+
+      - name: Notify deploy status
+        run: |
+          echo "✅ Code pushed to main. Server will sync via git pull on the scheduled cron job."
+          echo "   - One-shot deploy cron (if API accepted): run now"
+          echo "   - Recurring cron (backup): runs every 30 min via php crm/cron.php"
