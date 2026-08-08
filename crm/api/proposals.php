@@ -29,7 +29,8 @@ header('X-Robots-Tag: noindex, nofollow');
  */
 require __DIR__ . '/../lib/db.php';
 require __DIR__ . '/../lib/auth.php';
-require __DIR__ . '/lib/functions.php';
+require_once __DIR__ . '/../lib/constants.php';
+require __DIR__ . '/../lib/functions.php';
 
 $pdo = get_db();
 $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
