@@ -43,8 +43,12 @@
     function collectChars(node, accent, out) {
       if (!node) return;
       if (node.nodeType === 3) {
-        var txt = node.textContent || '';
-        for (var i = 0; i < txt.length; i++) out.push({ ch: txt[i], accent: !!accent });
+        var txt = (node.textContent || '').replace(/\s+/g, ' ');
+        for (var i = 0; i < txt.length; i++) {
+          var ch = txt[i];
+          if (ch === ' ' && out.length && out[out.length - 1].ch === ' ') continue;
+          out.push({ ch: ch, accent: !!accent });
+        }
         return;
       }
       if (node.nodeType !== 1) return;
@@ -56,6 +60,8 @@
     var charMap = [];
     var initialChildren = Array.prototype.slice.call(el.childNodes);
     for (var n = 0; n < initialChildren.length; n++) collectChars(initialChildren[n], false, charMap);
+    while (charMap.length && charMap[0].ch === ' ') charMap.shift();
+    while (charMap.length && charMap[charMap.length - 1].ch === ' ') charMap.pop();
     if (!charMap.length) return;
 
     /* Build character wrappers */
@@ -213,6 +219,7 @@
   style.textContent = [
     '[data-decrypt] .dt-char {',
     '  transition: none;',
+    '  display: inline !important;',
     '}',
     '[data-decrypt] .dt-char[data-tone="base"][data-state="plain"],',
     '[data-decrypt] .dt-char[data-tone="base"][data-state="lock"] {',
