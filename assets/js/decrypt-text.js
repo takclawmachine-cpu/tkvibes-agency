@@ -18,11 +18,6 @@
 
   var POOL = '#%&@$?!*+=/{}[]<>~^';
 
-  /* ── helpers ── */
-  function getStyle(el, prop) {
-    return window.getComputedStyle(el).getPropertyValue(prop).trim();
-  }
-
   /* mulberry32 PRNG */
   function makeRng(seed) {
     var a = seed >>> 0;
@@ -40,38 +35,40 @@
     var rafId = null;
     var timerId = null;
     var lastStart = -Infinity;
-    var played = false;
     var runCount = 0;
-    var lockAt, nextAt, locked, cells, cellChars;
+    var lockAt, nextAt, locked, cells;
 
-    /* Read the original text from data attribute */
-    var originalText = el.getAttribute('data-text');
-    if (!originalText) return;
+    /* Read original structure and preserve color intent:
+       base text node => base color, text inside span => accent color */
+    function collectChars(node, accent, out) {
+      if (!node) return;
+      if (node.nodeType === 3) {
+        var txt = node.textContent || '';
+        for (var i = 0; i < txt.length; i++) out.push({ ch: txt[i], accent: !!accent });
+        return;
+      }
+      if (node.nodeType !== 1) return;
+      var isAccent = accent || node.tagName.toLowerCase() === 'span';
+      var children = node.childNodes;
+      for (var j = 0; j < children.length; j++) collectChars(children[j], isAccent, out);
+    }
 
-    /* Build cell wrappers */
+    var charMap = [];
+    var initialChildren = Array.prototype.slice.call(el.childNodes);
+    for (var n = 0; n < initialChildren.length; n++) collectChars(initialChildren[n], false, charMap);
+    if (!charMap.length) return;
+
+    /* Build character wrappers */
     el.innerHTML = '';
-    cellChars = [];
-    var words = originalText.split(' ');
-    for (var w = 0; w < words.length; w++) {
-      if (w > 0) {
-        var space = document.createTextNode(' ');
-        var spaceSpan = document.createElement('span');
-        spaceSpan.className = 'dt-char';
-        spaceSpan.setAttribute('data-mk-char', ' ');
-        spaceSpan.setAttribute('data-state', 'plain');
-        spaceSpan.textContent = ' ';
-        el.appendChild(spaceSpan);
-      }
-      for (var c = 0; c < words[w].length; c++) {
-        var ch = words[w][c];
-        var span = document.createElement('span');
-        span.className = 'dt-char';
-        span.setAttribute('data-mk-char', ch);
-        span.setAttribute('data-state', 'plain');
-        span.textContent = ch;
-        el.appendChild(span);
-        cellChars.push(ch);
-      }
+    for (var k = 0; k < charMap.length; k++) {
+      var item = charMap[k];
+      var span = document.createElement('span');
+      span.className = 'dt-char';
+      span.setAttribute('data-mk-char', item.ch);
+      span.setAttribute('data-state', 'plain');
+      span.setAttribute('data-tone', item.accent ? 'accent' : 'base');
+      span.textContent = item.ch;
+      el.appendChild(span);
     }
 
     var cellsRaw = el.querySelectorAll('.dt-char');
@@ -103,7 +100,6 @@
       if (n === 0) return;
 
       lastStart = performance.now();
-      played = true;
 
       lockAt = new Float64Array(n);
       nextAt = new Float64Array(n);
@@ -200,21 +196,7 @@
     var h1 = document.querySelector('.hero-copy h1');
     if (!h1) return;
 
-    /* Store original text */
-    var text = h1.textContent.trim();
-    /* Handle the span-inside-h1 structure: the original has <span> feel effortless...</span> */
-    /* Get the full text including the span content */
-    var fullText = '';
-    for (var i = 0; i < h1.childNodes.length; i++) {
-      var node = h1.childNodes[i];
-      if (node.nodeType === 3) fullText += node.textContent;
-      if (node.nodeType === 1) fullText += node.textContent;
-    }
-    fullText = fullText.trim();
-
-    h1.setAttribute('data-text', fullText);
-
-    /* Save the h1 reference for style rules */
+    /* Mark target and initialize */
     h1.setAttribute('data-decrypt', '');
     createDecrypt(h1);
   }
@@ -232,20 +214,23 @@
     '[data-decrypt] .dt-char {',
     '  transition: none;',
     '}',
+    '[data-decrypt] .dt-char[data-tone="base"][data-state="plain"],',
+    '[data-decrypt] .dt-char[data-tone="base"][data-state="lock"] {',
+    '  color: var(--color-text-primary, #f5f7fb);',
+    '}',
+    '[data-decrypt] .dt-char[data-tone="accent"][data-state="plain"],',
+    '[data-decrypt] .dt-char[data-tone="accent"][data-state="lock"] {',
+    '  color: var(--color-primary-strong, #a8b4ff);',
+    '}',
     '[data-decrypt] .dt-char[data-state="scramble"] {',
     '  color: var(--color-primary, #7c8cff);',
-    '  opacity: 0.7;',
+    '  opacity: 0.72;',
     '}',
     '[data-decrypt] .dt-char[data-state="lock"] {',
-    '  color: var(--color-text-primary, #f5f7fb);',
     '  animation: dt-flash 420ms cubic-bezier(.2,0,0,1);',
-    '}',
-    '[data-decrypt] .dt-char[data-state="plain"] {',
-    '  color: var(--color-text-primary, #f5f7fb);',
     '}',
     '@keyframes dt-flash {',
     '  0% {',
-    '    color: var(--color-primary-strong, #a8b4ff);',
     '    text-shadow: 0 0 24px color-mix(in oklab, var(--color-primary, #7c8cff) 70%, transparent);',
     '  }',
     '  100% { text-shadow: 0 0 0 transparent; }',
