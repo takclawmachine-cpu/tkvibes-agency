@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /crm/
-Disallow: /operations-dashboard/
-Sitemap: https://tkvibes.in/sitemap.xml
