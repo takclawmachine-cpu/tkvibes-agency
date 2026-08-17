@@ -1087,6 +1087,21 @@ html.light .hero-metric-icon {
   margin-top: 1rem;
 }
 
+.pf-live-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.1rem;
+  color: var(--color-primary-strong);
+  font-weight: 700;
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.pf-live-link:hover {
+  color: var(--color-accent);
+  transform: translateX(4px);
+}
+
 .testimonial-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
