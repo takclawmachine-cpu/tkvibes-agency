@@ -16,6 +16,24 @@ class PortfolioContractTests(unittest.TestCase):
         self.assertTrue(screenshot.is_file())
         self.assertGreater(screenshot.stat().st_size, 50_000)
 
+    def test_mg_films_and_hotel_gray_stone_are_in_portfolio(self):
+        source = (ROOT / "portfolio.html").read_text(encoding="utf-8")
+        expected = {
+            "MG Films Garage": "websites/screenshots/mg-films-garage.png",
+            "Hotel Gray Stone": "websites/screenshots/hotel-gray-stone.png",
+        }
+        for title, screenshot in expected.items():
+            with self.subTest(title=title):
+                self.assertIn(f"<h3>{title}</h3>", source)
+                self.assertIn(screenshot, source)
+
+    def test_new_sample_screenshots_exist(self):
+        for filename in ("mg-films-garage.png", "hotel-gray-stone.png"):
+            with self.subTest(filename=filename):
+                screenshot = ROOT / "websites" / "screenshots" / filename
+                self.assertTrue(screenshot.is_file())
+                self.assertGreater(screenshot.stat().st_size, 50_000)
+
 
 if __name__ == "__main__":
     unittest.main()
